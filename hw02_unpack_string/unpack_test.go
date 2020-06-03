@@ -46,8 +46,8 @@ func TestUnpack(t *testing.T) {
 			expected: "aab",
 		},
 		{
-			input:    "d\n5abc",
-			expected: "d\n\n\n\n\nabc",
+			input:    "ad2\n5abc",
+			expected: "add\n\n\n\n\nabc",
 		},
 	} {
 		result, err := Unpack(tst.input)
@@ -65,8 +65,8 @@ func TestUnpackWithEscape(t *testing.T) {
 			expected: `qwe45`,
 		},
 		{
-			input:    `qwe\45`,
-			expected: `qwe44444`,
+			input:    `qwe5\45`,
+			expected: `qweeeee44444`,
 		},
 		{
 			input:    `qwe\\5`,
