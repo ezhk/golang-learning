@@ -13,47 +13,56 @@ const EOF = "_" // append EOF to input string as tail processing
 
 func Unpack(inputLine string) (string, error) {
 	var builder strings.Builder
-	var previous string
+	var factor strings.Builder
+
 	repeatableChar := false
 	escapedNext := false
+	previous := ""
 
-	inputLine += EOF
-
-	for idx, char := range inputLine {
+	extendedInputLine := inputLine + EOF
+	for idx, char := range extendedInputLine {
 		if idx == 0 && unicode.IsDigit(char) {
 			return "", ErrInvalidString
 		}
 
-		// Escape logic
-		switch {
-		case escapedNext:
+		// Escape next logic
+		if escapedNext {
 			previous = string(char)
 			escapedNext = false
 			continue
-		case string(char) == `\`:
-			builder.WriteString(previous)
-			escapedNext = true
+		}
+
+		// Multiplicator might be two and more symbols
+		if unicode.IsDigit(char) {
+			factor.WriteRune(char)
 			continue
 		}
 
-		if unicode.IsDigit(char) && !escapedNext {
-			counter, err := strconv.Atoi(string(char))
+		// Meet char and defined repeateble factor
+		if factor.Len() > 0 {
+			intFactor, err := strconv.Atoi(factor.String())
 			if err != nil {
 				return "", ErrInvalidString
 			}
 
 			// Skip repeateble and countered symbols
-			if counter > 0 && repeatableChar {
+			if intFactor > 0 && repeatableChar {
 				return "", ErrInvalidString
 			}
+			builder.WriteString(strings.Repeat(previous, intFactor))
 
-			builder.WriteString(strings.Repeat(previous, counter))
 			previous = ""
+			factor.Reset()
+		}
 
+		// Register escaping symbol
+		if string(char) == `\` {
+			builder.WriteString(previous)
+			escapedNext = true
 			continue
 		}
 
-		// Repetable logic
+		// Register repeatable char
 		switch {
 		case previous == string(char):
 			repeatableChar = true

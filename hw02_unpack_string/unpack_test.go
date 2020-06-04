@@ -90,3 +90,30 @@ func TestUnpackWithEscape(t *testing.T) {
 		require.Equal(t, tst.expected, result)
 	}
 }
+
+func TestUnpackBoundaryCases(t *testing.T) {
+	// t.Skip() // Remove if task with asterisk completed
+
+	for _, tst := range [...]test{
+		{
+			input:    "a10",
+			expected: "aaaaaaaaaa",
+		},
+		{
+			input:    `a\10`,
+			expected: `a`,
+		},
+		{
+			input:    `a1\0`,
+			expected: `a0`,
+		},
+		{
+			input:    `a10\`,
+			expected: "aaaaaaaaaa",
+		},
+	} {
+		result, err := Unpack(tst.input)
+		require.Equal(t, tst.err, err)
+		require.Equal(t, tst.expected, result)
+	}
+}
