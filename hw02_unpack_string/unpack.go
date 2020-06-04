@@ -12,15 +12,15 @@ var ErrInvalidString = errors.New("invalid string")
 const EOF = "_" // append EOF to input string as tail processing
 
 func writeNonZeroRune(sb *strings.Builder, ch rune) {
+	// Specially skip nil value
 	if ch > 0 {
 		sb.WriteRune(ch)
 	}
 }
 
-func RepeatRune(ch rune, count int) string {
-	var sb strings.Builder
+func RepeatRune(sb *strings.Builder, ch rune, count int) string {
 	for i := 0; i < count; i++ {
-		writeNonZeroRune(&sb, ch)
+		writeNonZeroRune(sb, ch)
 	}
 	return sb.String()
 }
@@ -61,7 +61,8 @@ func Unpack(inputLine string) (string, error) {
 				return "", ErrInvalidString
 			}
 
-			builder.WriteString(RepeatRune(previous, intFactor))
+			// Possible to use string.Repeat here
+			RepeatRune(&builder, previous, intFactor)
 			previous = 0
 			factor.Reset()
 		}
