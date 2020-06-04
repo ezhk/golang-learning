@@ -24,20 +24,17 @@ func Unpack(inputLine string) (string, error) {
 		if idx == 0 && unicode.IsDigit(char) {
 			return "", ErrInvalidString
 		}
-
 		// Escape next logic
 		if escapedNext {
 			previous = string(char)
 			escapedNext = false
 			continue
 		}
-
 		// Multiplicator might be two and more symbols
 		if unicode.IsDigit(char) {
 			factor.WriteRune(char)
 			continue
 		}
-
 		// Meet char and defined repeateble factor
 		if factor.Len() > 0 {
 			intFactor, err := strconv.Atoi(factor.String())
@@ -49,19 +46,18 @@ func Unpack(inputLine string) (string, error) {
 			if intFactor > 0 && repeatableChar {
 				return "", ErrInvalidString
 			}
+
 			builder.WriteString(strings.Repeat(previous, intFactor))
 
 			previous = ""
 			factor.Reset()
 		}
-
 		// Register escaping symbol
 		if string(char) == `\` {
 			builder.WriteString(previous)
 			escapedNext = true
 			continue
 		}
-
 		// Register repeatable char
 		switch {
 		case previous == string(char):
@@ -69,7 +65,6 @@ func Unpack(inputLine string) (string, error) {
 		case repeatableChar:
 			repeatableChar = false
 		}
-
 		builder.WriteString(previous)
 		previous = string(char)
 	}
