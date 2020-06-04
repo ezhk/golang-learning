@@ -11,13 +11,27 @@ var ErrInvalidString = errors.New("invalid string")
 
 const EOF = "_" // append EOF to input string as tail processing
 
+func writeNonZeroRune(sb *strings.Builder, ch rune) {
+	if ch > 0 {
+		sb.WriteRune(ch)
+	}
+}
+
+func RepeatRune(ch rune, count int) string {
+	var sb strings.Builder
+	for i := 0; i < count; i++ {
+		writeNonZeroRune(&sb, ch)
+	}
+	return sb.String()
+}
+
 func Unpack(inputLine string) (string, error) {
 	var builder strings.Builder
 	var factor strings.Builder
 
 	repeatableChar := false
 	escapedNext := false
-	previous := ""
+	var previous rune
 
 	extendedInputLine := inputLine + EOF
 	for idx, char := range extendedInputLine {
@@ -26,7 +40,7 @@ func Unpack(inputLine string) (string, error) {
 		}
 		// Escape next logic
 		if escapedNext {
-			previous = string(char)
+			previous = char
 			escapedNext = false
 			continue
 		}
@@ -47,26 +61,25 @@ func Unpack(inputLine string) (string, error) {
 				return "", ErrInvalidString
 			}
 
-			builder.WriteString(strings.Repeat(previous, intFactor))
-
-			previous = ""
+			builder.WriteString(RepeatRune(previous, intFactor))
+			previous = 0
 			factor.Reset()
 		}
 		// Register escaping symbol
-		if string(char) == `\` {
-			builder.WriteString(previous)
+		if char == '\\' {
+			writeNonZeroRune(&builder, previous)
 			escapedNext = true
 			continue
 		}
 		// Register repeatable char
-		switch {
-		case previous == string(char):
+		if previous == char {
 			repeatableChar = true
-		case repeatableChar:
+		} else {
 			repeatableChar = false
 		}
-		builder.WriteString(previous)
-		previous = string(char)
+
+		writeNonZeroRune(&builder, previous)
+		previous = char
 	}
 
 	return builder.String(), nil
