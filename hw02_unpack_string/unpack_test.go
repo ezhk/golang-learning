@@ -111,6 +111,10 @@ func TestUnpackBoundaryCases(t *testing.T) {
 			input:    `a10\`,
 			expected: "aaaaaaaaaa",
 		},
+		{
+			input:    "я3",
+			expected: "яяя",
+		},
 	} {
 		result, err := Unpack(tst.input)
 		require.Equal(t, tst.err, err)
