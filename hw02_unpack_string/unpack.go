@@ -11,27 +11,15 @@ var ErrInvalidString = errors.New("invalid string")
 
 const EOF = "_" // append EOF to input string as tail processing
 
-func writeNonZeroRune(sb *strings.Builder, ch rune) {
-	// Specially skip nil value
-	if ch > 0 {
-		sb.WriteRune(ch)
-	}
-}
-
-func RepeatRune(sb *strings.Builder, ch rune, count int) string {
-	for i := 0; i < count; i++ {
-		writeNonZeroRune(sb, ch)
-	}
-	return sb.String()
-}
-
 func Unpack(inputLine string) (string, error) {
-	var builder strings.Builder
-	var factor strings.Builder
+	var (
+		builder strings.Builder
+		factor  strings.Builder
 
-	repeatableChar := false
-	escapedNext := false
-	var previous rune
+		isRepeatableChar bool
+		isEscapedNext    bool
+		previous         rune
+	)
 
 	extendedInputLine := inputLine + EOF
 	for idx, char := range extendedInputLine {
@@ -39,9 +27,9 @@ func Unpack(inputLine string) (string, error) {
 			return "", ErrInvalidString
 		}
 		// Escape next logic
-		if escapedNext {
+		if isEscapedNext {
 			previous = char
-			escapedNext = false
+			isEscapedNext = false
 			continue
 		}
 		// Multiplicator might be two and more symbols
@@ -57,26 +45,26 @@ func Unpack(inputLine string) (string, error) {
 			}
 
 			// Skip repeateble and countered symbols
-			if intFactor > 0 && repeatableChar {
+			if intFactor > 0 && isRepeatableChar {
 				return "", ErrInvalidString
 			}
 
-			// Possible to use string.Repeat here
-			RepeatRune(&builder, previous, intFactor)
+			// Possible to use string.Repeat here, but rune is using
+			repeatRune(&builder, previous, intFactor)
 			previous = 0
 			factor.Reset()
 		}
 		// Register escaping symbol
 		if char == '\\' {
 			writeNonZeroRune(&builder, previous)
-			escapedNext = true
+			isEscapedNext = true
 			continue
 		}
 		// Register repeatable char
 		if previous == char {
-			repeatableChar = true
+			isRepeatableChar = true
 		} else {
-			repeatableChar = false
+			isRepeatableChar = false
 		}
 
 		writeNonZeroRune(&builder, previous)
@@ -84,4 +72,19 @@ func Unpack(inputLine string) (string, error) {
 	}
 
 	return builder.String(), nil
+}
+
+func writeNonZeroRune(sb *strings.Builder, ch rune) {
+	// Specially skip nil value
+	if ch > 0 {
+		sb.WriteRune(ch)
+	}
+}
+
+func repeatRune(sb *strings.Builder, ch rune, count int) *strings.Builder {
+	for i := 0; i < count; i++ {
+		writeNonZeroRune(sb, ch)
+	}
+
+	return sb
 }

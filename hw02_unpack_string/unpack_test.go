@@ -57,8 +57,6 @@ func TestUnpack(t *testing.T) {
 }
 
 func TestUnpackWithEscape(t *testing.T) {
-	// t.Skip() // Remove if task with asterisk completed
-
 	for _, tst := range [...]test{
 		{
 			input:    `qwe\4\5`,
@@ -92,8 +90,6 @@ func TestUnpackWithEscape(t *testing.T) {
 }
 
 func TestUnpackBoundaryCases(t *testing.T) {
-	// t.Skip() // Remove if task with asterisk completed
-
 	for _, tst := range [...]test{
 		{
 			input:    "a10",
@@ -114,6 +110,10 @@ func TestUnpackBoundaryCases(t *testing.T) {
 		{
 			input:    "я3",
 			expected: "яяя",
+		},
+		{
+			input:    "a4b_c_",
+			expected: "aaaab_c_",
 		},
 	} {
 		result, err := Unpack(tst.input)
