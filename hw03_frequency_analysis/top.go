@@ -27,7 +27,7 @@ func Top10(inputLine string) []string {
 		}
 	}
 
-	// convert map to slice wordFrequency for next order
+	// convert map to slice wordFrequency for next sorting
 	wordSlice := make([]WordFrequency, 0, len(freqMap))
 	for word, counter := range freqMap {
 		wordSlice = append(wordSlice, WordFrequency{word, counter})
@@ -36,7 +36,7 @@ func Top10(inputLine string) []string {
 		return wordSlice[i].RepeatCounter > wordSlice[j].RepeatCounter
 	})
 
-	// store data to result slice
+	// store data
 	for _, value := range wordSlice {
 		if len(mostFrequentWords) >= MaxLength {
 			break
