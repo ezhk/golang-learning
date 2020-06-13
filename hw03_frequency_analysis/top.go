@@ -4,10 +4,10 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"unicode"
 )
 
-var SplitFilter = regexp.MustCompile(`[\s?!.;,]`)
-var IgnoredSymbols = regexp.MustCompile(`[-]`)
+var ignoredSymbols = regexp.MustCompile(`[-]`)
 
 type WordFrequency struct {
 	word          string
@@ -20,8 +20,8 @@ func Top10(inputLine string) []string {
 
 	// prepare map with counter
 	freqMap := make(map[string]int)
-	for _, word := range SplitFilter.Split(inputLine, -1) {
-		word = IgnoredSymbols.ReplaceAllString(word, "")
+	inputLine = ignoredSymbols.ReplaceAllString(inputLine, "")
+	for _, word := range strings.FieldsFunc(inputLine, splitFunc) {
 		if len(word) > 0 {
 			freqMap[strings.ToLower(word)]++
 		}
@@ -45,4 +45,8 @@ func Top10(inputLine string) []string {
 	}
 
 	return mostFrequentWords
+}
+
+func splitFunc(char rune) bool {
+	return unicode.IsPunct(char) || unicode.IsSpace(char)
 }

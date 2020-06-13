@@ -75,3 +75,9 @@ func TestExtendedTop10(t *testing.T) {
 		assert.Equal(t, result, testCase.expected)
 	}
 }
+
+func BenchmarkTop(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Top10(text)
+	}
+}
