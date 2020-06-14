@@ -22,9 +22,7 @@ func Top10(inputLine string) []string {
 	freqMap := make(map[string]int)
 	inputLine = ignoredSymbols.ReplaceAllString(inputLine, "")
 	for _, word := range strings.FieldsFunc(inputLine, splitFunc) {
-		if len(word) > 0 {
-			freqMap[strings.ToLower(word)]++
-		}
+		freqMap[strings.ToLower(word)]++
 	}
 
 	// convert map to slice wordFrequency for next sorting
