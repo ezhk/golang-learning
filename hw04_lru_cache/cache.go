@@ -1,5 +1,7 @@
 package hw04_lru_cache //nolint:golint,stylecheck
 
+import "sync"
+
 type Key string
 
 type Cache interface {
@@ -9,6 +11,7 @@ type Cache interface {
 }
 
 type lruCache struct {
+	sync.Mutex
 	capacity int
 	Queue    List
 	Items    map[Key]*listItem
@@ -34,7 +37,10 @@ func newItem(key Key, value interface{}) *cacheItem {
 	}
 }
 
-func (c lruCache) Set(key Key, value interface{}) bool {
+func (c *lruCache) Set(key Key, value interface{}) bool {
+	c.Lock()
+	defer c.Unlock()
+
 	if item, ok := c.Items[key]; ok {
 		item.Value.(*cacheItem).cValue = value
 		c.Queue.MoveToFront(item)
@@ -53,7 +59,10 @@ func (c lruCache) Set(key Key, value interface{}) bool {
 	return false
 }
 
-func (c lruCache) Get(key Key) (interface{}, bool) {
+func (c *lruCache) Get(key Key) (interface{}, bool) {
+	c.Lock()
+	defer c.Unlock()
+
 	if item, ok := c.Items[key]; ok {
 		c.Queue.MoveToFront(item)
 		return item.Value.(*cacheItem).cValue, true
@@ -62,7 +71,10 @@ func (c lruCache) Get(key Key) (interface{}, bool) {
 	return nil, false
 }
 
-func (c lruCache) Clear() {
+func (c *lruCache) Clear() {
+	c.Lock()
+	defer c.Unlock()
+
 	for c.Queue.Len() > 0 {
 		c.Queue.Remove(c.Queue.Back())
 	}
