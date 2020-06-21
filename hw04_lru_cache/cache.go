@@ -1,6 +1,8 @@
 package hw04_lru_cache //nolint:golint,stylecheck
 
-import "sync"
+import (
+	"sync"
+)
 
 type Key string
 
