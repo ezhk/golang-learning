@@ -50,7 +50,53 @@ func TestCache(t *testing.T) {
 	})
 
 	t.Run("purge logic", func(t *testing.T) {
-		// Write me
+		c := NewCache(1)
+
+		wasInCache := c.Set("aaa", 100)
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("bbb", 200)
+		require.False(t, wasInCache)
+
+		val, ok := c.Get("aaa")
+		require.False(t, ok)
+		require.Equal(t, nil, val)
+
+		val, ok = c.Get("bbb")
+		require.True(t, ok)
+		require.Equal(t, 200, val)
+	})
+
+	t.Run("push logic", func(t *testing.T) {
+		c := NewCache(3)
+
+		c.Set("aaa", 100)
+		c.Set("bbb", 200)
+		c.Set("ccc", 300)
+
+		// make aaa and bbb more frequent
+		c.Get("aaa")
+		c.Get("bbb")
+
+		c.Set("ddd", 400)
+
+		// check purged value
+		val, ok := c.Get("ccc")
+		require.False(t, ok)
+		require.Equal(t, nil, val)
+
+		// check exist values
+		val, ok = c.Get("aaa")
+		require.True(t, ok)
+		require.Equal(t, 100, val)
+
+		val, ok = c.Get("bbb")
+		require.True(t, ok)
+		require.Equal(t, 200, val)
+
+		val, ok = c.Get("ddd")
+		require.True(t, ok)
+		require.Equal(t, 400, val)
 	})
 }
 
@@ -64,14 +110,14 @@ func TestCacheMultithreading(t *testing.T) {
 	go func() {
 		defer wg.Done()
 		for i := 0; i < 1_000_000; i++ {
-			c.Set(Key(strconv.Itoa(i)), i)
+			c.Set(strconv.Itoa(i), i)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
 		for i := 0; i < 1_000_000; i++ {
-			c.Get(Key(strconv.Itoa(rand.Intn(1_000_000))))
+			c.Get(strconv.Itoa(rand.Intn(1_000_000)))
 		}
 	}()
 
