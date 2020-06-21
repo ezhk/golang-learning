@@ -57,7 +57,7 @@ func (c lruCache) Set(key string, value interface{}) bool {
 func (c lruCache) Get(key string) (interface{}, bool) {
 	if item, ok := c.Items[key]; ok {
 		c.Queue.MoveToFront(item)
-		return (item.Value).(*cacheItem).cValue, true
+		return item.Value.(*cacheItem).cValue, true
 	}
 
 	return nil, false
