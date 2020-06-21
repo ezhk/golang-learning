@@ -28,12 +28,16 @@ func NewCache(capacity int) Cache {
 	}
 }
 
+func NewItem(key string, value interface{}) *cacheItem {
+	return &cacheItem{
+		cKey:   key,
+		cValue: value,
+	}
+}
+
 func (c lruCache) Set(key string, value interface{}) bool {
 	if item, ok := c.Items[key]; ok {
-		ci := item.Value.(cacheItem)
-		ci.cValue = value
-		item.Value = ci
-
+		item.Value.(*cacheItem).cValue = value
 		c.Queue.MoveToFront(item)
 		return true
 	}
@@ -42,13 +46,10 @@ func (c lruCache) Set(key string, value interface{}) bool {
 		latestItem := c.Queue.Back()
 
 		c.Queue.Remove(latestItem)
-		delete(c.Items, latestItem.Value.(cacheItem).cKey)
+		delete(c.Items, latestItem.Value.(*cacheItem).cKey)
 	}
 
-	item := cacheItem{
-		cKey:   key,
-		cValue: value,
-	}
+	item := NewItem(key, value)
 	c.Items[key] = c.Queue.PushFront(item)
 	return false
 }
@@ -56,7 +57,7 @@ func (c lruCache) Set(key string, value interface{}) bool {
 func (c lruCache) Get(key string) (interface{}, bool) {
 	if item, ok := c.Items[key]; ok {
 		c.Queue.MoveToFront(item)
-		return (item.Value).(cacheItem).cValue, true
+		return (item.Value).(*cacheItem).cValue, true
 	}
 
 	return nil, false
