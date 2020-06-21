@@ -3,39 +3,38 @@ package hw04_lru_cache //nolint:golint,stylecheck
 type Key string
 
 type Cache interface {
-	Set(key string, value interface{}) bool
-	Get(key string) (interface{}, bool)
+	Set(key Key, value interface{}) bool
+	Get(key Key) (interface{}, bool)
 	Clear()
 }
 
 type lruCache struct {
 	capacity int
 	Queue    List
-	Items    map[string]*listItem
+	Items    map[Key]*listItem
 }
 
 type cacheItem struct {
-	cKey   string
+	cKey   Key
 	cValue interface{}
 }
 
 func NewCache(capacity int) Cache {
-	list := NewList()
 	return &lruCache{
 		capacity: capacity,
-		Queue:    list,
-		Items:    make(map[string]*listItem),
+		Queue:    NewList(),
+		Items:    make(map[Key]*listItem),
 	}
 }
 
-func NewItem(key string, value interface{}) *cacheItem {
+func newItem(key Key, value interface{}) *cacheItem {
 	return &cacheItem{
 		cKey:   key,
 		cValue: value,
 	}
 }
 
-func (c lruCache) Set(key string, value interface{}) bool {
+func (c lruCache) Set(key Key, value interface{}) bool {
 	if item, ok := c.Items[key]; ok {
 		item.Value.(*cacheItem).cValue = value
 		c.Queue.MoveToFront(item)
@@ -49,12 +48,12 @@ func (c lruCache) Set(key string, value interface{}) bool {
 		delete(c.Items, latestItem.Value.(*cacheItem).cKey)
 	}
 
-	item := NewItem(key, value)
+	item := newItem(key, value)
 	c.Items[key] = c.Queue.PushFront(item)
 	return false
 }
 
-func (c lruCache) Get(key string) (interface{}, bool) {
+func (c lruCache) Get(key Key) (interface{}, bool) {
 	if item, ok := c.Items[key]; ok {
 		c.Queue.MoveToFront(item)
 		return item.Value.(*cacheItem).cValue, true
@@ -67,5 +66,5 @@ func (c lruCache) Clear() {
 	for c.Queue.Len() > 0 {
 		c.Queue.Remove(c.Queue.Back())
 	}
-	c.Items = make(map[string]*listItem)
+	c.Items = make(map[Key]*listItem)
 }
