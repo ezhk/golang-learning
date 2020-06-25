@@ -82,11 +82,11 @@ func (l *list) Remove(i *listItem) {
 	case i.Prev != nil && i.Next != nil:
 		i.Prev.Next = i.Next
 		i.Next.Prev = i.Prev
-	// element in the left/begin
+	// element in the right/end
 	case i.Prev != nil:
 		l.Last = i.Prev
 		i.Prev.Next = nil
-	// element in the right/end
+	// element in the left/begin
 	case i.Next != nil:
 		l.First = i.Next
 		i.Next.Prev = nil
