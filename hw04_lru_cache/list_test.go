@@ -28,7 +28,6 @@ func TestList(t *testing.T) {
 			elems = append(elems, i.Value.(int))
 		}
 		require.Equal(t, elems, []int{10})
-		require.Equal(t, l.ShowElements(), []listItem{*l.Front()})
 
 		l.Remove(l.Front())
 		require.Equal(t, l.Len(), 0)
