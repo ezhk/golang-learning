@@ -9,7 +9,6 @@ var ErrGoroutinesLimitNotPositive = errors.New("goroutines limit set to negative
 
 type Task func() error
 
-// Run starts tasks in N goroutines and stops its work when receiving M errors from tasks
 func Run(tasks []Task, concurrentGoroutinesLimit int, allowedErrorsAmount int) error {
 	if concurrentGoroutinesLimit < 1 {
 		return ErrGoroutinesLimitNotPositive
