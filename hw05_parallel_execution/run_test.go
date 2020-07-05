@@ -73,11 +73,11 @@ func TestRun(t *testing.T) {
 			M   int
 			err error
 		}{
-			{-1, 10, ErrGoroutinesLimitNotPositive},
-			{0, 5, ErrGoroutinesLimitNotPositive},
-			{-1, -1, ErrGoroutinesLimitNotPositive},
-			{10, -1, ErrErrorsLimitExceeded},
-			{5, 0, ErrErrorsLimitExceeded},
+			{-1, 10, ErrGoroutinesLimitNonPositive},
+			{0, 5, ErrGoroutinesLimitNonPositive},
+			{-1, -1, ErrGoroutinesLimitNonPositive},
+			{10, -1, ErrErrorsAmountNonPositive},
+			{5, 0, ErrErrorsAmountNonPositive},
 		} {
 			result := Run([]Task{func() error { return nil }}, test.N, test.M)
 			require.Equal(t, test.err, result)

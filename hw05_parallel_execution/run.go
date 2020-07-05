@@ -2,40 +2,47 @@ package hw05_parallel_execution //nolint:golint,stylecheck
 
 import (
 	"errors"
+	"sync/atomic"
 )
 
 var ErrErrorsLimitExceeded = errors.New("errors limit exceeded")
-var ErrGoroutinesLimitNotPositive = errors.New("goroutines limit set to negative value")
+var ErrGoroutinesLimitNonPositive = errors.New("goroutines limit contains non positive value")
+var ErrErrorsAmountNonPositive = errors.New("errors amount contains non positive value")
 
 type Task func() error
 
-func Run(tasks []Task, concurrentGoroutinesLimit int, allowedErrorsAmount int) error {
-	if concurrentGoroutinesLimit < 1 {
-		return ErrGoroutinesLimitNotPositive
+func Run(tasks []Task, goroutinesLimit int, allowedErrors int) error {
+	if goroutinesLimit < 1 {
+		return ErrGoroutinesLimitNonPositive
+	}
+	if allowedErrors < 1 {
+		return ErrErrorsAmountNonPositive
 	}
 
-	concurrentGoroutines := make(chan struct{}, concurrentGoroutinesLimit)
-	defer close(concurrentGoroutines)
+	errorsLeft := int64(allowedErrors)
+	concurrentCh := make(chan struct{}, goroutinesLimit)
 
-	for _, t := range tasks {
-		if allowedErrorsAmount < 1 {
+	for idx, task := range tasks {
+		if errorsLeft < 1 {
 			return ErrErrorsLimitExceeded
 		}
 
-		concurrentGoroutines <- struct{}{}
+		concurrentCh <- struct{}{}
 		go func(t Task) {
+			defer func() { <-concurrentCh }()
+
 			if err := t(); err != nil {
-				allowedErrorsAmount--
+				atomic.AddInt64(&errorsLeft, -1)
 			}
-			<-concurrentGoroutines
-		}(t)
+		}(task)
 	}
 
-	// wait completed tasks
-	for len(concurrentGoroutines) > 0 {
+	// wait completed tasks and close chan
+	for len(concurrentCh) > 0 {
 	}
+	close(concurrentCh)
 
-	if allowedErrorsAmount < 1 {
+	if errorsLeft < 1 {
 		return ErrErrorsLimitExceeded
 	}
 
