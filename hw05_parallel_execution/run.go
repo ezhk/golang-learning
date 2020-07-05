@@ -22,7 +22,7 @@ func Run(tasks []Task, goroutinesLimit int, allowedErrors int) error {
 	errorsLeft := int64(allowedErrors)
 	concurrentCh := make(chan struct{}, goroutinesLimit)
 
-	for idx, task := range tasks {
+	for _, task := range tasks {
 		if errorsLeft < 1 {
 			return ErrErrorsLimitExceeded
 		}
