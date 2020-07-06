@@ -2,6 +2,7 @@ package hw05_parallel_execution //nolint:golint,stylecheck
 
 import (
 	"errors"
+	"sync"
 	"sync/atomic"
 )
 
@@ -25,24 +26,28 @@ func Run(tasks []Task, goroutinesLimit int, maxErrors int) error {
 	concurrentCh := make(chan struct{}, goroutinesLimit)
 	defer close(concurrentCh)
 
+	var wg sync.WaitGroup
 	for _, task := range tasks {
-		if errorsLeft < 1 {
-			return ErrErrorsLimitExceeded
+		if atomic.LoadInt64(&errorsLeft) < 1 {
+			break
 		}
 
+		// wait for next step: use channel as task queue
 		concurrentCh <- struct{}{}
+
+		wg.Add(1)
 		go func(t Task) {
-			defer func() { <-concurrentCh }()
+			defer func() {
+				<-concurrentCh
+				wg.Done()
+			}()
 
 			if err := t(); err != nil {
 				atomic.AddInt64(&errorsLeft, -1)
 			}
 		}(task)
 	}
-
-	// wait completed tasks and close chan
-	for len(concurrentCh) > 0 {
-	}
+	wg.Wait()
 
 	if errorsLeft < 1 {
 		return ErrErrorsLimitExceeded
