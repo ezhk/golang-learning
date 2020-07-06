@@ -5,22 +5,25 @@ import (
 	"sync/atomic"
 )
 
-var ErrErrorsLimitExceeded = errors.New("errors limit exceeded")
-var ErrGoroutinesLimitNonPositive = errors.New("goroutines limit contains non positive value")
-var ErrErrorsAmountNonPositive = errors.New("errors amount contains non positive value")
+var (
+	ErrErrorsLimitExceeded        = errors.New("errors limit exceeded")
+	ErrGoroutinesLimitNonPositive = errors.New("goroutines limit contains non positive value")
+	ErrErrorsAmountNonPositive    = errors.New("errors amount contains non positive value")
+)
 
 type Task func() error
 
-func Run(tasks []Task, goroutinesLimit int, allowedErrors int) error {
+func Run(tasks []Task, goroutinesLimit int, maxErrors int) error {
 	if goroutinesLimit < 1 {
 		return ErrGoroutinesLimitNonPositive
 	}
-	if allowedErrors < 1 {
+	if maxErrors < 1 {
 		return ErrErrorsAmountNonPositive
 	}
 
-	errorsLeft := int64(allowedErrors)
+	errorsLeft := int64(maxErrors)
 	concurrentCh := make(chan struct{}, goroutinesLimit)
+	defer close(concurrentCh)
 
 	for _, task := range tasks {
 		if errorsLeft < 1 {
@@ -40,7 +43,6 @@ func Run(tasks []Task, goroutinesLimit int, allowedErrors int) error {
 	// wait completed tasks and close chan
 	for len(concurrentCh) > 0 {
 	}
-	close(concurrentCh)
 
 	if errorsLeft < 1 {
 		return ErrErrorsLimitExceeded
