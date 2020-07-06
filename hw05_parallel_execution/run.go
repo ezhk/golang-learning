@@ -14,7 +14,7 @@ var (
 
 type Task func() error
 
-func Run(tasks []Task, goroutinesLimit int, maxErrors int) error {
+func Run(tasks []Task, goroutinesLimit, maxErrors int) error {
 	if goroutinesLimit < 1 {
 		return ErrGoroutinesLimitNonPositive
 	}
