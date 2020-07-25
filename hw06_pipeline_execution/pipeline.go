@@ -6,8 +6,10 @@ type (
 	Bi  = chan interface{}
 )
 
-type Stage func(in In) (out Out)
-type I interface{}
+type (
+	Stage func(in In) (out Out)
+	I     interface{}
+)
 
 func ExecutePipeline(in In, done In, stages ...Stage) Out {
 	outCh := make(Bi)
