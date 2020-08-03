@@ -88,7 +88,7 @@ func defineLimitedReader(fromPath string, offset, limit int64) (io.Reader, error
 	if err != nil {
 		return reader, err
 	}
-
 	limitedReader := io.LimitReader(reader, limit)
+
 	return limitedReader, nil
 }
