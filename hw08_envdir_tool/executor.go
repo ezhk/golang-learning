@@ -5,8 +5,9 @@ import (
 	"os/exec"
 )
 
-// RunCmd runs a command + arguments (cmd) with environment variables from env
 func RunCmd(cmd []string, env Environment) (returnCode int) {
+	// RunCmd runs a command + arguments (cmd) with environment variables from env
+
 	execEnv := make([]string, len(env))
 	for envVariable, value := range env {
 		// skip empty values
@@ -18,10 +19,9 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 
 	command, args := cmd[0], cmd[1:]
 	cmdExec := exec.Command(command, args...)
-	cmdExec.Env = append(execEnv)
+	cmdExec.Env = execEnv
 
 	stdoutStderr, err := cmdExec.CombinedOutput()
-
 	if err != nil {
 		exitError, ok := err.(*exec.ExitError)
 		if ok {

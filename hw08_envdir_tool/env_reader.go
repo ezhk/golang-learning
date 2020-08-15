@@ -11,9 +11,9 @@ import (
 
 type Environment map[string]string
 
-// ReadDir reads a specified directory and returns map of env variables.
-// Variables represented as files where filename is name of variable, file first line is a value.
 func ReadDir(dir string) (Environment, error) {
+	// ReadDir reads a specified directory and returns map of env variables.
+	// Variables represented as files where filename is name of variable, file first line is a value.
 	env := make(Environment)
 	dataDir, err := ioutil.ReadDir(dir)
 	if err != nil {
@@ -40,8 +40,8 @@ func ReadDir(dir string) (Environment, error) {
 	return env, nil
 }
 
-// function read file and return first "trail trimmed" string
 func readFileValue(filePath string) (string, error) {
+	// function read file and return first "trail trimmed" string
 	r, err := os.Open(filePath)
 	if err != nil {
 		return "", err
