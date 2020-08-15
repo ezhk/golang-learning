@@ -33,5 +33,6 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 	}
 
 	fmt.Printf("%s", stdoutStderr)
+
 	return 0
 }

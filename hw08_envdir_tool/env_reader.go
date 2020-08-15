@@ -71,6 +71,7 @@ func readFileValue(filePath string) (string, error) {
 
 		// convering 0x00 to \n magic
 		val = strings.ReplaceAll(val, string('\x00'), "\n")
+
 		return strings.TrimRightFunc(val, unicode.IsSpace), nil
 	}
 
