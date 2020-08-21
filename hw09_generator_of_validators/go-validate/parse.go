@@ -8,6 +8,7 @@ import (
 	"go/parser"
 	"go/token"
 	"reflect"
+	"strings"
 )
 
 const FilterTag string = "validate"
@@ -54,7 +55,7 @@ func ParseStruct(filePath string) ([]ParsedStruct, error) {
 				fields = append(fields, field)
 			}
 
-			declStruct = ParsedStruct{StructName: structName, Fields: fields}
+			declStruct = ParsedStruct{Name: structName, Fields: fields}
 
 			// extend slice of parsed structs
 			parsedStructs = append(parsedStructs, declStruct)
@@ -91,11 +92,38 @@ func parseField(field *ast.Field, fset *token.FileSet) (Field, error) {
 
 	fieldName := field.Names[0].Name
 
+	conditions, err := prepareConditions(field.Tag.Value)
+	if err != nil {
+		return Field{}, err
+	}
+
 	// skip first and last quotes ` and `
 	tag := reflect.StructTag(field.Tag.Value[1 : len(field.Tag.Value)-1])
 	if tag.Get(FilterTag) == "" {
 		return Field{}, errors.New("empty tag string")
 	}
 
-	return Field{Name: fieldName, Type: variableType, Slice: isSlice, Tag: tag.Get(FilterTag)}, nil
+	return Field{Name: fieldName, Type: variableType, IsSlice: isSlice, Conditions: conditions}, nil
+}
+
+func prepareConditions(fieldTag string) ([]Condition, error) {
+	conditions := make([]Condition, 0)
+
+	tag := reflect.StructTag(fieldTag[1 : len(fieldTag)-1])
+	if tag.Get(FilterTag) == "" {
+		return conditions, errors.New("incorrect filter tag")
+	}
+
+	rules := strings.Split(tag.Get(FilterTag), "|")
+	for _, r := range rules {
+		conditionSlice := strings.SplitN(r, ":", 2)
+		cond := Condition{Name: conditionSlice[0], Value: conditionSlice[1]}
+		conditions = append(conditions, cond)
+	}
+
+	if len(conditions) < 1 {
+		return conditions, errors.New("empty filter tags")
+	}
+
+	return conditions, nil
 }

@@ -2,13 +2,19 @@ package main
 
 import (
 	"errors"
-	"fmt"
-	"strings"
 )
 
-var AllowedValidators map[string][]string = map[string][]string{
-	"int":    {"min", "max", "in"},
-	"string": {"len", "regexp", "in"},
+var AllowedValidators map[string]map[string]struct{} = map[string]map[string]struct{}{
+	"int": {
+		"min": struct{}{},
+		"max": struct{}{},
+		"in":  struct{}{},
+	},
+	"string": {
+		"len":    struct{}{},
+		"regexp": struct{}{},
+		"in":     struct{}{},
+	},
 }
 
 func ValidateStruct(parsedStructs []ParsedStruct) []ParsedStruct {
@@ -16,14 +22,12 @@ func ValidateStruct(parsedStructs []ParsedStruct) []ParsedStruct {
 	// validated data redefines earlier data
 	validatedStructs := make([]ParsedStruct, 0)
 	for _, parsedSt := range parsedStructs {
-		vStruct := ParsedStruct{StructName: parsedSt.StructName}
+		vStruct := ParsedStruct{Name: parsedSt.Name}
 		for _, field := range parsedSt.Fields {
 			validatedField, err := ValidateField(field)
 			if err != nil {
 				continue
 			}
-
-			fmt.Println(GeneratorField(field))
 			vStruct.Fields = append(vStruct.Fields, validatedField)
 		}
 		validatedStructs = append(validatedStructs, vStruct)
@@ -33,19 +37,16 @@ func ValidateStruct(parsedStructs []ParsedStruct) []ParsedStruct {
 }
 
 func ValidateField(field Field) (Field, error) {
-	validateCondition := strings.SplitN(field.Tag, ":", 2)
-	validateKeyword := validateCondition[0]
-
 	validators, ok := AllowedValidators[field.Type]
 	if !ok {
-		return Field{}, errors.New("empression not valid")
+		return Field{}, errors.New("expression not valid")
 	}
 
-	for _, v := range validators {
-		if v == validateKeyword {
-			return field, nil
+	for _, condition := range field.Conditions {
+		if _, ok := validators[condition.Name]; !ok {
+			return Field{}, errors.New("field name not valid")
 		}
 	}
 
-	return field, errors.New("not found valid validators")
+	return field, nil
 }

@@ -3,24 +3,24 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
-// type Term struct {
-// 	Name     string
-// 	Argument string
-// }
+type Condition struct {
+	Name  string
+	Value string
+}
 
 type Field struct {
-	Name  string
-	Type  string
-	Slice bool
-	// Terms []Term
-	Tag string
+	Name       string
+	Type       string
+	IsSlice    bool
+	Conditions []Condition
 }
 
 type ParsedStruct struct {
-	StructName string
-	Fields     []Field
+	Name   string
+	Fields []Field
 }
 
 func main() {
@@ -32,9 +32,23 @@ func main() {
 	}
 
 	validatedStruct := ValidateStruct(parsedStruct)
-	fmt.Printf("%+v\n", validatedStruct)
+	document, err := GenerateDocument(validatedStruct)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
-	// for _, readStruct := range parsedStruct {
-	// 	fmt.Printf("%#v\n", readStruct)
-	// }
+	savedFilename := strings.TrimSuffix(filename, ".go")
+	f, err := os.Create(fmt.Sprintf("%s_validation_generated.go", savedFilename))
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer f.Close()
+
+	_, err = f.Write(document)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
