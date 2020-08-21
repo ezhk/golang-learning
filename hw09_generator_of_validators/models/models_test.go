@@ -77,6 +77,7 @@ func TestUserValidation(t *testing.T) {
 		for _, e := range errs {
 			fields = append(fields, e.Field)
 		}
+
 		require.ElementsMatch(t, fields, []string{"Age", "Email", "Role"})
 	})
 }

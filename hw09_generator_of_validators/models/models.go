@@ -12,6 +12,7 @@ type (
 		Email  string   `validate:"regexp:^\\w+@\\w+\\.\\w+$"`
 		Role   UserRole `validate:"in:admin,stuff"`
 		Phones []string `validate:"len:11"`
+		// TEST   string   `validate:"in:admin,stuff"`
 	}
 
 	App struct {
