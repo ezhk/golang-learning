@@ -30,9 +30,9 @@ func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
 	return countDomains(u, domain)
 }
 
-func getUsersEmails(r io.Reader) (result []string, err error) {
+func getUsersEmails(r io.Reader) (result []string, funcErr error) {
 	var user User
-	var json = jsoniter.ConfigCompatibleWithStandardLibrary
+	json := jsoniter.ConfigCompatibleWithStandardLibrary
 
 	bufReader := bufio.NewReader(r)
 	for {
@@ -42,11 +42,13 @@ func getUsersEmails(r io.Reader) (result []string, err error) {
 		}
 
 		if err = json.Unmarshal(line, &user); err != nil {
+			funcErr = err
 			break
 		}
 
 		result = append(result, user.Email)
 	}
+
 	return
 }
 
@@ -63,5 +65,6 @@ func countDomains(emails []string, domain string) (DomainStat, error) {
 		domain := strings.Split(email, "@")[1]
 		result[strings.ToLower(domain)]++
 	}
+
 	return result, nil
 }
