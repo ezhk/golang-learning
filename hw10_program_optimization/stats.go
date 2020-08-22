@@ -27,6 +27,7 @@ func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
 	if err != nil {
 		return nil, fmt.Errorf("get users error: %s", err)
 	}
+
 	return countDomains(u, domain)
 }
 
@@ -43,6 +44,7 @@ func getUsersEmails(r io.Reader) (result []string, funcErr error) {
 
 		if err = json.Unmarshal(line, &user); err != nil {
 			funcErr = err
+
 			break
 		}
 
