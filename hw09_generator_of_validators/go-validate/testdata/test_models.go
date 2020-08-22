@@ -1,8 +1,4 @@
-package models
-
-//go:generate go-validate $GOFILE
-
-type UserRole string
+package testmodels
 
 type (
 	User struct {
@@ -18,14 +14,3 @@ type (
 		Version string `validate:"len:5"`
 	}
 )
-
-type Token struct {
-	Header    []byte
-	Payload   []byte
-	Signature []byte
-}
-
-type Response struct {
-	Code int    `validate:"in:200,404,500"`
-	Body string `json:"omitempty"`
-}

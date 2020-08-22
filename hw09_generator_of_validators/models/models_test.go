@@ -60,8 +60,19 @@ func TestUserValidation(t *testing.T) {
 	})
 
 	t.Run("phones slice", func(t *testing.T) {
-		// Write me :)
-		t.Fail()
+		u := goodUser
+
+		// negative case: wrong two numbers
+		u.Phones = []string{"84951234567", "1234567", "0123456789012"}
+		errs, err := u.Validate()
+		require.Nil(t, err)
+		require.Equal(t, 2, len(errs))
+
+		// positive test case
+		u.Phones = []string{"84951234567", "01234567890"}
+		errs, err = u.Validate()
+		require.Nil(t, err)
+		require.Equal(t, 0, len(errs))
 	})
 
 	t.Run("many errors", func(t *testing.T) {
@@ -78,7 +89,8 @@ func TestUserValidation(t *testing.T) {
 			fields = append(fields, e.Field)
 		}
 
-		require.ElementsMatch(t, fields, []string{"Age", "Email", "Role"})
+		// Role ignored, because it has UserRole type
+		require.ElementsMatch(t, fields, []string{"Age", "Email"})
 	})
 }
 

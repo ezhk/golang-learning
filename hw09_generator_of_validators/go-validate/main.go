@@ -24,7 +24,12 @@ type ParsedStruct struct {
 }
 
 func main() {
-	filename := os.Args[2]
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: go-validate [module path]")
+		os.Exit(1)
+	}
+
+	filename := os.Args[1]
 	parsedStruct, err := ParseStruct(filename)
 	if err != nil {
 		fmt.Println(err)
