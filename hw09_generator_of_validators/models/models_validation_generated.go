@@ -50,8 +50,12 @@ func (structName User) Validate() ([]ValidationError, error) {
 		errors = append(errors, ValidationError{Field: "Age", Err: fmt.Errorf("invalid Age length")})
 	}
 
-	if re := regexp.MustCompile("^\\w+@\\w+\\.\\w+$"); re.FindString(structName.Email) == "" {
+	if re := regexp.MustCompile("^\\w+@\\w+\\.\\w+$"); re.FindString(string(structName.Email)) == "" {
 		errors = append(errors, ValidationError{Field: "Email", Err: fmt.Errorf("invalid Email field, empty regexp")})
+	}
+
+	if !ContainsStr(string(structName.Role), "admin,stuff") {
+		errors = append(errors, ValidationError{Field: "Role", Err: fmt.Errorf("invalid Role value in range")})
 	}
 
 	for _, value := range structName.Phones {
@@ -78,7 +82,7 @@ func (structName App) Validate() ([]ValidationError, error) {
 func (structName Response) Validate() ([]ValidationError, error) {
 	errors := make([]ValidationError, 0)
 
-	if !ContainsInt(structName.Code, "200,404,500") {
+	if !ContainsInt(int(structName.Code), "200,404,500") {
 		errors = append(errors, ValidationError{Field: "Code", Err: fmt.Errorf("invalid Code value in range")})
 	}
 

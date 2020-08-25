@@ -6,9 +6,14 @@ import (
 	"strings"
 )
 
-type Condition struct {
-	Name  string
-	Value string
+type ParsedDocument struct {
+	Structs []ParsedStruct
+	Aliases AliasedStructs
+}
+
+type ParsedStruct struct {
+	Name   string
+	Fields []Field
 }
 
 type Field struct {
@@ -18,10 +23,12 @@ type Field struct {
 	Conditions []Condition
 }
 
-type ParsedStruct struct {
-	Name   string
-	Fields []Field
+type Condition struct {
+	Name  string
+	Value string
 }
+
+type AliasedStructs map[string]string
 
 func main() {
 	if len(os.Args) < 2 {

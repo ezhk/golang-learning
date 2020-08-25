@@ -89,8 +89,7 @@ func TestUserValidation(t *testing.T) {
 			fields = append(fields, e.Field)
 		}
 
-		// Role ignored, because it has UserRole type
-		require.ElementsMatch(t, fields, []string{"Age", "Email"})
+		require.ElementsMatch(t, fields, []string{"Age", "Email", "Role"})
 	})
 }
 

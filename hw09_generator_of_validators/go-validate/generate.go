@@ -72,16 +72,16 @@ func (structName {{$struct.Name}}) Validate() ([]ValidationError, error) {
 					errors = append(errors, ValidationError{Field: "{{$field.Name}}", Err: fmt.Errorf("invalid {{$field.Name}} length")})
 				}
 			{{else if eq $condition.Name "regexp"}}
-				if re := regexp.MustCompile({{$condition.Value | printf "%q"}}); re.FindString({{$variableName}}) == "" {
+				if re := regexp.MustCompile({{$condition.Value | printf "%q"}}); re.FindString({{$field.Type}}({{$variableName}})) == "" {
 					errors = append(errors, ValidationError{Field: "{{$field.Name}}", Err: fmt.Errorf("invalid {{$field.Name}} field, empty regexp")})
 				}
 			{{else if eq $condition.Name "in"}}
 				{{if eq $field.Type "int"}}
-					if !ContainsInt({{$variableName}}, "{{$condition.Value}}") {
+					if !ContainsInt({{$field.Type}}({{$variableName}}), "{{$condition.Value}}") {
 						errors = append(errors, ValidationError{Field: "{{$field.Name}}", Err: fmt.Errorf("invalid {{$field.Name}} value in range")})
 					}
 				{{else if eq $field.Type "string"}}
-					if !ContainsStr({{$variableName}}, "{{$condition.Value}}") {
+					if !ContainsStr({{$field.Type}}({{$variableName}}), "{{$condition.Value}}") {
 						errors = append(errors, ValidationError{Field: "{{$field.Name}}", Err: fmt.Errorf("invalid {{$field.Name}} value in range")})
 					}
 				{{end}}

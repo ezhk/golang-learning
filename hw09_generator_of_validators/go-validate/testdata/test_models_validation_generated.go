@@ -50,7 +50,7 @@ func (structName User) Validate() ([]ValidationError, error) {
 		errors = append(errors, ValidationError{Field: "Age", Err: fmt.Errorf("invalid Age length")})
 	}
 
-	if re := regexp.MustCompile("^\\w+@\\w+\\.\\w+$"); re.FindString(structName.Email) == "" {
+	if re := regexp.MustCompile("^\\w+@\\w+\\.\\w+$"); re.FindString(string(structName.Email)) == "" {
 		errors = append(errors, ValidationError{Field: "Email", Err: fmt.Errorf("invalid Email field, empty regexp")})
 	}
 

@@ -15,6 +15,8 @@ const FilterTag string = "validate"
 
 func ParseStruct(filePath string) ([]ParsedStruct, error) {
 	parsedStructs := make([]ParsedStruct, 0)
+	aliasedTypes := make(AliasedStructs)
+
 	fset := token.NewFileSet()
 
 	f, err := parser.ParseFile(fset, filePath, nil, parser.ParseComments)
@@ -38,11 +40,22 @@ func ParseStruct(filePath string) ([]ParsedStruct, error) {
 				continue
 			}
 
-			structType, ok := typeSpec.Type.(*ast.StructType)
-			if !ok {
+			var (
+				structName string
+				structType *ast.StructType
+			)
+			switch v := typeSpec.Type.(type) {
+			case *ast.Ident:
+				structName = v.Name
+				aliasedTypes[typeSpec.Name.Name] = structName
+
+				continue
+			case *ast.StructType:
+				structType = v
+				structName = typeSpec.Name.Name
+			default:
 				continue
 			}
-			structName := typeSpec.Name.Name
 
 			// read block fields and fetch tags
 			fields := make([]Field, 0)
@@ -54,15 +67,13 @@ func ParseStruct(filePath string) ([]ParsedStruct, error) {
 
 				fields = append(fields, field)
 			}
-
 			declStruct = ParsedStruct{Name: structName, Fields: fields}
-
 			// extend slice of parsed structs
 			parsedStructs = append(parsedStructs, declStruct)
 		}
 	}
 
-	return parsedStructs, nil
+	return ApplyAliases(ParsedDocument{Structs: parsedStructs, Aliases: aliasedTypes}), nil
 }
 
 func parseField(field *ast.Field, fset *token.FileSet) (Field, error) {
@@ -126,4 +137,22 @@ func prepareConditions(fieldTag string) ([]Condition, error) {
 	}
 
 	return conditions, nil
+}
+
+func ApplyAliases(parsedDocument ParsedDocument) []ParsedStruct {
+	// function parse ParsedDocument and convert aliased types into based
+
+	validatedStructs := make([]ParsedStruct, 0)
+	for _, parsedSt := range parsedDocument.Structs {
+		vStruct := ParsedStruct{Name: parsedSt.Name}
+		for _, field := range parsedSt.Fields {
+			if value, ok := parsedDocument.Aliases[field.Type]; ok {
+				field.Type = value
+			}
+			vStruct.Fields = append(vStruct.Fields, field)
+		}
+		validatedStructs = append(validatedStructs, vStruct)
+	}
+
+	return validatedStructs
 }
