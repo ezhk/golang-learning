@@ -13,8 +13,8 @@ import (
 
 var (
 	ErrEOF           = errors.New("EOF received")
-	ErrContextClosed = errors.New("Context was closed")
-	ErrPeerClosed    = errors.New("Connection was closed by peer")
+	ErrContextClosed = errors.New("context was closed")
+	ErrPeerClosed    = errors.New("connection was closed by peer")
 )
 
 type TelnetClient interface {
@@ -113,19 +113,13 @@ func (t *Telnet) Sender() error {
 	}()
 
 	var payload []byte
-	var sendText bytes.Buffer
 	for {
 		select {
 		case <-t.Ctx.Done():
 			// process closing context
 			return ErrContextClosed
 		case payload = <-scannerDataCh:
-			// process input message
-			sendText.Reset()
-			sendText.Write(payload)
-			sendText.WriteString("\n")
-
-			_, err := t.Conn.Write(sendText.Bytes())
+			err := SendPayloadToWriter(payload, t.Conn)
 			if err != nil {
 				t.Close()
 
@@ -157,8 +151,6 @@ func (t *Telnet) Receiver() error {
 	}()
 
 	var payload []byte
-	var receivedText bytes.Buffer
-
 	for {
 		select {
 		case <-t.Ctx.Done():
@@ -166,15 +158,24 @@ func (t *Telnet) Receiver() error {
 		case payload = <-scannerDataCh:
 		}
 
-		receivedText.Reset()
-		receivedText.Write(payload)
-		receivedText.WriteString("\n")
-
-		_, err := t.Writer.Write(receivedText.Bytes())
+		err := SendPayloadToWriter(payload, t.Writer)
 		if err != nil {
 			t.Close()
 
 			return err
 		}
 	}
+}
+
+func SendPayloadToWriter(payload []byte, writer io.Writer) error {
+	var buf bytes.Buffer
+	buf.Write(payload)
+	buf.WriteString("\n")
+
+	_, err := writer.Write(buf.Bytes())
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

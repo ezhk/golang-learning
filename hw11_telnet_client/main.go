@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var ErrInterrupt = errors.New("Process was interrupted")
+var ErrInterrupt = errors.New("process was interrupted")
 
 func main() {
 	if len(os.Args) < 3 {
@@ -55,11 +55,10 @@ func main() {
 		signalCh := make(chan os.Signal, 1)
 		signal.Notify(signalCh, syscall.SIGINT)
 
-		select {
-		case <-signalCh:
-			errorCh <- ErrInterrupt
-			c.Close()
-		}
+		// wait for signal
+		<-signalCh
+		errorCh <- ErrInterrupt
+		c.Close()
 	}()
 
 	err = <-errorCh
