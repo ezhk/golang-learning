@@ -2,7 +2,6 @@
 logger:
   output:
     - stdout
-    - logs.ini
   error:
     - stderr
   level: info
@@ -10,3 +9,6 @@ logger:
 db:
   path: calendar.sql
   type: in-memory
+server:
+  host: localhost
+  port: 8088

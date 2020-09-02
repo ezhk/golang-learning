@@ -17,6 +17,7 @@ package cmd
 
 import (
 	logger "github.com/ezhk/golang-learning/hw12_calendar/logger"
+	server "github.com/ezhk/golang-learning/hw12_calendar/server"
 	"github.com/spf13/cobra"
 )
 
@@ -29,6 +30,12 @@ under the hood, that processing request as SQL commands.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log := logger.NewLogger()
 		log.Info("Calendar has called")
+
+		HTTPServer := server.NewHTTPServer()
+		err := HTTPServer.Run()
+		if err != nil {
+			log.Error("Received HTTP run error", err)
+		}
 	},
 }
 
