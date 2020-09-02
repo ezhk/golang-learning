@@ -16,7 +16,7 @@ limitations under the License.
 package main
 
 import (
-	cmd "github.com/ezhk/golang-learning/hw12_calendar/cmd"
+	cmd "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/cmd"
 )
 
 func main() {

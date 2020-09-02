@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	logger "github.com/ezhk/golang-learning/hw12_calendar/logger"
-	server "github.com/ezhk/golang-learning/hw12_calendar/server"
+	logger "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/logger"
+	server "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/server"
 	"github.com/spf13/cobra"
 )
 
