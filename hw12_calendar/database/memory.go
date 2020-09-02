@@ -9,8 +9,8 @@ type MemoryDatabase struct {
 	Calendar
 	Users []User
 
-	LatestRecordId int
-	LatestUserId   int
+	LatestRecordID int
+	LatestUserID   int
 }
 
 func NewDatatabase() ClientInterface {
@@ -31,26 +31,27 @@ func (m *MemoryDatabase) GetUser(firstName string, lastName string) User {
 			return u
 		}
 	}
+
 	return User{}
 }
 
 func (m *MemoryDatabase) CreateUser(firstName string, lastName string) (int, error) {
 	existUser := m.GetUser(firstName, lastName)
-	if v := existUser.Id; v > 0 {
+	if v := existUser.ID; v > 0 {
 		return v, errors.New("user already exists")
 	}
 
-	m.LatestUserId++
-	m.Users = append(m.Users, User{Id: m.LatestUserId, FirstName: firstName, LastName: lastName})
+	m.LatestUserID++
+	m.Users = append(m.Users, User{ID: m.LatestUserID, FirstName: firstName, LastName: lastName})
 
-	return m.LatestUserId, nil
+	return m.LatestUserID, nil
 }
 
 func (m *MemoryDatabase) UpdateUser(id int, firstName string, lastName string) error {
 	for idx, u := range m.Users {
-		if u.Id == id {
+		if u.ID == id {
 			m.Users[idx] = User{
-				Id:        id,
+				ID:        id,
 				FirstName: firstName,
 				LastName:  lastName,
 			}
@@ -64,8 +65,9 @@ func (m *MemoryDatabase) UpdateUser(id int, firstName string, lastName string) e
 
 func (m *MemoryDatabase) DeleteUser(id int) error {
 	for idx, u := range m.Users {
-		if u.Id == id {
+		if u.ID == id {
 			m.Users = append(m.Users[:idx], m.Users[idx+1:]...)
+
 			return nil
 		}
 	}
@@ -73,11 +75,11 @@ func (m *MemoryDatabase) DeleteUser(id int) error {
 	return errors.New("user not found")
 }
 
-func (m *MemoryDatabase) GetRecords(userId int) []CRecord {
+func (m *MemoryDatabase) GetRecords(userID int) []CRecord {
 	findRecords := make([]CRecord, 0)
 
 	for _, r := range m.Records {
-		if r.UserId == userId {
+		if r.userID == userID {
 			findRecords = append(findRecords, r)
 		}
 	}
@@ -85,25 +87,25 @@ func (m *MemoryDatabase) GetRecords(userId int) []CRecord {
 	return findRecords
 }
 
-func (m *MemoryDatabase) CreateRecord(userId int, title, content string) (int, error) {
-	m.LatestRecordId++
+func (m *MemoryDatabase) CreateRecord(userID int, title, content string) (int, error) {
+	m.LatestRecordID++
 	m.Records = append(m.Records, CRecord{
-		Id:        m.LatestRecordId,
-		UserId:    userId,
+		ID:        m.LatestRecordID,
+		userID:    userID,
 		Title:     title,
 		Content:   content,
 		UpdatedAt: time.Now(),
 	})
 
-	return m.LatestRecordId, nil
+	return m.LatestRecordID, nil
 }
 
 func (m *MemoryDatabase) UpdateRecord(id int, title, content string) error {
 	for idx, r := range m.Records {
-		if r.Id == id {
+		if r.ID == id {
 			m.Records[idx] = CRecord{
-				Id:        id,
-				UserId:    m.Records[idx].UserId,
+				ID:        id,
+				userID:    m.Records[idx].userID,
 				Title:     title,
 				Content:   content,
 				UpdatedAt: time.Now(),
@@ -118,8 +120,9 @@ func (m *MemoryDatabase) UpdateRecord(id int, title, content string) error {
 
 func (m *MemoryDatabase) DeleteRecord(id int) error {
 	for idx, r := range m.Records {
-		if r.Id == id {
+		if r.ID == id {
 			m.Records = append(m.Records[:idx], m.Records[idx+1:]...)
+
 			return nil
 		}
 	}

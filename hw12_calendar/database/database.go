@@ -7,15 +7,15 @@ type Calendar struct {
 }
 
 type CRecord struct {
-	Id        int       `db:"id"`
-	UserId    int       `db:"user_id"`
+	ID        int       `db:"id"`
+	userID    int       `db:"user_id"`
 	Title     string    `db:"title"`
 	Content   string    `db:"content"`
 	UpdatedAt time.Time `db:"updated_at"`
 }
 
 type User struct {
-	Id        int    `db:"id"`
+	ID        int    `db:"id"`
 	FirstName string `db:"first_name"`
 	LastName  string `db:"last_name"`
 }

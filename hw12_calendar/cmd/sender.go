@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// senderCmd represents the sender command
+// senderCmd represents the sender command.
 var senderCmd = &cobra.Command{
 	Use:   "sender",
 	Short: "A brief description of your command",

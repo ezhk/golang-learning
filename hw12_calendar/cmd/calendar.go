@@ -16,38 +16,19 @@ limitations under the License.
 package cmd
 
 import (
+	logger "github.com/ezhk/golang-learning/hw12_calendar/logger"
 	"github.com/spf13/cobra"
-
-	database "../database"
-	logger "../logger"
 )
 
-// calendarCmd represents the calendar command
+// calendarCmd represents the calendar command.
 var calendarCmd = &cobra.Command{
 	Use:   "calendar",
 	Short: "Calendar CLI",
 	Long: `Calendar provides methods and abstraction calls
 under the hood, that processing request as SQL commands.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// fmt.Println("calendar called:", viper.Get("db.path"), viper.Get("logger"))
-
 		log := logger.NewLogger()
-		// log.Errorf("test %#v", viper.Get("db"))
-		// fmt.Println(log.Close())
-
-		db := database.NewDatatabase()
-		log.Info(db.CreateUser("Vasya", "Pupkin"))
-		log.Info(db.CreateUser("Vinni", "Pooh"))
-
-		vinniPooh := db.GetUser("Vinni", "Pooh")
-		log.Infof("%#v %v", db, vinniPooh)
-		log.Info(db.UpdateUser(vinniPooh.Id, "Винни", "Пух"))
-		log.Infof("%#v", db)
-
-		db.DeleteUser(vinniPooh.Id)
-		log.Infof("%#v", db)
-		log.Info(db.CreateUser("Vasya", "Pupkin"))
-
+		log.Info("Calendar has called")
 	},
 }
 
