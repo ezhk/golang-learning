@@ -1,0 +1,12 @@
+---
+logger:
+  output:
+    - stdout
+    - logs.ini
+  error:
+    - stderr
+  level: info
+  encoding: json
+db:
+  path: calendar.sql
+  type: in-memory
