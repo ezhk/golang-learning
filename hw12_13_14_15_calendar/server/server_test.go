@@ -1,6 +1,7 @@
 package server
 
 import (
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -18,5 +19,9 @@ func TestServer(t *testing.T) {
 
 		resp := w.Result()
 		require.Equal(t, http.StatusOK, resp.StatusCode)
+
+		body, err := ioutil.ReadAll(resp.Body)
+		require.Nil(t, err)
+		require.Equal(t, []byte("world"), body)
 	})
 }

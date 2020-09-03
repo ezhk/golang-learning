@@ -31,7 +31,7 @@ under the hood, that processing request as SQL commands.`,
 		log := logger.NewLogger()
 		log.Info("Calendar has called")
 
-		HTTPServer := server.NewHTTPServer()
+		HTTPServer := server.NewHTTPServer(log)
 		err := HTTPServer.Run()
 		if err != nil {
 			log.Error("Received HTTP run error", err)
