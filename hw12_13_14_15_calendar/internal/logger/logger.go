@@ -7,12 +7,12 @@ import (
 	"go.uber.org/zap"
 )
 
-type BaseLogger struct {
+type Logger struct {
 	zap.SugaredLogger
 	Sync func() error
 }
 
-func NewLogger() *BaseLogger {
+func NewLogger() *Logger {
 	config := prepareConfig()
 
 	logger, err := config.Build()
@@ -21,7 +21,7 @@ func NewLogger() *BaseLogger {
 	}
 	sugar := logger.Sugar()
 
-	return &BaseLogger{
+	return &Logger{
 		*sugar,
 		logger.Sync,
 	}
@@ -57,6 +57,6 @@ func prepareConfig() zap.Config {
 	return config
 }
 
-func (l *BaseLogger) Close() error {
+func (l *Logger) Close() error {
 	return l.Sync()
 }

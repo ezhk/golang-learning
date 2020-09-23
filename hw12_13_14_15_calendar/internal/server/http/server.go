@@ -1,10 +1,10 @@
-package server
+package internalhttp
 
 import (
 	"fmt"
 	"net/http"
 
-	logger "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/logger"
+	logger "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/logger"
 	"github.com/spf13/viper"
 )
 
@@ -12,7 +12,7 @@ type HTTPServer struct {
 	Server *http.Server
 }
 
-func NewHTTPServer(log *logger.BaseLogger) *HTTPServer {
+func NewHTTPServer(log *logger.Logger) *HTTPServer {
 	handler := &ServeHandler{}
 
 	mux := http.NewServeMux()
