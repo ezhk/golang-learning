@@ -6,8 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
+
+	config "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/config"
 )
 
 func TestLogger(t *testing.T) {
@@ -15,10 +16,12 @@ func TestLogger(t *testing.T) {
 		defer os.Remove("stdout_file")
 		_ = os.Remove("stdout_file")
 
-		viper.Set("logger.output", []string{"stdout_file"})
-		viper.Set("logger.level", "info")
-
-		log := NewLogger()
+		log := NewLogger(&config.Configuration{
+			Logger: config.LoggerParams{
+				Output:   []string{"stdout_file"},
+				Level:    "info",
+				Encoding: "json",
+			}})
 		require.NotEmpty(t, log)
 
 		log.Error("check file for error")

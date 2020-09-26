@@ -11,4 +11,6 @@ db:
   type: in-memory
 server:
   host: localhost
-  port: 8088
+  port: 8080
+test:
+  doNotRemoveMe: 42

@@ -1,4 +1,4 @@
-// +build sqlstorage
+// +build integration
 
 package sqlstorage
 
