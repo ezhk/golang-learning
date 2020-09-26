@@ -1,0 +1,16 @@
+---
+logger:
+  output:
+    - stdout
+  error:
+    - stderr
+  level: info
+  encoding: json
+db:
+  path: calendar.sql
+  type: in-memory
+server:
+  host: localhost
+  port: 8080
+test:
+  doNotRemoveMe: 42

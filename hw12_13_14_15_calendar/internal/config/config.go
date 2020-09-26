@@ -1,8 +1,6 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
@@ -38,13 +36,24 @@ type TestParams struct {
 func NewConfig(configPath string) *Configuration {
 	cfg := Configuration{}
 
-	fmt.Printf("%#v\n", viper.Get("TEST"))
 	viper.SetConfigFile(configPath)
 	if err := viper.ReadInConfig(); err == nil {
 		_ = viper.Unmarshal(&cfg)
 	}
+	cfg.updateDatabaseConfig()
 
 	return &cfg
+}
+
+func (cfg *Configuration) updateDatabaseConfig() {
+	switch cfg.DB.Type {
+	case "sql":
+		// Read environment directory.
+		if v := viper.Get("DSN"); v != nil {
+			cfg.DB.Path = v.(string)
+		}
+	case "in-memory":
+	}
 }
 
 func (cfg *Configuration) ZapConfigBuilder() zap.Config {
@@ -76,15 +85,4 @@ func (cfg *Configuration) ZapConfigBuilder() zap.Config {
 	}
 
 	return zapConfig
-}
-
-func (cfg *Configuration) DatabaseConfigBuilder() {
-	switch cfg.DB.Type {
-	case "sql":
-		// Read environment directory.
-		if v := viper.Get("DSN"); v != nil {
-			cfg.DB.Path = v.(string)
-		}
-	case "in-memory":
-	}
 }
