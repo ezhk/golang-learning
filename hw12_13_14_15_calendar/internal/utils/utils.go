@@ -14,11 +14,10 @@ func StartWeek(date time.Time) time.Time {
 	// Opetarate rounded by midnight date.
 	rDate := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, date.Location())
 
-	switch date.Weekday() {
 	// Sunday is zero day of week.
-	case time.Sunday:
+	if date.Weekday() == time.Sunday {
 		rDate = rDate.Add(-6 * time.Hour * 24)
-	default:
+	} else {
 		rDate = rDate.Add(-1 * time.Duration(rDate.Weekday()-1) * time.Hour * 24)
 	}
 

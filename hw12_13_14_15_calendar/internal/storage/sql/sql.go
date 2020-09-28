@@ -71,10 +71,16 @@ func (d *SQLDatabase) GetUserByEmail(email string) (storage.User, error) {
 	return user, nil
 }
 
-func (d *SQLDatabase) CreateUser(email string, firstName string, lastName string) (int64, error) {
+func (d *SQLDatabase) CreateUser(email string, firstName string, lastName string) (storage.User, error) {
 	existUser, _ := d.GetUserByEmail(email)
 	if v := existUser.ID; v > 0 {
-		return v, storage.ErrUserExists
+		return existUser, storage.ErrUserExists
+	}
+
+	user := storage.User{
+		Email:     email,
+		FirstName: firstName,
+		LastName:  lastName,
 	}
 
 	var insertID int64
@@ -83,45 +89,50 @@ func (d *SQLDatabase) CreateUser(email string, firstName string, lastName string
 		first_name,
 		last_name
 	) VALUES (
-		$1, $2, $3
+		:email,
+		:first_name,
+		:last_name
 	) RETURNING id`
 
-	err := d.database.QueryRowContext(d.ctx, query, email, firstName, lastName).Scan(&insertID)
+	// Prepare named request.
+	nstmt, err := d.database.PrepareNamedContext(d.ctx, query)
 	if err != nil {
-		return -1, fmt.Errorf("create user error: %q", err)
+		return storage.User{}, fmt.Errorf("prepare create user error: %w", err)
 	}
 
-	return insertID, nil
+	// Execute and waiting for returning ID.
+	err = nstmt.Get(&insertID, &user)
+	if err != nil {
+		return storage.User{}, fmt.Errorf("create user error: %w", err)
+	}
+
+	user.ID = insertID
+
+	return user, nil
 }
 
-func (d *SQLDatabase) UpdateUser(id int64, email string, firstName string, lastName string) error {
+func (d *SQLDatabase) UpdateUser(user storage.User) error {
 	query := `UPDATE users
 	SET	email = :email,
 		first_name = :first_name,
 		last_name = :last_name
 	WHERE id = :id`
 
-	u := storage.User{
-		ID:        id,
-		Email:     email,
-		FirstName: firstName,
-		LastName:  lastName,
-	}
-	_, err := d.database.NamedExecContext(d.ctx, query, &u)
+	_, err := d.database.NamedExecContext(d.ctx, query, &user)
 	if err != nil {
-		return fmt.Errorf("update user error: %q", err)
+		return fmt.Errorf("update user error: %w", err)
 	}
 
 	return nil
 }
 
-func (d *SQLDatabase) DeleteUserByUserID(id int64) error {
+func (d *SQLDatabase) DeleteUser(user storage.User) error {
 	query := `DELETE FROM users
 	WHERE id = $1`
 
-	_, err := d.database.ExecContext(d.ctx, query, id)
+	_, err := d.database.ExecContext(d.ctx, query, user.ID)
 	if err != nil {
-		return fmt.Errorf("delete user error: %q", err)
+		return fmt.Errorf("delete user error: %w", err)
 	}
 
 	return nil
@@ -159,7 +170,15 @@ func (d *SQLDatabase) getEventsByDateRange(userID int64, fromDate, toDate time.T
 	return events, nil
 }
 
-func (d *SQLDatabase) CreateEvent(userID int64, title, content string, dateFrom, dateTo time.Time) (int64, error) {
+func (d *SQLDatabase) CreateEvent(userID int64, title, content string, dateFrom, dateTo time.Time) (storage.Event, error) {
+	event := storage.Event{
+		UserID:   userID,
+		Title:    title,
+		Content:  content,
+		DateFrom: dateFrom,
+		DateTo:   dateTo,
+	}
+
 	var insertID int64
 	query := `INSERT INTO events(
 		user_id,
@@ -168,18 +187,31 @@ func (d *SQLDatabase) CreateEvent(userID int64, title, content string, dateFrom,
 		date_from,
 		date_to
 	) VALUES (
-		$1, $2, $3, $4, $5
+		:user_id,
+		:title,
+		:content,
+		:date_from,
+		:date_to
 	) RETURNING id`
 
-	err := d.database.QueryRowContext(d.ctx, query, userID, title, content, dateFrom, dateTo).Scan(&insertID)
+	// Prepare named request.
+	nstmt, err := d.database.PrepareNamedContext(d.ctx, query)
 	if err != nil {
-		return -1, fmt.Errorf("create event error: %q", err)
+		return storage.Event{}, fmt.Errorf("prepare create event error: %w", err)
 	}
 
-	return insertID, nil
+	// Execute and waiting for returning ID.
+	err = nstmt.Get(&insertID, &event)
+	if err != nil {
+		return storage.Event{}, fmt.Errorf("create event error: %w", err)
+	}
+
+	event.ID = insertID
+
+	return event, nil
 }
 
-func (d *SQLDatabase) UpdateEvent(id int64, userID int64, title, content string, dateFrom, dateTo time.Time) error {
+func (d *SQLDatabase) UpdateEvent(event storage.Event) error {
 	query := `UPDATE events
 	SET	user_id = :user_id,
 		title = :title,
@@ -188,15 +220,7 @@ func (d *SQLDatabase) UpdateEvent(id int64, userID int64, title, content string,
 		date_to = :date_to
 	WHERE id = :id`
 
-	e := storage.Event{
-		ID:       id,
-		UserID:   userID,
-		Title:    title,
-		Content:  content,
-		DateFrom: dateFrom,
-		DateTo:   dateTo,
-	}
-	_, err := d.database.NamedExecContext(d.ctx, query, &e)
+	_, err := d.database.NamedExecContext(d.ctx, query, &event)
 	if err != nil {
 		return fmt.Errorf("update event error: %q", err)
 	}
@@ -204,12 +228,12 @@ func (d *SQLDatabase) UpdateEvent(id int64, userID int64, title, content string,
 	return nil
 }
 
-func (d *SQLDatabase) DeleteEvent(id int64) error {
+func (d *SQLDatabase) DeleteEvent(event storage.Event) error {
 	query := `DELETE
 	FROM events
 	WHERE id = $1`
 
-	_, err := d.database.ExecContext(d.ctx, query, id)
+	_, err := d.database.ExecContext(d.ctx, query, event.ID)
 	if err != nil {
 		return fmt.Errorf("delete event error: %q", err)
 	}
@@ -255,15 +279,16 @@ func (d *SQLDatabase) GetNotifyReadyEvents() ([]storage.Event, error) {
 	return events, nil
 }
 
-func (d *SQLDatabase) MarkEventAsNotified(id int64) error {
+func (d *SQLDatabase) MarkEventAsNotified(event *storage.Event) error {
 	query := `UPDATE events
 	SET notified = TRUE
 	WHERE id = $1`
 
-	_, err := d.database.ExecContext(d.ctx, query, id)
+	_, err := d.database.ExecContext(d.ctx, query, event.ID)
 	if err != nil {
 		return fmt.Errorf("update event as notified error: %q", err)
 	}
+	event.Notified = true
 
 	return nil
 }

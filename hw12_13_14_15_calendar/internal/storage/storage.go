@@ -35,26 +35,19 @@ type ClientInterface interface {
 	Close() error
 
 	GetUserByEmail(string) (User, error)
-	CreateUser(string, string, string) (int64, error)
-	UpdateUser(int64, string, string, string) error
-	DeleteUserByUserID(int64) error
+	CreateUser(string, string, string) (User, error)
+	UpdateUser(User) error
+	DeleteUser(User) error
 
 	GetEventsByUserID(int64) ([]Event, error)
-	CreateEvent(int64, string, string, time.Time, time.Time) (int64, error)
-	UpdateEvent(int64, int64, string, string, time.Time, time.Time) error
-	DeleteEvent(int64) error
-
-	// GetUserByEmail(string) (User, error)
-	// CreateUser(string, string, string) (User, error)
-	// UpdateUser(User) error
-	// DeleteUser(User) error
-
-	// GetEventsByUserID(int64) ([]Event, error)
-	// CreateEvent(int64, string, string, time.Time, time.Time) (Event, error)
-	// UpdateEvent(Event) error
-	// DeleteEvent(Event) error
+	CreateEvent(int64, string, string, time.Time, time.Time) (Event, error)
+	UpdateEvent(Event) error
+	DeleteEvent(Event) error
 
 	DailyEvents(userID int64, date time.Time) ([]Event, error)
 	WeeklyEvents(userID int64, date time.Time) ([]Event, error)
 	MonthlyEvents(userID int64, date time.Time) ([]Event, error)
+
+	GetNotifyReadyEvents() ([]Event, error)
+	MarkEventAsNotified(event *Event) error
 }
