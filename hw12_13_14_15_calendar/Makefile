@@ -15,4 +15,7 @@ run:
 migrate:
 	goose -dir migrations postgres "${DSN}" up
 
+generate:
+	protoc --go_out=internal/server/grpc internal/server/grpc/internalgrpc.proto
+
 .PHONY: build
