@@ -6,6 +6,7 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/golangci/golangci-lint v1.31.0 // indirect
 	github.com/jackc/pgx v3.6.2+incompatible
+	github.com/jmoiron/sqlx v1.2.1-0.20190826204134-d7d95172beb5
 	github.com/lib/pq v1.8.0 // indirect
 	github.com/mattn/go-sqlite3 v1.14.3 // indirect
 	github.com/mitchellh/go-homedir v1.1.0

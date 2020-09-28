@@ -35,11 +35,11 @@ func TestDatabase(t *testing.T) {
 		require.NotNil(t, err)
 		require.Equal(t, err, storage.ErrUserExists)
 
-		err = db.DeleteUser(id)
+		err = db.DeleteUserByUserID(id)
 		require.NoError(t, err)
 
 		// secord run not cause error "user not exist" in SQL
-		err = db.DeleteUser(id)
+		err = db.DeleteUserByUserID(id)
 		require.Nil(t, err)
 	})
 
@@ -53,15 +53,15 @@ func TestDatabase(t *testing.T) {
 		// calendar operations must contain user
 		userID, err := db.CreateUser("vinny@pooh.com", "Винни", "Пух")
 		require.Nil(t, err)
-		defer db.DeleteUser(userID)
+		defer db.DeleteUserByUserID(userID)
 
 		// userID int64, title, content string, dateFrom, dateTo time.Time
 		recordStartDate := time.Date(2020, time.September, 1, 12, 0, 0, 0, time.UTC)
 		recordEndDate := time.Now()
-		_, err = db.CreateRecord(userID, "Встреча", "Кофе в кафе", recordStartDate, recordEndDate)
+		_, err = db.CreateEvent(userID, "Встреча", "Кофе в кафе", recordStartDate, recordEndDate)
 		require.Nil(t, err)
 
-		rec, err := db.GetRecordsByUserID(userID)
+		rec, err := db.GetEventsByUserID(userID)
 		require.Nil(t, err)
 
 		require.Equal(t, "Встреча", rec[0].Title)
@@ -70,17 +70,17 @@ func TestDatabase(t *testing.T) {
 		require.True(t, recordStartDate.Equal(rec[0].DateFrom))
 		require.True(t, recordEndDate.Equal(rec[0].DateTo))
 
-		err = db.UpdateRecord(rec[0].ID, rec[0].UserID, "Встреча", "Coffee time", rec[0].DateFrom, rec[0].DateTo)
+		err = db.UpdateEvent(rec[0].ID, rec[0].UserID, "Встреча", "Coffee time", rec[0].DateFrom, rec[0].DateTo)
 		require.Nil(t, err)
 
-		rec, _ = db.GetRecordsByUserID(userID)
+		rec, _ = db.GetEventsByUserID(userID)
 		require.Equal(t, 1, len(rec))
 		require.Equal(t, "Coffee time", rec[0].Content)
 
-		err = db.DeleteRecord(rec[0].ID)
+		err = db.DeleteEvent(rec[0].ID)
 		require.Nil(t, err)
 
-		rec, _ = db.GetRecordsByUserID(userID)
+		rec, _ = db.GetEventsByUserID(userID)
 		require.Equal(t, 0, len(rec))
 	})
 }

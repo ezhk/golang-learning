@@ -19,6 +19,7 @@ type Event struct {
 	Content  string    `db:"content"`
 	DateFrom time.Time `db:"date_from"`
 	DateTo   time.Time `db:"date_to"`
+	Notified bool      `db:"notified"`
 }
 
 // email must be unique and not null.
@@ -36,10 +37,24 @@ type ClientInterface interface {
 	GetUserByEmail(string) (User, error)
 	CreateUser(string, string, string) (int64, error)
 	UpdateUser(int64, string, string, string) error
-	DeleteUser(int64) error
+	DeleteUserByUserID(int64) error
 
-	GetRecordsByUserID(int64) ([]Event, error)
-	CreateRecord(int64, string, string, time.Time, time.Time) (int64, error)
-	UpdateRecord(int64, int64, string, string, time.Time, time.Time) error
-	DeleteRecord(int64) error
+	GetEventsByUserID(int64) ([]Event, error)
+	CreateEvent(int64, string, string, time.Time, time.Time) (int64, error)
+	UpdateEvent(int64, int64, string, string, time.Time, time.Time) error
+	DeleteEvent(int64) error
+
+	// GetUserByEmail(string) (User, error)
+	// CreateUser(string, string, string) (User, error)
+	// UpdateUser(User) error
+	// DeleteUser(User) error
+
+	// GetEventsByUserID(int64) ([]Event, error)
+	// CreateEvent(int64, string, string, time.Time, time.Time) (Event, error)
+	// UpdateEvent(Event) error
+	// DeleteEvent(Event) error
+
+	DailyEvents(userID int64, date time.Time) ([]Event, error)
+	WeeklyEvents(userID int64, date time.Time) ([]Event, error)
+	MonthlyEvents(userID int64, date time.Time) ([]Event, error)
 }

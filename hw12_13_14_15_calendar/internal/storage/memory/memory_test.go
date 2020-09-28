@@ -37,11 +37,11 @@ func TestDatabase(t *testing.T) {
 		require.NotNil(t, err)
 		require.Equal(t, err, storage.ErrUserExists)
 
-		err = db.DeleteUser(id)
+		err = db.DeleteUserByUserID(id)
 		require.NoError(t, err)
 
 		// secord run cause error "user not exist"
-		err = db.DeleteUser(id)
+		err = db.DeleteUserByUserID(id)
 		require.NotNil(t, err)
 	})
 

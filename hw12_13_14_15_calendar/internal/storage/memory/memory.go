@@ -107,7 +107,7 @@ func (m *MemoryDatabase) UpdateUser(id int64, email string, firstName string, la
 	return nil
 }
 
-func (m *MemoryDatabase) DeleteUser(id int64) error {
+func (m *MemoryDatabase) DeleteUserByUserID(id int64) error {
 	m.mutex.RLock()
 	user, ok := m.Users[id]
 	m.mutex.RUnlock()
