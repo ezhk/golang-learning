@@ -212,12 +212,14 @@ func (d *SQLDatabase) CreateEvent(userID int64, title, content string, dateFrom,
 }
 
 func (d *SQLDatabase) UpdateEvent(event storage.Event) error {
+	fmt.Println(event)
 	query := `UPDATE events
 	SET	user_id = :user_id,
 		title = :title,
 		content = :content,
 		date_from = :date_from,
-		date_to = :date_to
+		date_to = :date_to,
+		notified = :notified
 	WHERE id = :id`
 
 	_, err := d.database.NamedExecContext(d.ctx, query, &event)

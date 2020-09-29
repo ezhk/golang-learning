@@ -13,21 +13,21 @@ var (
 )
 
 type Event struct {
-	ID       int64     `db:"id"`
-	UserID   int64     `db:"user_id"`
-	Title    string    `db:"title"`
-	Content  string    `db:"content"`
-	DateFrom time.Time `db:"date_from"`
-	DateTo   time.Time `db:"date_to"`
-	Notified bool      `db:"notified"`
+	ID       int64     `db:"id" json:"id"`
+	UserID   int64     `db:"user_id" json:"user_id"`
+	Title    string    `db:"title" json:"title"`
+	Content  string    `db:"content" json:"content"`
+	DateFrom time.Time `db:"date_from" json:"date_from"`
+	DateTo   time.Time `db:"date_to" json:"date_to"`
+	Notified bool      `db:"notified" json:"notified"`
 }
 
 // email must be unique and not null.
 type User struct {
-	ID        int64  `db:"id"`
-	Email     string `db:"email"`
-	FirstName string `db:"first_name"`
-	LastName  string `db:"last_name"`
+	ID        int64  `db:"id" json:"id"`
+	Email     string `db:"email" json:"email"`
+	FirstName string `db:"first_name" json:"first_name"`
+	LastName  string `db:"last_name" json:"last_name"`
 }
 
 type ClientInterface interface {

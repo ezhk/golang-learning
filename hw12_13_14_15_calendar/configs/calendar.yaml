@@ -7,7 +7,7 @@ logger:
   level: info
   encoding: json
 db:
-  path: calendar.sql
+  path: user=postgres password=postgres dbname=postgres sslmode=disable
   type: in-memory
 server:
   host: localhost

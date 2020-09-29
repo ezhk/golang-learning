@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package internalgrpc;
+option go_package = ".;internalgrpc";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message Email { string Email = 1; }
+
+message User {
+  int64 ID = 1;
+  Email Email = 2;
+  string FirstName = 3;
+  string LastName = 4;
+}
+
+message Event {
+  int64 ID = 1;
+  int64 UserID = 2;
+  string Title = 3;
+  string Content = 4;
+  google.protobuf.Timestamp DateFrom = 5;
+  google.protobuf.Timestamp DateTo = 6;
+}
+
+message Events { repeated Event Events = 1; }
+
+message DateEvent {
+  User User = 1;
+  google.protobuf.Timestamp Date = 2;
+}
+
+service Calendar {
+  rpc GetUser(Email) returns (User) {}
+  rpc CreateUser(User) returns (User) {}
+  rpc UpdateUser(User) returns (User) {}
+  rpc DeleteUser(User) returns (User) {}
+
+  rpc GetEvents(User) returns (Events) {}
+  rpc CreateEvent(Event) returns (Event) {}
+  rpc UpdateEvent(Event) returns (Event) {}
+  rpc DeleteEvent(Event) returns (Event) {}
+
+  rpc DailyEvents(DateEvent) returns (Event) {}
+  rpc WeeklyEvents(DateEvent) returns (Event) {}
+  rpc MonthlyEvents(DateEvent) returns (Event) {}
+
+  rpc GetNotifyReadyEvents(google.protobuf.Empty) returns (Event) {}
+  rpc MarkEventAsNotified(Event) returns (google.protobuf.Empty) {}
+}

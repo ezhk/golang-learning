@@ -16,6 +16,7 @@ migrate:
 	goose -dir migrations postgres "${DSN}" up
 
 generate:
+	go install google.golang.org/protobuf/cmd/protoc-gen-go
 	protoc --go_out=internal/server/grpc internal/server/grpc/internalgrpc.proto
 
 .PHONY: build

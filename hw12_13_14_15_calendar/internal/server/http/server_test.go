@@ -6,22 +6,23 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	internalhttphandlers "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/server/http/handlers"
 	"github.com/stretchr/testify/require"
 )
 
 func TestServer(t *testing.T) {
-	t.Run("hello handler", func(t *testing.T) {
-		handler := &ServeHandler{}
+	t.Run("health-check handler", func(t *testing.T) {
+		handler := &internalhttphandlers.ServeHandler{}
 
 		r := httptest.NewRequest("GET", "http://localhost", nil)
 		w := httptest.NewRecorder()
-		handler.Hello(w, r)
+		handler.HealthCheck(w, r)
 
 		resp := w.Result()
 		require.Equal(t, http.StatusOK, resp.StatusCode)
 
 		body, err := ioutil.ReadAll(resp.Body)
 		require.Nil(t, err)
-		require.Equal(t, []byte("world"), body)
+		require.Equal(t, []byte("Alive"), body)
 	})
 }

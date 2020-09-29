@@ -7,19 +7,58 @@ import (
 
 	config "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/config"
 	logger "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/logger"
+	internalhttphandlers "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/server/http/handlers"
+	"github.com/gorilla/mux"
 )
+
+/*
+REST API scheme and storage methods.
+
+/users			- GET		=> 404 Not Found
+/users/{email}	- GET		=> GetUserByEmail(string) (User, error)
+/users			- POST		=> CreateUser(string, string, string) (User, error)
+/users/{id}		- PUT		=> UpdateUser(User) error
+/users/{id}		- DELETE	=> DeleteUser(User{ID: id}) error
+
+
+/events	- GET	=> 404 Not Found
+
+/events?userid=ID					- GET	=> GetEventsByUserID(int64) ([]Event, error)
+/events?userid=ID&filter=daily		- GET	=> DailyEvents(userID int64, date time.Time) ([]Event, error)
+/events?userid=ID&filter=weekly		- GET	=> WeeklyEvents(userID int64, date time.Time) ([]Event, error)
+/events?userid=ID&filter=monthly	- GET	=> MonthlyEvents(userID int64, date time.Time) ([]Event, error)
+
+/events?filter=uninformed	— GET	=> GetNotifyReadyEvents() ([]Event, error)
+
+/events			- POST		=> CreateEvent(int64, string, string, time.Time, time.Time) (Event, error)
+/events/{id}	- PUT		=> UpdateEvent(Event) error
+/events/{id}	- DELETE	=> DeleteEvent(Event{ID: id}) error
+*/
 
 type HTTPServer struct {
 	Server *http.Server
 }
 
 func NewHTTPServer(cfg *config.Configuration, log *logger.Logger) *HTTPServer {
-	handler := &ServeHandler{}
+	handler := internalhttphandlers.NewServeHandler(cfg, log)
+
+	r := mux.NewRouter()
+	// Users methods.
+	r.HandleFunc("/users", handler.CreateUser).Methods("POST")
+	r.HandleFunc("/users/{email}", handler.ReadUser).Methods("GET")
+	r.HandleFunc("/users/{id}", handler.UpdateUser).Methods("PUT")
+	r.HandleFunc("/users/{id}", handler.DeleteUser).Methods("DELETE")
+	// Events methods.
+	r.HandleFunc("/events", handler.CreateEvent).Methods("POST")
+	r.HandleFunc("/events", handler.ReadEvents).Methods("GET")
+	r.HandleFunc("/events/{id}", handler.UpdateEvent).Methods("PUT")
+	r.HandleFunc("/events/{id}", handler.DeleteEvent).Methods("DELETE")
+
+	helloHandler := http.HandlerFunc(handler.HealthCheck)
 
 	mux := http.NewServeMux()
-
-	helloHandler := http.HandlerFunc(handler.Hello)
-	mux.Handle("/hello", LoggerMiddleware(log, helloHandler))
+	mux.Handle("/health-check", LoggerMiddleware(log, helloHandler))
+	mux.Handle("/", LoggerMiddleware(log, r))
 
 	server := &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port),

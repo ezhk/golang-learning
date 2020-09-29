@@ -189,6 +189,7 @@ func (m *MemoryDatabase) UpdateEvent(event storage.Event) error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
+	// Change attributes by exist pointer.
 	eventPointer.UserID = event.UserID
 	eventPointer.Title = event.Title
 	eventPointer.Content = event.Content

@@ -1,6 +1,9 @@
 package config
 
 import (
+	storage "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/storage"
+	memorystorage "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/storage/memory"
+	sqlstorage "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/storage/sql"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
@@ -54,6 +57,14 @@ func (cfg *Configuration) updateDatabaseConfig() {
 		}
 	case "in-memory":
 	}
+}
+
+func (cfg *Configuration) DatabaseBuilder() storage.ClientInterface {
+	if cfg.DB.Type == "in-memory" {
+		return memorystorage.NewDatatabase()
+	}
+
+	return sqlstorage.NewDatatabase()
 }
 
 func (cfg *Configuration) ZapConfigBuilder() zap.Config {

@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS events(
     user_id   BIGINT NOT NULL,
     title     VARCHAR(256) NOT NULL,
     content   TEXT,
-    date_from TIMESTAMPTZ,
-    date_to   TIMESTAMPTZ,
+    date_from TIMESTAMPTZ DEFAULT NOW(),
+    date_to   TIMESTAMPTZ DEFAULT NOW(),
     notified  BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(id)
 );
