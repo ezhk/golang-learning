@@ -2,7 +2,6 @@ package internalhttphandlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -48,7 +47,6 @@ func (sh *ServeHandler) ReadUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	w.Header().Set("Content-Type", "application/json")
 
-	fmt.Println(params)
 	user, err := sh.db.GetUserByEmail(params["email"])
 	if err != nil {
 		_ = generateError(w, err)
