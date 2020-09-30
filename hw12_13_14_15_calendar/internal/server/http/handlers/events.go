@@ -62,17 +62,19 @@ func (sh *ServeHandler) ReadEvents(w http.ResponseWriter, r *http.Request) {
 
 	filter := v.Get("filter")
 	userID, _ := strconv.ParseInt(v.Get("userid"), 10, 64)
+	date, err := time.Parse(time.RFC3339, v.Get("date"))
+	if err != nil {
+		date = time.Now()
+	}
 
 	var events []storage.Event
-	var err error
-
 	switch filter {
 	case "daily":
-		events, err = sh.db.DailyEvents(userID, time.Now())
+		events, err = sh.db.DailyEvents(userID, date)
 	case "weekly":
-		events, err = sh.db.WeeklyEvents(userID, time.Now())
+		events, err = sh.db.WeeklyEvents(userID, date)
 	case "monthly":
-		events, err = sh.db.MonthlyEvents(userID, time.Now())
+		events, err = sh.db.MonthlyEvents(userID, date)
 	case "uninformed":
 		events, err = sh.db.GetNotifyReadyEvents()
 	default:

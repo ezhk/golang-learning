@@ -140,17 +140,17 @@ func (m *MemoryDatabase) getEventsByDateRange(userID int64, fromDate, toDate tim
 
 	selectedEvents := make([]storage.Event, 0)
 	for _, eventPointer := range events {
-		if eventPointer.DateFrom.After(fromDate) && eventPointer.DateFrom.Before(toDate) {
+		if eventPointer.DateFrom.Before(toDate) && eventPointer.DateTo.After(fromDate) {
 			selectedEvents = append(selectedEvents, *eventPointer)
 
 			continue
 		}
 
-		if eventPointer.DateTo.After(fromDate) && eventPointer.DateTo.Before(toDate) {
-			selectedEvents = append(selectedEvents, *eventPointer)
+		// if eventPointer.DateTo.After(fromDate) && eventPointer.DateTo.Before(toDate) {
+		// 	selectedEvents = append(selectedEvents, *eventPointer)
 
-			continue
-		}
+		// 	continue
+		// }
 	}
 
 	return selectedEvents, nil

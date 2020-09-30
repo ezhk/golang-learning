@@ -25,9 +25,9 @@ REST API scheme and storage methods.
 /events	- GET	=> 404 Not Found
 
 /events?userid=ID					- GET	=> GetEventsByUserID(int64) ([]Event, error)
-/events?userid=ID&filter=daily		- GET	=> DailyEvents(userID int64, date time.Time) ([]Event, error)
-/events?userid=ID&filter=weekly		- GET	=> WeeklyEvents(userID int64, date time.Time) ([]Event, error)
-/events?userid=ID&filter=monthly	- GET	=> MonthlyEvents(userID int64, date time.Time) ([]Event, error)
+/events?userid=ID&filter=daily?date=2006-01-02T12:04:05Z03:00	- GET	=> DailyEvents(userID int64, date time.Time) ([]Event, error)
+/events?userid=ID&filter=weekly?date=2006-01-02T12:04:05Z03:00	- GET	=> WeeklyEvents(userID int64, date time.Time) ([]Event, error)
+/events?userid=ID&filter=monthly?date=2006-01-02T12:04:05Z03:00	- GET	=> MonthlyEvents(userID int64, date time.Time) ([]Event, error)
 
 /events?filter=uninformed	— GET	=> GetNotifyReadyEvents() ([]Event, error)
 

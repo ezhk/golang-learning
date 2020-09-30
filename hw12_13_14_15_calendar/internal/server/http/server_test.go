@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 	"time"
 
@@ -387,4 +388,157 @@ func (s *EventTestSuite) TestDeleteEvent() {
 
 	s.Equal(internalhttphandlers.StatusOK, manyEventsBody.Status)
 	s.Equal(0, len(manyEventsBody.Events))
+}
+
+func (s *EventTestSuite) TestRangeEvents() {
+	// First event.
+	s.event.DateFrom = time.Date(2020, 10, 1, 12, 0, 0, 0, time.UTC)
+	s.event.DateTo = s.event.DateFrom.Add(+2 * time.Hour)
+	jsonBody, err := json.Marshal(s.event)
+	s.NoError(err)
+
+	r := httptest.NewRequest("POST", "/events", bytes.NewReader(jsonBody))
+	w := httptest.NewRecorder()
+	s.handler.CreateEvent(w, r)
+
+	// Second event
+	s.event.DateFrom = time.Date(2020, 9, 30, 12, 0, 0, 0, time.UTC)
+	s.event.DateTo = s.event.DateFrom.Add(+2 * time.Hour)
+	jsonBody, err = json.Marshal(s.event)
+	s.NoError(err)
+	r = httptest.NewRequest("POST", "/events", bytes.NewReader(jsonBody))
+	w = httptest.NewRecorder()
+	s.handler.CreateEvent(w, r)
+
+	// Third event
+	s.event.DateFrom = time.Date(2020, 9, 30, 16, 0, 0, 0, time.UTC)
+	s.event.DateTo = s.event.DateFrom.Add(+2 * time.Hour)
+	jsonBody, err = json.Marshal(s.event)
+	s.NoError(err)
+	r = httptest.NewRequest("POST", "/events", bytes.NewReader(jsonBody))
+	w = httptest.NewRecorder()
+	s.handler.CreateEvent(w, r)
+
+	// Fourth event
+	s.event.DateFrom = time.Date(2020, 9, 15, 16, 0, 0, 0, time.UTC)
+	s.event.DateTo = s.event.DateFrom.Add(+2 * time.Hour)
+	jsonBody, err = json.Marshal(s.event)
+	s.NoError(err)
+	r = httptest.NewRequest("POST", "/events", bytes.NewReader(jsonBody))
+	w = httptest.NewRecorder()
+	s.handler.CreateEvent(w, r)
+
+	// Result - 4 events summary:
+	// - 1 event in October
+	// - 3 event in September
+	// - 2 event in daily 30.09
+	// - 1 event in day 15.09
+
+	// Check summery events
+	r = httptest.NewRequest("GET", "/events?userid=1", nil)
+	w = httptest.NewRecorder()
+	s.handler.ReadEvents(w, r)
+	body, err := ioutil.ReadAll(w.Result().Body)
+	s.NoError(err)
+	var manyEventsBody internalhttphandlers.ManyEventsBody
+	err = json.NewDecoder(bytes.NewReader(body)).Decode(&manyEventsBody)
+	s.NoError(err)
+	s.Equal(internalhttphandlers.StatusOK, manyEventsBody.Status)
+	s.Equal(4, len(manyEventsBody.Events))
+
+	// Check October events
+	eventsURL := "/events?userid=1&filter=monthly&date=" + url.QueryEscape("2020-10-20T12:04:05+03:00")
+	r = httptest.NewRequest("GET", eventsURL, nil)
+	w = httptest.NewRecorder()
+	s.handler.ReadEvents(w, r)
+	body, err = ioutil.ReadAll(w.Result().Body)
+	s.NoError(err)
+	err = json.NewDecoder(bytes.NewReader(body)).Decode(&manyEventsBody)
+	s.NoError(err)
+	s.Equal(internalhttphandlers.StatusOK, manyEventsBody.Status)
+	s.Equal(1, len(manyEventsBody.Events))
+
+	// Check September events
+	eventsURL = "/events?userid=1&filter=monthly&date=" + url.QueryEscape("2020-09-10T05:00:00+03:00")
+	r = httptest.NewRequest("GET", eventsURL, nil)
+	w = httptest.NewRecorder()
+	s.handler.ReadEvents(w, r)
+	body, err = ioutil.ReadAll(w.Result().Body)
+	s.NoError(err)
+	err = json.NewDecoder(bytes.NewReader(body)).Decode(&manyEventsBody)
+	s.NoError(err)
+	s.Equal(internalhttphandlers.StatusOK, manyEventsBody.Status)
+	s.Equal(3, len(manyEventsBody.Events))
+
+	// Check week 28.09 - 04.10 events
+	eventsURL = "/events?userid=1&filter=daily&date=" + url.QueryEscape("2020-09-30T08:00:01+03:00")
+	r = httptest.NewRequest("GET", eventsURL, nil)
+	w = httptest.NewRecorder()
+	s.handler.ReadEvents(w, r)
+	body, err = ioutil.ReadAll(w.Result().Body)
+	s.NoError(err)
+	err = json.NewDecoder(bytes.NewReader(body)).Decode(&manyEventsBody)
+	s.NoError(err)
+	s.Equal(internalhttphandlers.StatusOK, manyEventsBody.Status)
+	s.Equal(2, len(manyEventsBody.Events))
+
+	// Check daily event 2020.09.15
+	eventsURL = "/events?userid=1&filter=daily&date=" + url.QueryEscape("2020-09-15T08:00:01+03:00")
+	r = httptest.NewRequest("GET", eventsURL, nil)
+	w = httptest.NewRecorder()
+	s.handler.ReadEvents(w, r)
+	body, err = ioutil.ReadAll(w.Result().Body)
+	s.NoError(err)
+	err = json.NewDecoder(bytes.NewReader(body)).Decode(&manyEventsBody)
+	s.NoError(err)
+	s.Equal(internalhttphandlers.StatusOK, manyEventsBody.Status)
+	s.Equal(1, len(manyEventsBody.Events))
+}
+
+func (s *EventTestSuite) TestReadUninformedEvents() {
+	s.event.DateFrom = time.Now().Add(+20 * time.Hour * 20)
+	jsonBody, err := json.Marshal(s.event)
+	s.NoError(err)
+
+	r := httptest.NewRequest("POST", "/events", bytes.NewReader(jsonBody))
+	w := httptest.NewRecorder()
+	s.handler.CreateEvent(w, r)
+
+	// Check no events
+	r = httptest.NewRequest("GET", "/events?filter=uninformed", nil)
+	w = httptest.NewRecorder()
+	s.handler.ReadEvents(w, r)
+
+	body, err := ioutil.ReadAll(w.Result().Body)
+	s.NoError(err)
+
+	var manyEventsBody internalhttphandlers.ManyEventsBody
+	err = json.NewDecoder(bytes.NewReader(body)).Decode(&manyEventsBody)
+	s.NoError(err)
+
+	s.Equal(internalhttphandlers.StatusOK, manyEventsBody.Status)
+	s.Equal(0, len(manyEventsBody.Events))
+
+	// Create current event
+	s.event.DateFrom = time.Now()
+	jsonBody, err = json.Marshal(s.event)
+	s.NoError(err)
+
+	r = httptest.NewRequest("POST", "/events", bytes.NewReader(jsonBody))
+	w = httptest.NewRecorder()
+	s.handler.CreateEvent(w, r)
+
+	// Check one events
+	r = httptest.NewRequest("GET", "/events?filter=uninformed", nil)
+	w = httptest.NewRecorder()
+	s.handler.ReadEvents(w, r)
+
+	body, err = ioutil.ReadAll(w.Result().Body)
+	s.NoError(err)
+
+	err = json.NewDecoder(bytes.NewReader(body)).Decode(&manyEventsBody)
+	s.NoError(err)
+
+	s.Equal(internalhttphandlers.StatusOK, manyEventsBody.Status)
+	s.Equal(1, len(manyEventsBody.Events))
 }
