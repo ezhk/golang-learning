@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 
-	config "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/config"
 	logger "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/logger"
 	storage "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/storage"
 )
@@ -34,15 +33,10 @@ type ServeHandler struct {
 	log *logger.Logger
 }
 
-func NewServeHandler(cfg *config.Configuration, log *logger.Logger) *ServeHandler {
+func NewServeHandler(log *logger.Logger, database storage.ClientInterface) *ServeHandler {
 	srvHander := &ServeHandler{
-		db:  cfg.DatabaseBuilder(),
+		db:  database,
 		log: log,
-	}
-
-	err := srvHander.db.Connect(cfg.DB.Path)
-	if err != nil {
-		log.Error("cannot conect to database: %v", err)
 	}
 
 	return srvHander

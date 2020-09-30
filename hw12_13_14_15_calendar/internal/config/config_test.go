@@ -45,7 +45,8 @@ func TestConfig(t *testing.T) {
 
 		// in-memory value not changed.
 		cfg := NewConfig("testdata/default.yaml")
-		require.Equal(t, cfgInMemory.DB.Path, cfg.DB.Path)
+		databasePath := cfg.GetDatabasePath()
+		require.Equal(t, cfgInMemory.DB.Path, databasePath)
 
 		cfg = NewConfig("testdata/sql.yaml")
 		require.Equal(t, randomTestString, cfg.DB.Path)

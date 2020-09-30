@@ -212,11 +212,17 @@ func (m *MemoryDatabase) DeleteEvent(event storage.Event) error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	for idx, pointers := range m.EventsByUserID[event.UserID] {
+	for idx, pointers := range m.EventsByUserID[eventPointer.UserID] {
 		if pointers != eventPointer {
 			continue
 		}
-		m.EventsByUserID[event.UserID] = append(m.EventsByUserID[event.UserID][:idx], m.EventsByUserID[event.UserID][idx+1:]...)
+
+		m.EventsByUserID[eventPointer.UserID] = append(
+			m.EventsByUserID[eventPointer.UserID][:idx],
+			m.EventsByUserID[eventPointer.UserID][idx+1:]...,
+		)
+
+		break
 	}
 
 	delete(m.Events, event.ID)

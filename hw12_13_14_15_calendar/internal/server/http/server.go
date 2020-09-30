@@ -8,6 +8,7 @@ import (
 	config "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/config"
 	logger "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/logger"
 	internalhttphandlers "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/server/http/handlers"
+	storage "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/storage"
 	"github.com/gorilla/mux"
 )
 
@@ -39,8 +40,8 @@ type HTTPServer struct {
 	Server *http.Server
 }
 
-func NewHTTPServer(cfg *config.Configuration, log *logger.Logger) *HTTPServer {
-	handler := internalhttphandlers.NewServeHandler(cfg, log)
+func NewHTTPServer(cfg *config.Configuration, log *logger.Logger, db storage.ClientInterface) *HTTPServer {
+	handler := internalhttphandlers.NewServeHandler(log, db)
 
 	r := mux.NewRouter()
 	// Users methods.

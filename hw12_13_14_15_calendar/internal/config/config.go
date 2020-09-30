@@ -67,6 +67,10 @@ func (cfg *Configuration) DatabaseBuilder() storage.ClientInterface {
 	return sqlstorage.NewDatatabase()
 }
 
+func (cfg *Configuration) GetDatabasePath() string {
+	return cfg.DB.Path
+}
+
 func (cfg *Configuration) ZapConfigBuilder() zap.Config {
 	zapConfig := zap.NewProductionConfig()
 
