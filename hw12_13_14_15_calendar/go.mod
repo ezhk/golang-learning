@@ -3,14 +3,18 @@ module github.com/ezhk/golang-learning/hw12_13_14_15_calendar
 go 1.15
 
 require (
+	github.com/cockroachdb/apd v1.1.0 // indirect
+	github.com/gofrs/uuid v3.3.0+incompatible // indirect
 	github.com/golang/protobuf v1.4.2
-	github.com/golangci/golangci-lint v1.31.0 // indirect
+	github.com/golangci/golangci-lint v1.31.0
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.15.0
+	github.com/jackc/fake v0.0.0-20150926172116-812a484cc733 // indirect
 	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/jmoiron/sqlx v1.2.1-0.20190826204134-d7d95172beb5
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/pressly/goose v2.6.0+incompatible // indirect
+	github.com/pressly/goose v2.6.0+incompatible
+	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1
