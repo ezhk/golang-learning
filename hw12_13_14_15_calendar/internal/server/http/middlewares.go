@@ -18,11 +18,11 @@ func (o *responseObserver) WriteHeader(code int) {
 	o.Status = code
 }
 
-func LoggerMiddleware(log *logger.Logger, next http.Handler) http.Handler {
+func LoggerMiddleware(log *logger.Logger, h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		startTime := time.Now()
 		o := &responseObserver{ResponseWriter: w}
-		next.ServeHTTP(o, r)
+		h.ServeHTTP(o, r)
 		spendTime := time.Since(startTime).Seconds()
 
 		log.Info("HTTP request",

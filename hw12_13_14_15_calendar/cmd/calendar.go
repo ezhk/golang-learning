@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -18,8 +19,8 @@ var calendarCmd = &cobra.Command{
 under the hood, that processing request as SQL commands.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Init logger.
-		log := logger.NewLogger(cfg)
-		defer log.Close()
+		zapLogger := logger.NewLogger(cfg)
+		defer zapLogger.Close()
 
 		// Init connect to database on runiing app.
 		DSNString := cfg.GetDatabasePath()
@@ -36,11 +37,11 @@ under the hood, that processing request as SQL commands.`,
 		signal.Notify(s, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 		// Run server.
-		server := internalgrpc.NewServer(cfg, log, database)
+		server := internalgrpc.NewServer(cfg, zapLogger, database)
 		go func() {
 			err := server.RunServer()
 			if err != nil {
-				log.Fatal("cannot run server: %w", err)
+				log.Fatal(err)
 				close(s)
 			}
 		}()
@@ -54,19 +55,19 @@ under the hood, that processing request as SQL commands.`,
 		defer server.Close()
 
 		// // Defined server and waiting for shutdown.
-		// HTTPServer := internalhttp.NewHTTPServer(cfg, log, database)
+		// HTTPServer := internalhttp.NewHTTPServer(cfg, zapLogger, database)
 		// defer func() {
 		// 	if err := HTTPServer.Shutdown(context.Background()); err != nil {
-		// 		log.Error(err)
+		// 		zapLogger.Error(err.Error())
 		// 	}
-		// 	log.Info("HTTP server shutdowned")
+		// 	zapLogger.Info("HTTP server shutdowned")
 		// }()
 
 		// // Main server goroutine.
 		// go func() {
 		// 	err := HTTPServer.Run()
 		// 	if err != nil {
-		// 		log.Error(err)
+		// 		zapLogger.Error(err.Error())
 
 		// 		// Don't wait for signal on server error.
 		// 		close(s)

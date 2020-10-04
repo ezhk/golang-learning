@@ -9,7 +9,10 @@ import (
 
 	"github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/config"
 	"github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/logger"
+	internalhttp "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/server/http"
 	storage "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/storage"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -51,7 +54,8 @@ func (s *Server) RunProxy() error {
 	}
 	address := fmt.Sprintf("%s:%d", s.cfg.Server.Host, s.cfg.Server.HTTPPort)
 
-	return http.ListenAndServe(address, mux)
+	// Endble HTTP logger.
+	return http.ListenAndServe(address, internalhttp.LoggerMiddleware(s.log, mux))
 }
 
 func (s *Server) RunServer() error {
@@ -62,7 +66,16 @@ func (s *Server) RunServer() error {
 	}
 
 	s.listener = l
-	grpcServer := grpc.NewServer()
+
+	// Include gRPC logger.
+	grpcServer := grpc.NewServer(
+		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
+			grpc_zap.StreamServerInterceptor(&s.log.Logger),
+		)),
+		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+			grpc_zap.UnaryServerInterceptor(&s.log.Logger),
+		)),
+	)
 	RegisterCalendarServer(grpcServer, s)
 
 	return grpcServer.Serve(s.listener)
@@ -200,7 +213,6 @@ func (s *Server) PeriodEvents(ctx context.Context, d *DateEvent) (*Events, error
 	var events []storage.Event
 	var err error
 
-	fmt.Println(d.Date)
 	switch d.Period {
 	case DateEvent_DAILY:
 		events, err = s.db.DailyEvents(d.UserID, d.Date.AsTime())
