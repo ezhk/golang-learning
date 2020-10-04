@@ -5,6 +5,7 @@ test:
 	go test -race ./...
 
 lint:
+	go get github.com/golangci/golangci-lint/cmd/golangci-lint
 	golangci-lint run ./...
 
 run:
