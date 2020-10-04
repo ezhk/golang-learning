@@ -8,9 +8,10 @@ logger:
   encoding: json
 db:
   path: user=postgres password=postgres dbname=postgres sslmode=disable
-  type: in-memory
+  type: sql
 server:
   host: localhost
-  port: 8080
+  httpPort: 8080
+  grpcPort: 9090
 test:
   doNotRemoveMe: 42

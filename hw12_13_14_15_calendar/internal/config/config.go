@@ -28,8 +28,9 @@ type DatabaseParams struct {
 }
 
 type ServerParams struct {
-	Host string `yaml:"host"`
-	Port int    `yaml:"port"`
+	Host     string `yaml:"host"`
+	HTTPPort int    `yaml:"httpPort"`
+	GRPCPort int    `yaml:"grpcPort"`
 }
 
 type TestParams struct {

@@ -11,6 +11,7 @@ db:
   type: in-memory
 server:
   host: localhost
-  port: 8080
+  httpPort: 8080
+  grpcPort: 9090
 test:
   doNotRemoveMe: 42

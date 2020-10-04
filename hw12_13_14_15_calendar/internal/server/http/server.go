@@ -62,7 +62,7 @@ func NewHTTPServer(cfg *config.Configuration, log *logger.Logger, db storage.Cli
 	mux.Handle("/", LoggerMiddleware(log, r))
 
 	server := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port),
+		Addr:    fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.HTTPPort),
 		Handler: mux,
 	}
 

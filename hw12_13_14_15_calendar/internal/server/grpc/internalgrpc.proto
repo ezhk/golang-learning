@@ -3,18 +3,21 @@ syntax = "proto3";
 package internalgrpc;
 option go_package = ".;internalgrpc";
 
+import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
-message Email { string Email = 1; }
+message RequestByUserID { int64 ID = 1; }
+message RequestByUserEmail { string Email = 1; }
 
 message User {
   int64 ID = 1;
-  Email Email = 2;
+  string Email = 2;
   string FirstName = 3;
   string LastName = 4;
 }
 
+message EventID { int64 ID = 1; }
 message Event {
   int64 ID = 1;
   int64 UserID = 2;
@@ -22,30 +25,82 @@ message Event {
   string Content = 4;
   google.protobuf.Timestamp DateFrom = 5;
   google.protobuf.Timestamp DateTo = 6;
+  bool Notified = 7;
 }
 
 message Events { repeated Event Events = 1; }
 
 message DateEvent {
-  User User = 1;
-  google.protobuf.Timestamp Date = 2;
+  enum PeriodTypes {
+    // Used Daily if undefined.
+    DAILY = 0;
+    WEEKLY = 1;
+    MONTHLY = 2;
+  }
+
+  int64 UserID = 1;
+  PeriodTypes Period = 2;
+  google.protobuf.Timestamp Date = 3;
 }
 
 service Calendar {
-  rpc GetUser(Email) returns (User) {}
-  rpc CreateUser(User) returns (User) {}
-  rpc UpdateUser(User) returns (User) {}
-  rpc DeleteUser(User) returns (User) {}
+  rpc GetUser(RequestByUserEmail) returns (User) {
+    option (google.api.http) = {
+      get : "/api/v1/users/by-email/{Email}"
+    };
+  }
+  rpc CreateUser(User) returns (User) {
+    option (google.api.http) = {
+      post : "/api/v1/users"
+      body : "*"
+    };
+  }
+  rpc UpdateUser(User) returns (User) {
+    option (google.api.http) = {
+      put : "/api/v1/users/{ID}"
+      body : "*"
+    };
+  }
+  rpc DeleteUser(RequestByUserID) returns (User) {
+    option (google.api.http) = {
+      delete : "/api/v1/users/{ID}"
+    };
+  }
 
-  rpc GetEvents(User) returns (Events) {}
-  rpc CreateEvent(Event) returns (Event) {}
-  rpc UpdateEvent(Event) returns (Event) {}
-  rpc DeleteEvent(Event) returns (Event) {}
+  rpc GetEvents(RequestByUserID) returns (Events) {
+    option (google.api.http) = {
+      get : "/api/v1/events/by-user/{ID}"
+    };
+  }
+  rpc PeriodEvents(DateEvent) returns (Events) {
+    option (google.api.http) = {
+      get : "/api/v1/events/by-user/{UserID}/period/{Period}/date/{Date}"
+    };
+  }
 
-  rpc DailyEvents(DateEvent) returns (Event) {}
-  rpc WeeklyEvents(DateEvent) returns (Event) {}
-  rpc MonthlyEvents(DateEvent) returns (Event) {}
+  rpc CreateEvent(Event) returns (Event) {
+    option (google.api.http) = {
+      post : "/api/v1/events"
+      body : "*"
+    };
+  }
+  rpc UpdateEvent(Event) returns (Event) {
+    option (google.api.http) = {
+      put : "/api/v1/events/{ID}"
+      body : "*"
+    };
+  }
+  rpc DeleteEvent(EventID) returns (Event) {
+    option (google.api.http) = {
+      delete : "/api/v1/events/{ID}"
+    };
+  }
 
-  rpc GetNotifyReadyEvents(google.protobuf.Empty) returns (Event) {}
-  rpc MarkEventAsNotified(Event) returns (google.protobuf.Empty) {}
+  rpc GetNotifyReadyEvents(google.protobuf.Empty) returns (Events) {
+    option (google.api.http) = {
+      get : "/api/v1/events/uninformed"
+    };
+  }
+
+  // rpc MarkEventAsNotified(Event) returns (google.protobuf.Empty) {}
 }
