@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"time"
 
 	"github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/config"
 	"github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/logger"
@@ -213,13 +214,18 @@ func (s *Server) PeriodEvents(ctx context.Context, d *DateEvent) (*Events, error
 	var events []storage.Event
 	var err error
 
+	dateTime, err := time.Parse(time.RFC3339, d.Date)
+	if err != nil {
+		return nil, err
+	}
+
 	switch d.Period {
 	case DateEvent_DAILY:
-		events, err = s.db.DailyEvents(d.UserID, d.Date.AsTime())
+		events, err = s.db.DailyEvents(d.UserID, dateTime)
 	case DateEvent_WEEKLY:
-		events, err = s.db.DailyEvents(d.UserID, d.Date.AsTime())
+		events, err = s.db.WeeklyEvents(d.UserID, dateTime)
 	case DateEvent_MONTHLY:
-		events, err = s.db.DailyEvents(d.UserID, d.Date.AsTime())
+		events, err = s.db.MonthlyEvents(d.UserID, dateTime)
 	default:
 		return nil, errors.New("not period filter")
 	}

@@ -40,7 +40,10 @@ message DateEvent {
 
   int64 UserID = 1;
   PeriodTypes Period = 2;
-  google.protobuf.Timestamp Date = 3;
+
+  // Date must be string in RFC3339 format; google.protobuf.Timestamp cause
+  // error: "json: cannot unmarshal number into Go value of type string"
+  string Date = 3;
 }
 
 service Calendar {
@@ -74,7 +77,7 @@ service Calendar {
   }
   rpc PeriodEvents(DateEvent) returns (Events) {
     option (google.api.http) = {
-      get : "/api/v1/events/by-user/{UserID}/period/{Period}/date/{Date}"
+      get : "/api/v1/events/by-user/{UserID}/date/{Date}/period/{Period}"
     };
   }
 

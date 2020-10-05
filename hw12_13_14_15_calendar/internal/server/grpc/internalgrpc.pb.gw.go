@@ -323,6 +323,17 @@ func request_Calendar_PeriodEvents_0(ctx context.Context, marshaler runtime.Mars
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UserID", err)
 	}
 
+	val, ok = pathParams["Date"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "Date")
+	}
+
+	protoReq.Date, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "Date", err)
+	}
+
 	val, ok = pathParams["Period"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "Period")
@@ -335,17 +346,6 @@ func request_Calendar_PeriodEvents_0(ctx context.Context, marshaler runtime.Mars
 	}
 
 	protoReq.Period = DateEvent_PeriodTypes(e)
-
-	val, ok = pathParams["Date"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "Date")
-	}
-
-	protoReq.Date, err = runtime.Timestamp(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "Date", err)
-	}
 
 	msg, err := client.PeriodEvents(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -375,6 +375,17 @@ func local_request_Calendar_PeriodEvents_0(ctx context.Context, marshaler runtim
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UserID", err)
 	}
 
+	val, ok = pathParams["Date"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "Date")
+	}
+
+	protoReq.Date, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "Date", err)
+	}
+
 	val, ok = pathParams["Period"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "Period")
@@ -387,17 +398,6 @@ func local_request_Calendar_PeriodEvents_0(ctx context.Context, marshaler runtim
 	}
 
 	protoReq.Period = DateEvent_PeriodTypes(e)
-
-	val, ok = pathParams["Date"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "Date")
-	}
-
-	protoReq.Date, err = runtime.Timestamp(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "Date", err)
-	}
 
 	msg, err := server.PeriodEvents(ctx, &protoReq)
 	return msg, metadata, err
@@ -1071,7 +1071,7 @@ var (
 
 	pattern_Calendar_GetEvents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v1", "events", "by-user", "ID"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Calendar_PeriodEvents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6, 2, 7, 1, 0, 4, 1, 5, 8}, []string{"api", "v1", "events", "by-user", "UserID", "period", "Period", "date", "Date"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Calendar_PeriodEvents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6, 2, 7, 1, 0, 4, 1, 5, 8}, []string{"api", "v1", "events", "by-user", "UserID", "date", "Date", "period", "Period"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Calendar_CreateEvent_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "events"}, "", runtime.AssumeColonVerbOpt(true)))
 

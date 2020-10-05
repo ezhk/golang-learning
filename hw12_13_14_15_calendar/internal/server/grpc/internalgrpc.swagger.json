@@ -74,7 +74,7 @@
         ]
       }
     },
-    "/api/v1/events/by-user/{UserID}/period/{Period}/date/{Date}": {
+    "/api/v1/events/by-user/{UserID}/date/{Date}/period/{Period}": {
       "get": {
         "operationId": "Calendar_PeriodEvents",
         "responses": {
@@ -100,6 +100,13 @@
             "format": "int64"
           },
           {
+            "name": "Date",
+            "description": "Date must be in RFC3339 format;\ngoogle.protobuf.Timestamp cause error:\n\"json: cannot unmarshal number into Go value of type string\"",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
             "name": "Period",
             "in": "path",
             "required": true,
@@ -109,13 +116,6 @@
               "WEEKLY",
               "MONTHLY"
             ]
-          },
-          {
-            "name": "Date",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "date-time"
           }
         ],
         "tags": [
