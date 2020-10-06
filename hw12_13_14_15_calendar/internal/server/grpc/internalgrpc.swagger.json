@@ -43,38 +43,7 @@
         ]
       }
     },
-    "/api/v1/events/by-user/{ID}": {
-      "get": {
-        "operationId": "Calendar_GetEvents",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/internalgrpcEvents"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/runtimeError"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "Calendar"
-        ]
-      }
-    },
-    "/api/v1/events/by-user/{UserID}/date/{Date}/period/{Period}": {
+    "/api/v1/events/by-date/{UserID}/date/{Date}/period/{Period}": {
       "get": {
         "operationId": "Calendar_PeriodEvents",
         "responses": {
@@ -101,7 +70,7 @@
           },
           {
             "name": "Date",
-            "description": "Date must be in RFC3339 format;\ngoogle.protobuf.Timestamp cause error:\n\"json: cannot unmarshal number into Go value of type string\"",
+            "description": "Date must be string in RFC3339 format; google.protobuf.Timestamp cause\nerror: \"json: cannot unmarshal number into Go value of type string\"",
             "in": "path",
             "required": true,
             "type": "string"
@@ -116,6 +85,37 @@
               "WEEKLY",
               "MONTHLY"
             ]
+          }
+        ],
+        "tags": [
+          "Calendar"
+        ]
+      }
+    },
+    "/api/v1/events/by-user/{ID}": {
+      "get": {
+        "operationId": "Calendar_GetEvents",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/internalgrpcEvents"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
           }
         ],
         "tags": [

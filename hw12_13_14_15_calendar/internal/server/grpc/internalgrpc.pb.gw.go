@@ -1071,7 +1071,7 @@ var (
 
 	pattern_Calendar_GetEvents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "v1", "events", "by-user", "ID"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Calendar_PeriodEvents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6, 2, 7, 1, 0, 4, 1, 5, 8}, []string{"api", "v1", "events", "by-user", "UserID", "date", "Date", "period", "Period"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Calendar_PeriodEvents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6, 2, 7, 1, 0, 4, 1, 5, 8}, []string{"api", "v1", "events", "by-date", "UserID", "date", "Date", "period", "Period"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Calendar_CreateEvent_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "events"}, "", runtime.AssumeColonVerbOpt(true)))
 

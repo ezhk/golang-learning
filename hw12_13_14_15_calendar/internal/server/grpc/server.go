@@ -17,7 +17,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 //go:generate protoc -I . -I ${GOPATH}/src -I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --swagger_out=logtostderr=true:. --go_out=plugins=grpc:. --grpc-gateway_out . --grpc-gateway_opt logtostderr=true --grpc-gateway_opt paths=source_relative --grpc-gateway_opt generate_unbound_methods=true internalgrpc.proto
@@ -88,31 +87,13 @@ func (s *Server) Close() error {
 	return s.listener.Close()
 }
 
-func covertToStorageUser(u *User) storage.User {
-	return storage.User{
-		ID:        u.ID,
-		Email:     u.Email,
-		FirstName: u.FirstName,
-		LastName:  u.LastName,
-	}
-}
-
-func convertToServerUser(u storage.User) *User {
-	return &User{
-		ID:        u.ID,
-		Email:     u.Email,
-		FirstName: u.FirstName,
-		LastName:  u.LastName,
-	}
-}
-
 func (s *Server) GetUser(ctx context.Context, req *RequestByUserEmail) (*User, error) {
 	user, err := s.db.GetUserByEmail(req.Email)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertToServerUser(user), nil
+	return ConvertStorageUserToUser(user), nil
 }
 
 func (s *Server) CreateUser(ctx context.Context, u *User) (*User, error) {
@@ -121,11 +102,11 @@ func (s *Server) CreateUser(ctx context.Context, u *User) (*User, error) {
 		return nil, err
 	}
 
-	return convertToServerUser(user), nil
+	return ConvertStorageUserToUser(user), nil
 }
 
 func (s *Server) UpdateUser(ctx context.Context, u *User) (*User, error) {
-	user := covertToStorageUser(u)
+	user := CovertUserToStorageUser(u)
 
 	err := s.db.UpdateUser(user)
 	if err != nil {
@@ -144,30 +125,6 @@ func (s *Server) DeleteUser(ctx context.Context, req *RequestByUserID) (*User, e
 	return &User{ID: req.ID}, nil
 }
 
-func covertToStorageEvent(e *Event) storage.Event {
-	return storage.Event{
-		ID:       e.ID,
-		UserID:   e.UserID,
-		Title:    e.Title,
-		Content:  e.Content,
-		DateFrom: e.DateFrom.AsTime(),
-		DateTo:   e.DateTo.AsTime(),
-		Notified: e.Notified,
-	}
-}
-
-func convertToServerEvent(e storage.Event) *Event {
-	return &Event{
-		ID:       e.ID,
-		UserID:   e.UserID,
-		Title:    e.Title,
-		Content:  e.Content,
-		DateFrom: timestamppb.New(e.DateFrom),
-		DateTo:   timestamppb.New(e.DateTo),
-		Notified: e.Notified,
-	}
-}
-
 func (s *Server) GetEvents(ctx context.Context, req *RequestByUserID) (*Events, error) {
 	events, err := s.db.GetEventsByUserID(req.ID)
 	if err != nil {
@@ -176,7 +133,7 @@ func (s *Server) GetEvents(ctx context.Context, req *RequestByUserID) (*Events, 
 
 	resultEvents := make([]*Event, 0)
 	for _, e := range events {
-		resultEvents = append(resultEvents, convertToServerEvent(e))
+		resultEvents = append(resultEvents, ConvertStorageEventToEvent(e))
 	}
 
 	return &Events{Events: resultEvents}, nil
@@ -188,11 +145,11 @@ func (s *Server) CreateEvent(ctx context.Context, e *Event) (*Event, error) {
 		return nil, err
 	}
 
-	return convertToServerEvent(event), nil
+	return ConvertStorageEventToEvent(event), nil
 }
 
 func (s *Server) UpdateEvent(ctx context.Context, e *Event) (*Event, error) {
-	err := s.db.UpdateEvent(covertToStorageEvent(e))
+	err := s.db.UpdateEvent(CovertEventToStorageEvent(e))
 	if err != nil {
 		return nil, err
 	}
@@ -207,7 +164,7 @@ func (s *Server) DeleteEvent(ctx context.Context, eventID *EventID) (*Event, err
 		return nil, err
 	}
 
-	return convertToServerEvent(event), nil
+	return ConvertStorageEventToEvent(event), nil
 }
 
 func (s *Server) PeriodEvents(ctx context.Context, d *DateEvent) (*Events, error) {
@@ -236,7 +193,7 @@ func (s *Server) PeriodEvents(ctx context.Context, d *DateEvent) (*Events, error
 
 	resultEvents := make([]*Event, 0)
 	for _, e := range events {
-		resultEvents = append(resultEvents, convertToServerEvent(e))
+		resultEvents = append(resultEvents, ConvertStorageEventToEvent(e))
 	}
 
 	return &Events{Events: resultEvents}, nil
@@ -250,14 +207,14 @@ func (s *Server) GetNotifyReadyEvents(ctx context.Context, empty *emptypb.Empty)
 
 	resultEvents := make([]*Event, 0)
 	for _, e := range events {
-		resultEvents = append(resultEvents, convertToServerEvent(e))
+		resultEvents = append(resultEvents, ConvertStorageEventToEvent(e))
 	}
 
 	return &Events{Events: resultEvents}, nil
 }
 
 // func (s *Server) MarkEventAsNotified(ctx context.Context, e *Event) (*emptypb.Empty, error) {
-// 	event := covertToStorageEvent(e)
+// 	event := CovertEventToStorageEvent(e)
 // 	err := s.db.MarkEventAsNotified(&event)
 // 	if err != nil {
 // 		return nil, err
