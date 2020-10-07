@@ -1,65 +1,12 @@
 package internalgrpc
 
 import (
-	"strconv"
-	"time"
-
-	storage "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/storage"
+	structs "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/structs"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func ConvertUserMessageToStorageUser(u UserMessage) (storage.User, error) {
-	ID, err := strconv.Atoi(u.ID)
-	if err != nil {
-		return storage.User{}, err
-	}
-
-	storageUser := storage.User{
-		ID:        int64(ID),
-		Email:     u.Email,
-		FirstName: u.FirstName,
-		LastName:  u.LastName,
-	}
-
-	return storageUser, nil
-}
-
-func ConvertEventMessageToStorageUser(e EventMessage) (storage.Event, error) {
-	ID, err := strconv.Atoi(e.ID)
-	if err != nil {
-		return storage.Event{}, err
-	}
-
-	userID, err := strconv.Atoi(e.ID)
-	if err != nil {
-		return storage.Event{}, err
-	}
-
-	dateFrom, err := time.Parse(time.RFC3339, e.DateFrom)
-	if err != nil {
-		return storage.Event{}, err
-	}
-
-	dateTo, err := time.Parse(time.RFC3339, e.DateTo)
-	if err != nil {
-		return storage.Event{}, err
-	}
-
-	storageEvent := storage.Event{
-		ID:       int64(ID),
-		UserID:   int64(userID),
-		Title:    e.Title,
-		Content:  e.Content,
-		DateFrom: dateFrom,
-		DateTo:   dateTo,
-		Notified: e.Notified,
-	}
-
-	return storageEvent, nil
-}
-
-func CovertUserToStorageUser(u *User) storage.User {
-	return storage.User{
+func ConvertInternalUserToUser(u *User) structs.User {
+	return structs.User{
 		ID:        u.ID,
 		Email:     u.Email,
 		FirstName: u.FirstName,
@@ -67,7 +14,7 @@ func CovertUserToStorageUser(u *User) storage.User {
 	}
 }
 
-func ConvertStorageUserToUser(u storage.User) *User {
+func ConvertUserToInternalUser(u structs.User) *User {
 	return &User{
 		ID:        u.ID,
 		Email:     u.Email,
@@ -76,8 +23,8 @@ func ConvertStorageUserToUser(u storage.User) *User {
 	}
 }
 
-func CovertEventToStorageEvent(e *Event) storage.Event {
-	return storage.Event{
+func CovertInternalEventToEvent(e *Event) structs.Event {
+	return structs.Event{
 		ID:       e.ID,
 		UserID:   e.UserID,
 		Title:    e.Title,
@@ -88,7 +35,7 @@ func CovertEventToStorageEvent(e *Event) storage.Event {
 	}
 }
 
-func ConvertStorageEventToEvent(e storage.Event) *Event {
+func ConvertEventToInternalEvent(e structs.Event) *Event {
 	return &Event{
 		ID:       e.ID,
 		UserID:   e.UserID,

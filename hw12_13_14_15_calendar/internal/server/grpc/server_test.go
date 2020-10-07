@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/config"
-	storage "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/storage"
+	config "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/config"
+	structs "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/structs"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/stretchr/testify/suite"
 )
@@ -19,7 +19,7 @@ import (
 type UserTestSuite struct {
 	suite.Suite
 	mux  *runtime.ServeMux
-	user storage.User
+	user structs.User
 }
 
 func TestUserSuite(t *testing.T) {
@@ -36,7 +36,7 @@ func (s *UserTestSuite) SetupTest() {
 	s.NoError(err)
 
 	// Default defined user.
-	s.user = storage.User{
+	s.user = structs.User{
 		Email:     "test@yandex.ru",
 		FirstName: "Test",
 		LastName:  "Yandex mail",
@@ -79,7 +79,7 @@ func (s *UserTestSuite) TestCreateUser() {
 	var userMsg UserMessage
 	err = json.NewDecoder(w.Body).Decode(&userMsg)
 	s.NoError(err)
-	user, err := ConvertUserMessageToStorageUser(userMsg)
+	user, err := structs.ConvertUserMessageToUser(userMsg)
 	s.NoError(err)
 
 	s.Equal(int64(1), user.ID)
@@ -176,20 +176,10 @@ func (s *UserTestSuite) TestDeleteUser() {
 	s.Equal("user doesn't not exist", errMsg.Message)
 }
 
-/*
-
-
-
-
-
-
-
- */
-
 type EventTestSuite struct {
 	suite.Suite
 	mux   *runtime.ServeMux
-	event storage.Event
+	event structs.Event
 }
 
 func TestEventSuite(t *testing.T) {
@@ -206,7 +196,7 @@ func (s *EventTestSuite) SetupTest() {
 	s.NoError(err)
 
 	// Default defined event.
-	s.event = storage.Event{
+	s.event = structs.Event{
 		UserID:   1,
 		Title:    "Base title",
 		Content:  "Random content",
@@ -250,7 +240,7 @@ func (s *EventTestSuite) TestCreateEvent() {
 	err = json.NewDecoder(w.Body).Decode(&eventMsg)
 	s.NoError(err)
 
-	e, err := ConvertEventMessageToStorageUser(eventMsg)
+	e, err := structs.ConvertEventMessageToEvent(eventMsg)
 	s.NoError(err)
 
 	s.Equal(http.StatusOK, w.Result().StatusCode)
@@ -290,11 +280,11 @@ func (s *EventTestSuite) TestReadEvents() {
 	s.Equal(http.StatusOK, w.Result().StatusCode)
 	s.Equal(2, len(manyEvents.Events))
 
-	e, err := ConvertEventMessageToStorageUser(manyEvents.Events[0])
+	e, err := structs.ConvertEventMessageToEvent(manyEvents.Events[0])
 	s.NoError(err)
 	s.Equal("2020-01-02T12:04:37Z", e.DateFrom.Format(time.RFC3339))
 
-	e, err = ConvertEventMessageToStorageUser(manyEvents.Events[1])
+	e, err = structs.ConvertEventMessageToEvent(manyEvents.Events[1])
 	s.NoError(err)
 	s.Equal("2020-01-02T14:04:37Z", e.DateFrom.Format(time.RFC3339))
 }
@@ -311,7 +301,7 @@ func (s *EventTestSuite) TestUpdateEvents() {
 	var eventMsg EventMessage
 	err = json.NewDecoder(w.Body).Decode(&eventMsg)
 	s.NoError(err)
-	e, err := ConvertEventMessageToStorageUser(eventMsg)
+	e, err := structs.ConvertEventMessageToEvent(eventMsg)
 	s.NoError(err)
 	s.Equal("2020-01-02T12:04:37Z", e.DateFrom.Format(time.RFC3339))
 
@@ -326,7 +316,7 @@ func (s *EventTestSuite) TestUpdateEvents() {
 
 	err = json.NewDecoder(w.Body).Decode(&eventMsg)
 	s.NoError(err)
-	e, err = ConvertEventMessageToStorageUser(eventMsg)
+	e, err = structs.ConvertEventMessageToEvent(eventMsg)
 	s.NoError(err)
 	s.Equal("2020-01-02T14:04:37Z", e.DateFrom.Format(time.RFC3339))
 }
@@ -348,7 +338,7 @@ func (s *EventTestSuite) TestDeleteEvent() {
 	var eventMsg EventMessage
 	err = json.NewDecoder(w.Body).Decode(&eventMsg)
 	s.NoError(err)
-	e, err := ConvertEventMessageToStorageUser(eventMsg)
+	e, err := structs.ConvertEventMessageToEvent(eventMsg)
 	s.NoError(err)
 	s.Equal(int64(1), e.ID)
 

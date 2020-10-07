@@ -15,3 +15,8 @@ server:
   grpcPort: 9090
 test:
   doNotRemoveMe: 42
+broker:
+  amqp: amqp://guest:guest@localhost:5672/
+  exchange: events
+  exchangeType: direct
+  routingKey: notifications

@@ -18,6 +18,7 @@ require (
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.1
+	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.6.1
 	github.com/ziutek/mymysql v1.5.4 // indirect
 	go.uber.org/zap v1.16.0

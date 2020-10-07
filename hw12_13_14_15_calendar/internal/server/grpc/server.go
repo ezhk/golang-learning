@@ -8,10 +8,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/config"
-	"github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/logger"
+	config "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/config"
+	logger "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/logger"
 	internalhttp "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/server/http"
 	storage "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/storage"
+	structs "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/structs"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -20,6 +21,13 @@ import (
 )
 
 //go:generate protoc -I . -I ${GOPATH}/src -I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --swagger_out=logtostderr=true:. --go_out=plugins=grpc:. --grpc-gateway_out . --grpc-gateway_opt logtostderr=true --grpc-gateway_opt paths=source_relative --grpc-gateway_opt generate_unbound_methods=true internalgrpc.proto
+
+type (
+	ErrorMessage      = structs.ErrorMessage
+	UserMessage       = structs.UserMessage
+	EventMessage      = structs.EventMessage
+	ManyEventsMessage = structs.ManyEventsMessage
+)
 
 type Server struct {
 	ctx      context.Context
@@ -93,7 +101,7 @@ func (s *Server) GetUser(ctx context.Context, req *RequestByUserEmail) (*User, e
 		return nil, err
 	}
 
-	return ConvertStorageUserToUser(user), nil
+	return ConvertUserToInternalUser(user), nil
 }
 
 func (s *Server) CreateUser(ctx context.Context, u *User) (*User, error) {
@@ -102,11 +110,11 @@ func (s *Server) CreateUser(ctx context.Context, u *User) (*User, error) {
 		return nil, err
 	}
 
-	return ConvertStorageUserToUser(user), nil
+	return ConvertUserToInternalUser(user), nil
 }
 
 func (s *Server) UpdateUser(ctx context.Context, u *User) (*User, error) {
-	user := CovertUserToStorageUser(u)
+	user := ConvertInternalUserToUser(u)
 
 	err := s.db.UpdateUser(user)
 	if err != nil {
@@ -117,7 +125,7 @@ func (s *Server) UpdateUser(ctx context.Context, u *User) (*User, error) {
 }
 
 func (s *Server) DeleteUser(ctx context.Context, req *RequestByUserID) (*User, error) {
-	err := s.db.DeleteUser(storage.User{ID: req.ID})
+	err := s.db.DeleteUser(structs.User{ID: req.ID})
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +141,7 @@ func (s *Server) GetEvents(ctx context.Context, req *RequestByUserID) (*Events, 
 
 	resultEvents := make([]*Event, 0)
 	for _, e := range events {
-		resultEvents = append(resultEvents, ConvertStorageEventToEvent(e))
+		resultEvents = append(resultEvents, ConvertEventToInternalEvent(e))
 	}
 
 	return &Events{Events: resultEvents}, nil
@@ -145,11 +153,11 @@ func (s *Server) CreateEvent(ctx context.Context, e *Event) (*Event, error) {
 		return nil, err
 	}
 
-	return ConvertStorageEventToEvent(event), nil
+	return ConvertEventToInternalEvent(event), nil
 }
 
 func (s *Server) UpdateEvent(ctx context.Context, e *Event) (*Event, error) {
-	err := s.db.UpdateEvent(CovertEventToStorageEvent(e))
+	err := s.db.UpdateEvent(CovertInternalEventToEvent(e))
 	if err != nil {
 		return nil, err
 	}
@@ -158,17 +166,17 @@ func (s *Server) UpdateEvent(ctx context.Context, e *Event) (*Event, error) {
 }
 
 func (s *Server) DeleteEvent(ctx context.Context, eventID *EventID) (*Event, error) {
-	event := storage.Event{ID: eventID.ID}
+	event := structs.Event{ID: eventID.ID}
 	err := s.db.DeleteEvent(event)
 	if err != nil {
 		return nil, err
 	}
 
-	return ConvertStorageEventToEvent(event), nil
+	return ConvertEventToInternalEvent(event), nil
 }
 
 func (s *Server) PeriodEvents(ctx context.Context, d *DateEvent) (*Events, error) {
-	var events []storage.Event
+	var events []structs.Event
 	var err error
 
 	dateTime, err := time.Parse(time.RFC3339, d.Date)
@@ -193,7 +201,7 @@ func (s *Server) PeriodEvents(ctx context.Context, d *DateEvent) (*Events, error
 
 	resultEvents := make([]*Event, 0)
 	for _, e := range events {
-		resultEvents = append(resultEvents, ConvertStorageEventToEvent(e))
+		resultEvents = append(resultEvents, ConvertEventToInternalEvent(e))
 	}
 
 	return &Events{Events: resultEvents}, nil
@@ -207,14 +215,14 @@ func (s *Server) GetNotifyReadyEvents(ctx context.Context, empty *emptypb.Empty)
 
 	resultEvents := make([]*Event, 0)
 	for _, e := range events {
-		resultEvents = append(resultEvents, ConvertStorageEventToEvent(e))
+		resultEvents = append(resultEvents, ConvertEventToInternalEvent(e))
 	}
 
 	return &Events{Events: resultEvents}, nil
 }
 
 // func (s *Server) MarkEventAsNotified(ctx context.Context, e *Event) (*emptypb.Empty, error) {
-// 	event := CovertEventToStorageEvent(e)
+// 	event := CovertInternalEventToEvent(e)
 // 	err := s.db.MarkEventAsNotified(&event)
 // 	if err != nil {
 // 		return nil, err

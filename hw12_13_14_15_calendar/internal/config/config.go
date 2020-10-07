@@ -12,6 +12,7 @@ type Configuration struct {
 	Logger LoggerParams   `yaml:"logger"`
 	DB     DatabaseParams `yaml:"db"`
 	Server ServerParams   `yaml:"server"`
+	Broker BrokerParams   `yaml:"broker"`
 	Test   TestParams     `yaml:"test"`
 }
 
@@ -31,6 +32,13 @@ type ServerParams struct {
 	Host     string `yaml:"host"`
 	HTTPPort int    `yaml:"httpPort"`
 	GRPCPort int    `yaml:"grpcPort"`
+}
+
+type BrokerParams struct {
+	AMQP         string `yaml:"amqp"`
+	Exchange     string `yaml:"exchange"`
+	ExchangeType string `yaml:"exchangeType"`
+	RoutingKey   string `yaml:"routingKey"`
 }
 
 type TestParams struct {

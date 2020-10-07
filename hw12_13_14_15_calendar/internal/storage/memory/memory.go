@@ -1,25 +1,13 @@
 package memorystorage
 
 import (
-	"sync"
 	"time"
 
 	storage "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/storage"
 	utils "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/utils"
 )
 
-type MemoryDatabase struct {
-	Events map[int64]*storage.Event
-	Users  map[int64]*storage.User
-
-	EventsByUserID map[int64][]*storage.Event
-	UsersByEmail   map[string]*storage.User
-
-	LatestRecordID int64
-	LatestUserID   int64
-
-	mutex sync.RWMutex
-}
+type MemoryDatabase storage.MemoryDatabase
 
 func NewDatatabase() storage.ClientInterface {
 	return &MemoryDatabase{
@@ -39,9 +27,9 @@ func (m *MemoryDatabase) Close() error {
 }
 
 func (m *MemoryDatabase) GetUserByEmail(email string) (storage.User, error) {
-	m.mutex.RLock()
+	m.RLock()
 	userPtr, ok := m.UsersByEmail[email]
-	m.mutex.RUnlock()
+	m.RUnlock()
 
 	if !ok {
 		return storage.User{}, storage.ErrUserDoesNotExist
@@ -62,8 +50,8 @@ func (m *MemoryDatabase) CreateUser(email string, firstName string, lastName str
 		LastName:  lastName,
 	}
 
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.Lock()
+	defer m.Unlock()
 
 	m.LatestUserID++
 	user.ID = m.LatestUserID
@@ -75,16 +63,16 @@ func (m *MemoryDatabase) CreateUser(email string, firstName string, lastName str
 }
 
 func (m *MemoryDatabase) UpdateUser(user storage.User) error {
-	m.mutex.RLock()
+	m.RLock()
 	userPointer, ok := m.Users[user.ID]
-	m.mutex.RUnlock()
+	m.RUnlock()
 
 	if !ok {
 		return storage.ErrUserDoesNotExist
 	}
 
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.Lock()
+	defer m.Unlock()
 
 	delete(m.UsersByEmail, userPointer.Email)
 
@@ -95,16 +83,16 @@ func (m *MemoryDatabase) UpdateUser(user storage.User) error {
 }
 
 func (m *MemoryDatabase) DeleteUser(user storage.User) error {
-	m.mutex.RLock()
+	m.RLock()
 	userPointer, ok := m.Users[user.ID]
-	m.mutex.RUnlock()
+	m.RUnlock()
 
 	if !ok {
 		return storage.ErrUserDoesNotExist
 	}
 
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.Lock()
+	defer m.Unlock()
 
 	delete(m.UsersByEmail, userPointer.Email)
 	delete(m.Users, userPointer.ID)
@@ -113,8 +101,8 @@ func (m *MemoryDatabase) DeleteUser(user storage.User) error {
 }
 
 func (m *MemoryDatabase) GetEventsByUserID(userID int64) ([]storage.Event, error) {
-	m.mutex.RLock()
-	defer m.mutex.RUnlock()
+	m.RLock()
+	defer m.RUnlock()
 
 	events, ok := m.EventsByUserID[userID]
 	if !ok {
@@ -130,8 +118,8 @@ func (m *MemoryDatabase) GetEventsByUserID(userID int64) ([]storage.Event, error
 }
 
 func (m *MemoryDatabase) getEventsByDateRange(userID int64, fromDate, toDate time.Time) ([]storage.Event, error) {
-	m.mutex.RLock()
-	defer m.mutex.RUnlock()
+	m.RLock()
+	defer m.RUnlock()
 
 	events, ok := m.EventsByUserID[userID]
 	if !ok {
@@ -145,12 +133,6 @@ func (m *MemoryDatabase) getEventsByDateRange(userID int64, fromDate, toDate tim
 
 			continue
 		}
-
-		// if eventPointer.DateTo.After(fromDate) && eventPointer.DateTo.Before(toDate) {
-		// 	selectedEvents = append(selectedEvents, *eventPointer)
-
-		// 	continue
-		// }
 	}
 
 	return selectedEvents, nil
@@ -165,8 +147,8 @@ func (m *MemoryDatabase) CreateEvent(userID int64, title, content string, dateFr
 		DateTo:   dateTo,
 	}
 
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.Lock()
+	defer m.Unlock()
 
 	m.LatestRecordID++
 	event.ID = m.LatestRecordID
@@ -178,16 +160,16 @@ func (m *MemoryDatabase) CreateEvent(userID int64, title, content string, dateFr
 }
 
 func (m *MemoryDatabase) UpdateEvent(event storage.Event) error {
-	m.mutex.RLock()
+	m.RLock()
 	eventPointer, ok := m.Events[event.ID]
-	m.mutex.RUnlock()
+	m.RUnlock()
 
 	if !ok {
 		return storage.ErrEventDoesNotExist
 	}
 
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.Lock()
+	defer m.Unlock()
 
 	// Change attributes by exist pointer.
 	eventPointer.UserID = event.UserID
@@ -201,16 +183,16 @@ func (m *MemoryDatabase) UpdateEvent(event storage.Event) error {
 }
 
 func (m *MemoryDatabase) DeleteEvent(event storage.Event) error {
-	m.mutex.RLock()
+	m.RLock()
 	eventPointer, ok := m.Events[event.ID]
-	m.mutex.RUnlock()
+	m.RUnlock()
 
 	if !ok {
 		return storage.ErrEventDoesNotExist
 	}
 
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.Lock()
+	defer m.Unlock()
 
 	for idx, pointers := range m.EventsByUserID[eventPointer.UserID] {
 		if pointers != eventPointer {
@@ -252,8 +234,8 @@ func (m *MemoryDatabase) MonthlyEvents(userID int64, date time.Time) ([]storage.
 }
 
 func (m *MemoryDatabase) GetNotifyReadyEvents() ([]storage.Event, error) {
-	m.mutex.RLock()
-	defer m.mutex.RUnlock()
+	m.RLock()
+	defer m.RUnlock()
 
 	twoWeekLeft := time.Now().Add(2 * time.Hour * 24 * 7)
 	selectedEvents := make([]storage.Event, 0)
@@ -268,16 +250,16 @@ func (m *MemoryDatabase) GetNotifyReadyEvents() ([]storage.Event, error) {
 }
 
 func (m *MemoryDatabase) MarkEventAsNotified(event *storage.Event) error {
-	m.mutex.RLock()
+	m.RLock()
 	eventPointer, ok := m.Events[event.ID]
-	m.mutex.RUnlock()
+	m.RUnlock()
 
 	if !ok {
 		return storage.ErrEventDoesNotExist
 	}
 
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.Lock()
+	defer m.Unlock()
 
 	// Back compatibility with SQL.
 	event.Notified = true
