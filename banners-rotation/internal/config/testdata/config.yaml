@@ -1,0 +1,10 @@
+---
+logger:
+  output:
+    - stdout
+  error:
+    - stderr
+  level: info
+  encoding: json
+db:
+  path: user=postgres password=postgres dbname=postgres sslmode=disable
