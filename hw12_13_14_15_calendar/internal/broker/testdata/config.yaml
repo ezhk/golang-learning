@@ -1,0 +1,13 @@
+---
+logger:
+  output:
+    - stdout
+  error:
+    - stderr
+  level: info
+  encoding: json
+broker:
+  amqp: amqp://guest:guest@localhost:5672/
+  exchange: test-events
+  exchangeType: direct
+  routingKey: test-notifications

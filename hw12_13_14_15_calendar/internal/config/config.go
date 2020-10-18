@@ -9,11 +9,12 @@ import (
 )
 
 type Configuration struct {
-	Logger LoggerParams   `yaml:"logger"`
-	DB     DatabaseParams `yaml:"db"`
-	Server ServerParams   `yaml:"server"`
-	Broker BrokerParams   `yaml:"broker"`
-	Test   TestParams     `yaml:"test"`
+	Logger    LoggerParams    `yaml:"logger"`
+	DB        DatabaseParams  `yaml:"db"`
+	Server    ServerParams    `yaml:"server"`
+	Broker    BrokerParams    `yaml:"broker"`
+	Scheduler SchedulerParams `yaml:"scheduler"`
+	Test      TestParams      `yaml:"test"`
 }
 
 type LoggerParams struct {
@@ -39,6 +40,10 @@ type BrokerParams struct {
 	Exchange     string `yaml:"exchange"`
 	ExchangeType string `yaml:"exchangeType"`
 	RoutingKey   string `yaml:"routingKey"`
+}
+
+type SchedulerParams struct {
+	CheckInterval int `yaml:"checkInterval"`
 }
 
 type TestParams struct {
