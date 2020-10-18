@@ -3,7 +3,6 @@ package core
 import (
 	"testing"
 
-	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 	"github.com/stretchr/testify/require"
 )
 
@@ -76,10 +75,7 @@ func TestCore(t *testing.T) {
 				err:          nil,
 			},
 		} {
-			scoreVal, err := Score(&structs.BannerScore{
-				Shows:  tt.shows,
-				Clicks: tt.clicks,
-			}, tt.summaryShows)
+			scoreVal, err := Score(tt.clicks, tt.shows, tt.summaryShows)
 
 			require.Equal(t, tt.expected, scoreVal)
 			require.Equal(t, tt.err, err)

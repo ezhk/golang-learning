@@ -3,8 +3,6 @@ package core
 import (
 	"errors"
 	"math"
-
-	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 )
 
 var (
@@ -14,10 +12,10 @@ var (
 )
 
 // Score - based on UCB1 algorythm.
-func Score(b *structs.BannerScore, summaryShows int64) (float64, error) {
-	fClicks := float64(b.Clicks)
-	fShows := float64(b.Shows)
-	fSummaryShows := float64(summaryShows)
+func Score(clicks int64, bannerShows int64, summaryBannersShows int64) (float64, error) {
+	fClicks := float64(clicks)
+	fShows := float64(bannerShows)
+	fSummaryShows := float64(summaryBannersShows)
 
 	if fShows < 1 {
 		return 0, ErrSmallValue
