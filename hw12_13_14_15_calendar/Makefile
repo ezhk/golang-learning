@@ -2,7 +2,7 @@ build: clean test
 	go build -o ./build/calendar -tags=server,sender,scheduler .
 
 clean:
-	find build -not -name "README.md" -delete
+	find build -not -name "README.md" -delete || true
 
 test:
 	go test -race ./...
