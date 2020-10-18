@@ -7,10 +7,16 @@ logger:
   level: info
   encoding: json
 db:
-  path: calendar.sql
-  type: in-memory
+  path: user=postgres password=postgres dbname=postgres sslmode=disable
+  type: sql
 server:
   host: localhost
-  port: 8080
+  httpPort: 8080
+  grpcPort: 9090
 test:
   doNotRemoveMe: 42
+broker:
+  amqp: amqp://guest:guest@localhost:5672/
+  exchange: events
+  exchangeType: direct
+  routingKey: notifications

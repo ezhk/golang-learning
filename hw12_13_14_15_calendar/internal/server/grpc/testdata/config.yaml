@@ -1,0 +1,4 @@
+---
+db:
+  path: calendar.sql
+  type: in-memory

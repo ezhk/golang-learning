@@ -1,6 +1,9 @@
 package config
 
 import (
+	storage "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/storage"
+	memorystorage "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/storage/memory"
+	sqlstorage "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/storage/sql"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
@@ -9,6 +12,7 @@ type Configuration struct {
 	Logger LoggerParams   `yaml:"logger"`
 	DB     DatabaseParams `yaml:"db"`
 	Server ServerParams   `yaml:"server"`
+	Broker BrokerParams   `yaml:"broker"`
 	Test   TestParams     `yaml:"test"`
 }
 
@@ -25,8 +29,16 @@ type DatabaseParams struct {
 }
 
 type ServerParams struct {
-	Host string `yaml:"host"`
-	Port int    `yaml:"port"`
+	Host     string `yaml:"host"`
+	HTTPPort int    `yaml:"httpPort"`
+	GRPCPort int    `yaml:"grpcPort"`
+}
+
+type BrokerParams struct {
+	AMQP         string `yaml:"amqp"`
+	Exchange     string `yaml:"exchange"`
+	ExchangeType string `yaml:"exchangeType"`
+	RoutingKey   string `yaml:"routingKey"`
 }
 
 type TestParams struct {
@@ -54,6 +66,18 @@ func (cfg *Configuration) updateDatabaseConfig() {
 		}
 	case "in-memory":
 	}
+}
+
+func (cfg *Configuration) DatabaseBuilder() storage.ClientInterface {
+	if cfg.DB.Type == "in-memory" {
+		return memorystorage.NewDatatabase()
+	}
+
+	return sqlstorage.NewDatatabase()
+}
+
+func (cfg *Configuration) GetDatabasePath() string {
+	return cfg.DB.Path
 }
 
 func (cfg *Configuration) ZapConfigBuilder() zap.Config {

@@ -8,8 +8,7 @@ import (
 )
 
 type Logger struct {
-	zap.SugaredLogger
-	Sync func() error
+	zap.Logger
 }
 
 func NewLogger(cfg *config.Configuration) *Logger {
@@ -18,12 +17,8 @@ func NewLogger(cfg *config.Configuration) *Logger {
 	if err != nil {
 		log.Fatalf("can't initialize zap logger: %v", err)
 	}
-	sugar := logger.Sugar()
 
-	return &Logger{
-		*sugar,
-		logger.Sync,
-	}
+	return &Logger{*logger}
 }
 
 func (l *Logger) Close() error {

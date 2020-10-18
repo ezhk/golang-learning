@@ -12,6 +12,5 @@ db:
 server:
   host: localhost
   httpPort: 8080
-  grpcPort: 9090
 test:
   doNotRemoveMe: 42

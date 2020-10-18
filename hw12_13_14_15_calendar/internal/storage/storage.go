@@ -3,6 +3,8 @@ package storage
 import (
 	"errors"
 	"time"
+
+	structs "github.com/ezhk/golang-learning/hw12_13_14_15_calendar/internal/structs"
 )
 
 var (
@@ -12,34 +14,30 @@ var (
 	ErrEventDoesNotExist = errors.New("event doesn't exist")
 )
 
-type Event struct {
-	ID       int64     `db:"id"`
-	UserID   int64     `db:"user_id"`
-	Title    string    `db:"title"`
-	Content  string    `db:"content"`
-	DateFrom time.Time `db:"date_from"`
-	DateTo   time.Time `db:"date_to"`
-}
-
-// email must be unique and not null.
-type User struct {
-	ID        int64  `db:"id"`
-	Email     string `db:"email"`
-	FirstName string `db:"first_name"`
-	LastName  string `db:"last_name"`
-}
+type (
+	Event          = structs.Event
+	User           = structs.User
+	MemoryDatabase = structs.MemoryDatabase
+)
 
 type ClientInterface interface {
 	Connect(string) error
 	Close() error
 
 	GetUserByEmail(string) (User, error)
-	CreateUser(string, string, string) (int64, error)
-	UpdateUser(int64, string, string, string) error
-	DeleteUser(int64) error
+	CreateUser(string, string, string) (User, error)
+	UpdateUser(User) error
+	DeleteUser(User) error
 
-	GetRecordsByUserID(int64) ([]Event, error)
-	CreateRecord(int64, string, string, time.Time, time.Time) (int64, error)
-	UpdateRecord(int64, int64, string, string, time.Time, time.Time) error
-	DeleteRecord(int64) error
+	GetEventsByUserID(int64) ([]Event, error)
+	CreateEvent(int64, string, string, time.Time, time.Time) (Event, error)
+	UpdateEvent(Event) error
+	DeleteEvent(Event) error
+
+	DailyEvents(userID int64, date time.Time) ([]Event, error)
+	WeeklyEvents(userID int64, date time.Time) ([]Event, error)
+	MonthlyEvents(userID int64, date time.Time) ([]Event, error)
+
+	GetNotifyReadyEvents() ([]Event, error)
+	MarkEventAsNotified(event *Event) error
 }
