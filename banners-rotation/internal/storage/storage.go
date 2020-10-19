@@ -3,7 +3,6 @@ package storage
 import (
 	"github.com/ezhk/golang-learning/banners-rotation/internal/config"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

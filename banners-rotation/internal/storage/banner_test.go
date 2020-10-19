@@ -27,6 +27,10 @@ func (s *BannersTestSuite) SetupTest() {
 	// Define storage.
 	s.db = db
 
+	s.TearDownTest()
+}
+
+func (s *BannersTestSuite) TearDownTest() {
 	// Clean exists Banners.
 	banners, err := s.db.ReadBanners()
 	s.NoError(err)

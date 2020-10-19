@@ -11,7 +11,7 @@ var (
 	ErrNaNValue        = errors.New("undefined value")
 )
 
-// Score - based on UCB1 algorythm.
+// Score based on UCB1 algorythm.
 func Score(clicks int64, bannerShows int64, summaryBannersShows int64) (float64, error) {
 	fClicks := float64(clicks)
 	fShows := float64(bannerShows)

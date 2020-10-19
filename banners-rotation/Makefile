@@ -1,0 +1,6 @@
+test:
+	go test -tags integration -race ./...
+
+lint:
+	go get github.com/golangci/golangci-lint/cmd/golangci-lint
+	golangci-lint run ./...

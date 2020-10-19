@@ -27,6 +27,10 @@ func (s *GroupsTestSuite) SetupTest() {
 	// Define Storage.
 	s.db = db
 
+	s.TearDownTest()
+}
+
+func (s *GroupsTestSuite) TearDownTest() {
 	// Clean exists Groups.
 	groups, err := s.db.ReadGroups()
 	s.NoError(err)

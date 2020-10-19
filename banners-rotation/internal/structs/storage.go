@@ -47,3 +47,10 @@ type BannerScore struct {
 	Clicks int64   `gorm:"default:0"`
 	Score  float64 `gorm:"default:0"` // will be computed in background task
 }
+
+// SummaryBannersShows using for UCB1 summary show value.
+type SummaryBannersShows struct {
+	SlotID       uint
+	GroupID      uint
+	SummaryShows int64
+}
