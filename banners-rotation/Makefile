@@ -1,3 +1,6 @@
+generate:
+	go generate ./...
+
 test:
 	go test -tags integration -race ./...
 

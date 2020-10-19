@@ -23,28 +23,29 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type SlotsTestSuite struct {
+type SlotTestSuite struct {
 	suite.Suite
 	db *Storage
 }
 
-func TestSlotsSuite(t *testing.T) {
-	suite.Run(t, new(SlotsTestSuite))
+func TestSlotSuite(t *testing.T) {
+	suite.Run(t, new(SlotTestSuite))
 }
 
-func (s *SlotsTestSuite) SetupTest() {
+func (s *SlotTestSuite) SetupTest() {
 	cfg := config.NewConfig("testdata/config.yaml")
 
 	db, err := NewStorage(cfg)
 	s.NoError(err)
 
-	// Define Storage.
+	// Define storage.
 	s.db = db
 
+	// Clean previous values.
 	s.TearDownTest()
 }
 
-func (s *SlotsTestSuite) TearDownTest() {
+func (s *SlotTestSuite) TearDownTest() {
 	// Clean exists slots.
 	slots, err := s.db.ReadSlots()
 	s.NoError(err)
@@ -54,7 +55,7 @@ func (s *SlotsTestSuite) TearDownTest() {
 	}
 }
 
-func (s *SlotsTestSuite) TestSlotOperations() {
+func (s *SlotTestSuite) TestSlotOperations() {
 	// Create new slot.
 	slot, err := s.db.CreateSlot("test slot")
 	s.NoError(err)
@@ -76,7 +77,7 @@ func (s *SlotsTestSuite) TestSlotOperations() {
 
 	err = s.db.DeleteSlot(slots[0].ID)
 	s.NoError(err)
-}		
+}
 `, string(data))
 	})
 }
