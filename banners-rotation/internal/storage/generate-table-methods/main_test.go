@@ -19,8 +19,11 @@ import (
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 )
 
-func (s *Storage) CreateBanner(bannerName string) (structs.Banner, error) {
-	banner := structs.Banner{Name: bannerName}
+func (s *Storage) CreateBanner(bannerName, bannerDescription string) (structs.Banner, error) {
+	banner := structs.Banner{
+		Name:        bannerName,
+		Description: bannerDescription,
+	}
 	result := s.db.Create(&banner)
 
 	return banner, result.Error

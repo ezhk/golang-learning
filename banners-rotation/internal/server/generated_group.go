@@ -11,22 +11,24 @@ import (
 
 func ConvertGroupToSimpleResponse(b structs.Group) *SimpleResponse {
 	return &SimpleResponse{
-		ID:        b.ID,
-		Name:      b.Name,
-		CreatedAt: timestamppb.New(b.CreatedAt),
-		UpdatedAt: timestamppb.New(b.UpdatedAt),
+		ID:          b.ID,
+		Name:        b.Name,
+		Description: b.Description,
+		CreatedAt:   timestamppb.New(b.CreatedAt),
+		UpdatedAt:   timestamppb.New(b.UpdatedAt),
 	}
 }
 
 func ConvertSimpleUpdateRequestToGroup(r *SimpleUpdateRequest) structs.Group {
 	return structs.Group{
-		ID:   r.ID,
-		Name: r.Name,
+		ID:          r.ID,
+		Name:        r.Name,
+		Description: r.Description,
 	}
 }
 
 func (s Server) CreateGroup(ctx context.Context, r *SimpleCreateRequest) (*SimpleResponse, error) {
-	group, err := s.storage.CreateGroup(r.Name)
+	group, err := s.storage.CreateGroup(r.Name, r.Description)
 	if err != nil {
 		return nil, err
 	}

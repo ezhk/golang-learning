@@ -24,22 +24,24 @@ import (
 
 func ConvertBannerToSimpleResponse(b structs.Banner) *SimpleResponse {
 	return &SimpleResponse{
-		ID:        b.ID,
-		Name:      b.Name,
-		CreatedAt: timestamppb.New(b.CreatedAt),
-		UpdatedAt: timestamppb.New(b.UpdatedAt),
+		ID:          b.ID,
+		Name:        b.Name,
+		Description: b.Description,
+		CreatedAt:   timestamppb.New(b.CreatedAt),
+		UpdatedAt:   timestamppb.New(b.UpdatedAt),
 	}
 }
 
 func ConvertSimpleUpdateRequestToBanner(r *SimpleUpdateRequest) structs.Banner {
 	return structs.Banner{
-		ID:   r.ID,
-		Name: r.Name,
+		ID:          r.ID,
+		Name:        r.Name,
+		Description: r.Description,
 	}
 }
 
 func (s Server) CreateBanner(ctx context.Context, r *SimpleCreateRequest) (*SimpleResponse, error) {
-	banner, err := s.storage.CreateBanner(r.Name)
+	banner, err := s.storage.CreateBanner(r.Name, r.Description)
 	if err != nil {
 		return nil, err
 	}

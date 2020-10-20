@@ -23,8 +23,11 @@ import (
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 )
 
-func (s *Storage) Create{{.Name | Title}}({{.Name | ToLower}}Name string) (structs.{{.Name | Title}}, error) {
-	{{.Name | ToLower}} := structs.{{.Name | Title}}{Name: {{.Name | ToLower}}Name}
+func (s *Storage) Create{{.Name | Title}}({{.Name | ToLower}}Name, {{.Name | ToLower}}Description string) (structs.{{.Name | Title}}, error) {
+	{{.Name | ToLower}} := structs.{{.Name | Title}}{
+		Name: {{.Name | ToLower}}Name,
+		Description: {{.Name | ToLower}}Description,
+	}
 	result := s.db.Create(&{{.Name | ToLower}})
 
 	return {{.Name | ToLower}}, result.Error

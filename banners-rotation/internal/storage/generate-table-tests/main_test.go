@@ -57,7 +57,7 @@ func (s *SlotTestSuite) TearDownTest() {
 
 func (s *SlotTestSuite) TestSlotOperations() {
 	// Create new slot.
-	slot, err := s.db.CreateSlot("test slot")
+	slot, err := s.db.CreateSlot("test slot", "test description")
 	s.NoError(err)
 	s.Equal("test slot", slot.Name)
 
@@ -72,7 +72,7 @@ func (s *SlotTestSuite) TestSlotOperations() {
 	s.Equal("updated test slot", slots[0].Name)
 
 	// Call "duplicate key value violates unique constraint".
-	_, err = s.db.CreateSlot("updated test slot")
+	_, err = s.db.CreateSlot("updated test slot", "empty")
 	s.Error(err)
 
 	err = s.db.DeleteSlot(slots[0].ID)

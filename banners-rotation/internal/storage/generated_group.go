@@ -6,8 +6,11 @@ import (
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 )
 
-func (s *Storage) CreateGroup(groupName string) (structs.Group, error) {
-	group := structs.Group{Name: groupName}
+func (s *Storage) CreateGroup(groupName, groupDescription string) (structs.Group, error) {
+	group := structs.Group{
+		Name:        groupName,
+		Description: groupDescription,
+	}
 	result := s.db.Create(&group)
 
 	return group, result.Error

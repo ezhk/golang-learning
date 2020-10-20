@@ -28,22 +28,24 @@ import (
 
 func Convert{{.Name | Title}}ToSimpleResponse(b structs.{{.Name | Title}}) *SimpleResponse {
 	return &SimpleResponse{
-		ID:        b.ID,
-		Name:      b.Name,
-		CreatedAt: timestamppb.New(b.CreatedAt),
-		UpdatedAt: timestamppb.New(b.UpdatedAt),
+		ID:          b.ID,
+		Name:        b.Name,
+		Description: b.Description,
+		CreatedAt:   timestamppb.New(b.CreatedAt),
+		UpdatedAt:   timestamppb.New(b.UpdatedAt),
 	}
 }
 
 func ConvertSimpleUpdateRequestTo{{.Name | Title}}(r *SimpleUpdateRequest) structs.{{.Name | Title}} {
 	return structs.{{.Name | Title}}{
-		ID:   r.ID,
-		Name: r.Name,
+		ID:          r.ID,
+		Name:        r.Name,
+		Description: r.Description,
 	}
 }
 
 func (s Server) Create{{.Name | Title}}(ctx context.Context, r *SimpleCreateRequest) (*SimpleResponse, error) {
-	{{.Name | ToLower}}, err := s.storage.Create{{.Name | Title}}(r.Name)
+	{{.Name | ToLower}}, err := s.storage.Create{{.Name | Title}}(r.Name, r.Description)
 	if err != nil {
 		return nil, err
 	}

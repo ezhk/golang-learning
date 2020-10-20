@@ -44,7 +44,7 @@ func (s *GroupTestSuite) TearDownTest() {
 
 func (s *GroupTestSuite) TestGroupOperations() {
 	// Create new group.
-	group, err := s.db.CreateGroup("test group")
+	group, err := s.db.CreateGroup("test group", "test description")
 	s.NoError(err)
 	s.Equal("test group", group.Name)
 
@@ -59,7 +59,7 @@ func (s *GroupTestSuite) TestGroupOperations() {
 	s.Equal("updated test group", groups[0].Name)
 
 	// Call "duplicate key value violates unique constraint".
-	_, err = s.db.CreateGroup("updated test group")
+	_, err = s.db.CreateGroup("updated test group", "empty")
 	s.Error(err)
 
 	err = s.db.DeleteGroup(groups[0].ID)

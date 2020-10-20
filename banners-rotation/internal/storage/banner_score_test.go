@@ -43,27 +43,27 @@ func (bs *BannerScoreTestSuite) SetupTest() {
 	}
 
 	// Create test banner.
-	firstBanner, err := bs.db.CreateBanner("test first score banner")
+	firstBanner, err := bs.db.CreateBanner("test first score banner", "first banner description")
 	bs.NoError(err)
 	bs.firstBanner = &firstBanner
 
 	// Create test banner.
-	secondBanner, err := bs.db.CreateBanner("test second score banner")
+	secondBanner, err := bs.db.CreateBanner("test second score banner", "second banner description")
 	bs.NoError(err)
 	bs.secondBanner = &secondBanner
 
 	// Create first slot.
-	firstSlot, err := bs.db.CreateSlot("test first score slot")
+	firstSlot, err := bs.db.CreateSlot("test first score slot", "first slot description")
 	bs.NoError(err)
 	bs.firstSlot = &firstSlot
 
 	// Create second slot.
-	secondSlot, err := bs.db.CreateSlot("test second score slot")
+	secondSlot, err := bs.db.CreateSlot("test second score slot", "second slot description")
 	bs.NoError(err)
 	bs.secondSlot = &secondSlot
 
 	// Create test banner.
-	group, err := bs.db.CreateGroup("test score group")
+	group, err := bs.db.CreateGroup("test score group", "group description")
 	bs.NoError(err)
 	bs.group = &group
 }

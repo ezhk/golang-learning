@@ -11,22 +11,24 @@ import (
 
 func ConvertSlotToSimpleResponse(b structs.Slot) *SimpleResponse {
 	return &SimpleResponse{
-		ID:        b.ID,
-		Name:      b.Name,
-		CreatedAt: timestamppb.New(b.CreatedAt),
-		UpdatedAt: timestamppb.New(b.UpdatedAt),
+		ID:          b.ID,
+		Name:        b.Name,
+		Description: b.Description,
+		CreatedAt:   timestamppb.New(b.CreatedAt),
+		UpdatedAt:   timestamppb.New(b.UpdatedAt),
 	}
 }
 
 func ConvertSimpleUpdateRequestToSlot(r *SimpleUpdateRequest) structs.Slot {
 	return structs.Slot{
-		ID:   r.ID,
-		Name: r.Name,
+		ID:          r.ID,
+		Name:        r.Name,
+		Description: r.Description,
 	}
 }
 
 func (s Server) CreateSlot(ctx context.Context, r *SimpleCreateRequest) (*SimpleResponse, error) {
-	slot, err := s.storage.CreateSlot(r.Name)
+	slot, err := s.storage.CreateSlot(r.Name, r.Description)
 	if err != nil {
 		return nil, err
 	}

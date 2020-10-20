@@ -6,8 +6,11 @@ import (
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 )
 
-func (s *Storage) CreateSlot(slotName string) (structs.Slot, error) {
-	slot := structs.Slot{Name: slotName}
+func (s *Storage) CreateSlot(slotName, slotDescription string) (structs.Slot, error) {
+	slot := structs.Slot{
+		Name:        slotName,
+		Description: slotDescription,
+	}
 	result := s.db.Create(&slot)
 
 	return slot, result.Error

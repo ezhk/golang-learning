@@ -44,7 +44,7 @@ func (s *BannerTestSuite) TearDownTest() {
 
 func (s *BannerTestSuite) TestBannerOperations() {
 	// Create new banner.
-	banner, err := s.db.CreateBanner("test banner")
+	banner, err := s.db.CreateBanner("test banner", "test description")
 	s.NoError(err)
 	s.Equal("test banner", banner.Name)
 
@@ -59,7 +59,7 @@ func (s *BannerTestSuite) TestBannerOperations() {
 	s.Equal("updated test banner", banners[0].Name)
 
 	// Call "duplicate key value violates unique constraint".
-	_, err = s.db.CreateBanner("updated test banner")
+	_, err = s.db.CreateBanner("updated test banner", "empty")
 	s.Error(err)
 
 	err = s.db.DeleteBanner(banners[0].ID)

@@ -10,15 +10,20 @@ import "google/protobuf/empty.proto";
 message SimpleResponse {
   uint64 ID = 1;
   string Name = 2;
-  google.protobuf.Timestamp CreatedAt = 3;
-  google.protobuf.Timestamp UpdatedAt = 4;
+  string Description = 3;
+  google.protobuf.Timestamp CreatedAt = 4;
+  google.protobuf.Timestamp UpdatedAt = 5;
 }
 message MultipleSimpleResponse { repeated SimpleResponse Objects = 1; }
 
-message SimpleCreateRequest { string Name = 1; }
+message SimpleCreateRequest {
+  string Name = 1;
+  string Description = 2;
+}
 message SimpleUpdateRequest {
   uint64 ID = 1;
   string Name = 2;
+  string Description = 3;
 }
 
 message SimpleDeleteRequest { uint64 ID = 1; }

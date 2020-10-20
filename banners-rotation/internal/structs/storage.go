@@ -9,7 +9,8 @@ type Slot struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	Name string `gorm:"unique"`
+	Name        string `gorm:"unique"`
+	Description string
 }
 
 type Group struct {
@@ -17,7 +18,8 @@ type Group struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	Name string `gorm:"unique"`
+	Name        string `gorm:"unique"`
+	Description string
 }
 
 type Banner struct {
@@ -25,7 +27,8 @@ type Banner struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	Name string `gorm:"unique"`
+	Name        string `gorm:"unique"`
+	Description string
 }
 
 type BannerScore struct {

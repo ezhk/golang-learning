@@ -422,6 +422,9 @@
       "properties": {
         "Name": {
           "type": "string"
+        },
+        "Description": {
+          "type": "string"
         }
       }
     },
@@ -444,6 +447,9 @@
         "Name": {
           "type": "string"
         },
+        "Description": {
+          "type": "string"
+        },
         "CreatedAt": {
           "type": "string",
           "format": "date-time"
@@ -462,6 +468,9 @@
           "format": "uint64"
         },
         "Name": {
+          "type": "string"
+        },
+        "Description": {
           "type": "string"
         }
       }

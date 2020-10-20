@@ -61,7 +61,7 @@ func (s *{{.Name | Title}}TestSuite) TearDownTest() {
 
 func (s *{{.Name | Title}}TestSuite) Test{{.Name | Title}}Operations() {
 	// Create new {{.Name | ToLower}}.
-	{{.Name | ToLower}}, err := s.db.Create{{.Name | Title}}("test {{.Name | ToLower}}")
+	{{.Name | ToLower}}, err := s.db.Create{{.Name | Title}}("test {{.Name | ToLower}}", "test description")
 	s.NoError(err)
 	s.Equal("test {{.Name | ToLower}}", {{.Name | ToLower}}.Name)
 
@@ -76,7 +76,7 @@ func (s *{{.Name | Title}}TestSuite) Test{{.Name | Title}}Operations() {
 	s.Equal("updated test {{.Name | ToLower}}", {{.Name | ToLower}}s[0].Name)
 
 	// Call "duplicate key value violates unique constraint".
-	_, err = s.db.Create{{.Name | Title}}("updated test {{.Name | ToLower}}")
+	_, err = s.db.Create{{.Name | Title}}("updated test {{.Name | ToLower}}", "empty")
 	s.Error(err)
 
 	err = s.db.Delete{{.Name | Title}}({{.Name | ToLower}}s[0].ID)
