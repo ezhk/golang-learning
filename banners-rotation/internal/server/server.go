@@ -24,7 +24,13 @@ type Server struct {
 	storage *storage.Storage
 }
 
+// Generate gRPC gateway.
 //go:generate protoc -I . -I ${GOPATH}/src -I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --go-grpc_out . --go-grpc_opt require_unimplemented_servers=false --go_out . --go_opt paths=source_relative --openapiv2_out . --openapiv2_opt logtostderr=true --grpc-gateway_out . --grpc-gateway_opt logtostderr=true --grpc-gateway_opt paths=source_relative --grpc-gateway_opt generate_unbound_methods=true server.proto
+
+// Generate object methods.
+//go:generate go run ./generate-server-methods/... -object banner -file banner.go
+//go:generate go run ./generate-server-methods/... -object slot -file slot.go
+//go:generate go run ./generate-server-methods/... -object group -file group.go
 
 func NewServer(configPtr *config.Configuration, loggerPtr *logger.Logger, storagePtr *storage.Storage) *Server {
 	ctx, cancel := context.WithCancel(context.Background())

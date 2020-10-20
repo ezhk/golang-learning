@@ -39,31 +39,31 @@ service Banner {
     option(google.api.http) = {delete : "/api/v1/banners/{ID}"};
   }
 
-  // // Slots methods.
-  // rpc CreateSlot(SimpleCreateRequest) returns(SimpleResponse) {
-  //   option(google.api.http) = {post : "/api/v1/slots" body : "*"};
-  // }
-  // rpc ReadSlots(google.protobuf.Empty) returns(MultipleSimpleResponse) {
-  //   option(google.api.http) = {get : "/api/v1/slots"};
-  // }
-  // rpc UpdateSlot(SimpleUpdateRequest) returns(SimpleResponse) {
-  //   option(google.api.http) = {put : "/api/v1/slots/{ID}" body : "*"};
-  // }
-  // rpc DeleteSlot(SimpleDeleteRequest) returns(google.protobuf.Empty) {
-  //   option(google.api.http) = {delete : "/api/v1/slots/{ID}"};
-  // }
+  // Slots methods.
+  rpc CreateSlot(SimpleCreateRequest) returns(SimpleResponse) {
+    option(google.api.http) = {post : "/api/v1/slots" body : "*"};
+  }
+  rpc ReadSlots(google.protobuf.Empty) returns(MultipleSimpleResponse) {
+    option(google.api.http) = {get : "/api/v1/slots"};
+  }
+  rpc UpdateSlot(SimpleUpdateRequest) returns(SimpleResponse) {
+    option(google.api.http) = {put : "/api/v1/slots/{ID}" body : "*"};
+  }
+  rpc DeleteSlot(SimpleDeleteRequest) returns(SimpleDeleteResponse) {
+    option(google.api.http) = {delete : "/api/v1/slots/{ID}"};
+  }
 
-  // // Group methods.
-  // rpc CreateGroup(SimpleCreateRequest) returns(SimpleResponse) {
-  //   option(google.api.http) = {post : "/api/v1/groups" body : "*"};
-  // }
-  // rpc ReadGroups(google.protobuf.Empty) returns(MultipleSimpleResponse) {
-  //   option(google.api.http) = {get : "/api/v1/groups"};
-  // }
-  // rpc UpdateGroup(SimpleUpdateRequest) returns(SimpleResponse) {
-  //   option(google.api.http) = {put : "/api/v1/groups/{ID}" body : "*"};
-  // }
-  // rpc DeleteGroup(SimpleDeleteRequest) returns(google.protobuf.Empty) {
-  //   option(google.api.http) = {delete : "/api/v1/groups/{ID}"};
-  // }
+  // Group methods.
+  rpc CreateGroup(SimpleCreateRequest) returns(SimpleResponse) {
+    option(google.api.http) = {post : "/api/v1/groups" body : "*"};
+  }
+  rpc ReadGroups(google.protobuf.Empty) returns(MultipleSimpleResponse) {
+    option(google.api.http) = {get : "/api/v1/groups"};
+  }
+  rpc UpdateGroup(SimpleUpdateRequest) returns(SimpleResponse) {
+    option(google.api.http) = {put : "/api/v1/groups/{ID}" body : "*"};
+  }
+  rpc DeleteGroup(SimpleDeleteRequest) returns(SimpleDeleteResponse) {
+    option(google.api.http) = {delete : "/api/v1/groups/{ID}"};
+  }
 }

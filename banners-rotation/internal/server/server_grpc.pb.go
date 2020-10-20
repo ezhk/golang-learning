@@ -23,6 +23,16 @@ type BannerClient interface {
 	ReadBanners(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*MultipleSimpleResponse, error)
 	UpdateBanner(ctx context.Context, in *SimpleUpdateRequest, opts ...grpc.CallOption) (*SimpleResponse, error)
 	DeleteBanner(ctx context.Context, in *SimpleDeleteRequest, opts ...grpc.CallOption) (*SimpleDeleteResponse, error)
+	// Slots methods.
+	CreateSlot(ctx context.Context, in *SimpleCreateRequest, opts ...grpc.CallOption) (*SimpleResponse, error)
+	ReadSlots(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*MultipleSimpleResponse, error)
+	UpdateSlot(ctx context.Context, in *SimpleUpdateRequest, opts ...grpc.CallOption) (*SimpleResponse, error)
+	DeleteSlot(ctx context.Context, in *SimpleDeleteRequest, opts ...grpc.CallOption) (*SimpleDeleteResponse, error)
+	// Group methods.
+	CreateGroup(ctx context.Context, in *SimpleCreateRequest, opts ...grpc.CallOption) (*SimpleResponse, error)
+	ReadGroups(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*MultipleSimpleResponse, error)
+	UpdateGroup(ctx context.Context, in *SimpleUpdateRequest, opts ...grpc.CallOption) (*SimpleResponse, error)
+	DeleteGroup(ctx context.Context, in *SimpleDeleteRequest, opts ...grpc.CallOption) (*SimpleDeleteResponse, error)
 }
 
 type bannerClient struct {
@@ -69,6 +79,78 @@ func (c *bannerClient) DeleteBanner(ctx context.Context, in *SimpleDeleteRequest
 	return out, nil
 }
 
+func (c *bannerClient) CreateSlot(ctx context.Context, in *SimpleCreateRequest, opts ...grpc.CallOption) (*SimpleResponse, error) {
+	out := new(SimpleResponse)
+	err := c.cc.Invoke(ctx, "/server.Banner/CreateSlot", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bannerClient) ReadSlots(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*MultipleSimpleResponse, error) {
+	out := new(MultipleSimpleResponse)
+	err := c.cc.Invoke(ctx, "/server.Banner/ReadSlots", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bannerClient) UpdateSlot(ctx context.Context, in *SimpleUpdateRequest, opts ...grpc.CallOption) (*SimpleResponse, error) {
+	out := new(SimpleResponse)
+	err := c.cc.Invoke(ctx, "/server.Banner/UpdateSlot", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bannerClient) DeleteSlot(ctx context.Context, in *SimpleDeleteRequest, opts ...grpc.CallOption) (*SimpleDeleteResponse, error) {
+	out := new(SimpleDeleteResponse)
+	err := c.cc.Invoke(ctx, "/server.Banner/DeleteSlot", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bannerClient) CreateGroup(ctx context.Context, in *SimpleCreateRequest, opts ...grpc.CallOption) (*SimpleResponse, error) {
+	out := new(SimpleResponse)
+	err := c.cc.Invoke(ctx, "/server.Banner/CreateGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bannerClient) ReadGroups(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*MultipleSimpleResponse, error) {
+	out := new(MultipleSimpleResponse)
+	err := c.cc.Invoke(ctx, "/server.Banner/ReadGroups", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bannerClient) UpdateGroup(ctx context.Context, in *SimpleUpdateRequest, opts ...grpc.CallOption) (*SimpleResponse, error) {
+	out := new(SimpleResponse)
+	err := c.cc.Invoke(ctx, "/server.Banner/UpdateGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bannerClient) DeleteGroup(ctx context.Context, in *SimpleDeleteRequest, opts ...grpc.CallOption) (*SimpleDeleteResponse, error) {
+	out := new(SimpleDeleteResponse)
+	err := c.cc.Invoke(ctx, "/server.Banner/DeleteGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BannerServer is the server API for Banner service.
 // All implementations should embed UnimplementedBannerServer
 // for forward compatibility
@@ -78,6 +160,16 @@ type BannerServer interface {
 	ReadBanners(context.Context, *empty.Empty) (*MultipleSimpleResponse, error)
 	UpdateBanner(context.Context, *SimpleUpdateRequest) (*SimpleResponse, error)
 	DeleteBanner(context.Context, *SimpleDeleteRequest) (*SimpleDeleteResponse, error)
+	// Slots methods.
+	CreateSlot(context.Context, *SimpleCreateRequest) (*SimpleResponse, error)
+	ReadSlots(context.Context, *empty.Empty) (*MultipleSimpleResponse, error)
+	UpdateSlot(context.Context, *SimpleUpdateRequest) (*SimpleResponse, error)
+	DeleteSlot(context.Context, *SimpleDeleteRequest) (*SimpleDeleteResponse, error)
+	// Group methods.
+	CreateGroup(context.Context, *SimpleCreateRequest) (*SimpleResponse, error)
+	ReadGroups(context.Context, *empty.Empty) (*MultipleSimpleResponse, error)
+	UpdateGroup(context.Context, *SimpleUpdateRequest) (*SimpleResponse, error)
+	DeleteGroup(context.Context, *SimpleDeleteRequest) (*SimpleDeleteResponse, error)
 }
 
 // UnimplementedBannerServer should be embedded to have forward compatible implementations.
@@ -95,6 +187,30 @@ func (UnimplementedBannerServer) UpdateBanner(context.Context, *SimpleUpdateRequ
 }
 func (UnimplementedBannerServer) DeleteBanner(context.Context, *SimpleDeleteRequest) (*SimpleDeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBanner not implemented")
+}
+func (UnimplementedBannerServer) CreateSlot(context.Context, *SimpleCreateRequest) (*SimpleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSlot not implemented")
+}
+func (UnimplementedBannerServer) ReadSlots(context.Context, *empty.Empty) (*MultipleSimpleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadSlots not implemented")
+}
+func (UnimplementedBannerServer) UpdateSlot(context.Context, *SimpleUpdateRequest) (*SimpleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateSlot not implemented")
+}
+func (UnimplementedBannerServer) DeleteSlot(context.Context, *SimpleDeleteRequest) (*SimpleDeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSlot not implemented")
+}
+func (UnimplementedBannerServer) CreateGroup(context.Context, *SimpleCreateRequest) (*SimpleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateGroup not implemented")
+}
+func (UnimplementedBannerServer) ReadGroups(context.Context, *empty.Empty) (*MultipleSimpleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadGroups not implemented")
+}
+func (UnimplementedBannerServer) UpdateGroup(context.Context, *SimpleUpdateRequest) (*SimpleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroup not implemented")
+}
+func (UnimplementedBannerServer) DeleteGroup(context.Context, *SimpleDeleteRequest) (*SimpleDeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteGroup not implemented")
 }
 
 // UnsafeBannerServer may be embedded to opt out of forward compatibility for this service.
@@ -180,6 +296,150 @@ func _Banner_DeleteBanner_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Banner_CreateSlot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SimpleCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BannerServer).CreateSlot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/server.Banner/CreateSlot",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BannerServer).CreateSlot(ctx, req.(*SimpleCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Banner_ReadSlots_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BannerServer).ReadSlots(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/server.Banner/ReadSlots",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BannerServer).ReadSlots(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Banner_UpdateSlot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SimpleUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BannerServer).UpdateSlot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/server.Banner/UpdateSlot",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BannerServer).UpdateSlot(ctx, req.(*SimpleUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Banner_DeleteSlot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SimpleDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BannerServer).DeleteSlot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/server.Banner/DeleteSlot",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BannerServer).DeleteSlot(ctx, req.(*SimpleDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Banner_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SimpleCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BannerServer).CreateGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/server.Banner/CreateGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BannerServer).CreateGroup(ctx, req.(*SimpleCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Banner_ReadGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BannerServer).ReadGroups(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/server.Banner/ReadGroups",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BannerServer).ReadGroups(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Banner_UpdateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SimpleUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BannerServer).UpdateGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/server.Banner/UpdateGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BannerServer).UpdateGroup(ctx, req.(*SimpleUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Banner_DeleteGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SimpleDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BannerServer).DeleteGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/server.Banner/DeleteGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BannerServer).DeleteGroup(ctx, req.(*SimpleDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Banner_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "server.Banner",
 	HandlerType: (*BannerServer)(nil),
@@ -199,6 +459,38 @@ var _Banner_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteBanner",
 			Handler:    _Banner_DeleteBanner_Handler,
+		},
+		{
+			MethodName: "CreateSlot",
+			Handler:    _Banner_CreateSlot_Handler,
+		},
+		{
+			MethodName: "ReadSlots",
+			Handler:    _Banner_ReadSlots_Handler,
+		},
+		{
+			MethodName: "UpdateSlot",
+			Handler:    _Banner_UpdateSlot_Handler,
+		},
+		{
+			MethodName: "DeleteSlot",
+			Handler:    _Banner_DeleteSlot_Handler,
+		},
+		{
+			MethodName: "CreateGroup",
+			Handler:    _Banner_CreateGroup_Handler,
+		},
+		{
+			MethodName: "ReadGroups",
+			Handler:    _Banner_ReadGroups_Handler,
+		},
+		{
+			MethodName: "UpdateGroup",
+			Handler:    _Banner_UpdateGroup_Handler,
+		},
+		{
+			MethodName: "DeleteGroup",
+			Handler:    _Banner_DeleteGroup_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
