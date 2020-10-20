@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"flag"
 	"go/format"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"strings"
+	"text/template"
 )
 
 var FunctionsMap = template.FuncMap{

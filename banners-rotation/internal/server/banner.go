@@ -5,7 +5,6 @@ import (
 
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 	"github.com/golang/protobuf/ptypes/empty"
-
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
