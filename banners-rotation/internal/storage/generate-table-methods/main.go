@@ -41,7 +41,7 @@ func (s *Storage) Update{{.Name | Title}}(b structs.{{.Name | Title}}) (structs.
 	return {{.Name | ToLower}}, result.Error
 }
 
-func (s *Storage) Delete{{.Name | Title}}(id uint) error {
+func (s *Storage) Delete{{.Name | Title}}(id uint64) error {
 	result := s.db.Delete(&structs.{{.Name | Title}}{}, id)
 
 	return result.Error

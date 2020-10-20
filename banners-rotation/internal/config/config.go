@@ -8,6 +8,7 @@ import (
 type Configuration struct {
 	Logger   LoggerParams   `yaml:"logger"`
 	Database DatabaseParams `yaml:"database"`
+	Server   ServerParams   `yaml:"server"`
 }
 
 type LoggerParams struct {
@@ -19,6 +20,11 @@ type LoggerParams struct {
 
 type DatabaseParams struct {
 	Path string `yaml:"path"`
+}
+
+type ServerParams struct {
+	HTTP string `yaml:"http"`
+	GRPC string `yaml:"grpc"`
 }
 
 func NewConfig(configPath string) *Configuration {

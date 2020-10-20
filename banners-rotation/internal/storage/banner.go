@@ -24,7 +24,7 @@ func (s *Storage) UpdateBanner(b structs.Banner) (structs.Banner, error) {
 	return banner, result.Error
 }
 
-func (s *Storage) DeleteBanner(id uint) error {
+func (s *Storage) DeleteBanner(id uint64) error {
 	result := s.db.Delete(&structs.Banner{}, id)
 
 	return result.Error

@@ -24,7 +24,7 @@ func (s *Storage) UpdateSlot(b structs.Slot) (structs.Slot, error) {
 	return slot, result.Error
 }
 
-func (s *Storage) DeleteSlot(id uint) error {
+func (s *Storage) DeleteSlot(id uint64) error {
 	result := s.db.Delete(&structs.Slot{}, id)
 
 	return result.Error

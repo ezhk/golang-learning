@@ -24,7 +24,7 @@ func (s *Storage) UpdateGroup(b structs.Group) (structs.Group, error) {
 	return group, result.Error
 }
 
-func (s *Storage) DeleteGroup(id uint) error {
+func (s *Storage) DeleteGroup(id uint64) error {
 	result := s.db.Delete(&structs.Group{}, id)
 
 	return result.Error

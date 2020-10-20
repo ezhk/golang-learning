@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func (s *Storage) CreateBannerScore(bannerID uint, slotID uint, groupID uint) (structs.BannerScore, error) {
+func (s *Storage) CreateBannerScore(bannerID uint64, slotID uint64, groupID uint64) (structs.BannerScore, error) {
 	bannerScore := structs.BannerScore{
 		BannerID: bannerID,
 		SlotID:   slotID,
@@ -37,7 +37,7 @@ func (s *Storage) UpdateBannerScore(b structs.BannerScore) (structs.BannerScore,
 	return bannerScore, result.Error
 }
 
-func (s *Storage) DeleteBannerScore(id uint) error {
+func (s *Storage) DeleteBannerScore(id uint64) error {
 	result := s.db.Delete(&structs.BannerScore{}, id)
 
 	return result.Error

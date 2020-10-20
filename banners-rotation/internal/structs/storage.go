@@ -5,7 +5,7 @@ import (
 )
 
 type Slot struct {
-	ID        uint
+	ID        uint64
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
@@ -13,7 +13,7 @@ type Slot struct {
 }
 
 type Group struct {
-	ID        uint
+	ID        uint64
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
@@ -21,7 +21,7 @@ type Group struct {
 }
 
 type Banner struct {
-	ID        uint
+	ID        uint64
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
@@ -30,17 +30,17 @@ type Banner struct {
 
 type BannerScore struct {
 	// gorm.Model
-	ID        uint
+	ID        uint64
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	BannerID uint
+	BannerID uint64
 	Banner   Banner `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
-	SlotID uint
+	SlotID uint64
 	Slot   Slot `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
-	GroupID uint
+	GroupID uint64
 	Group   Group `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	Shows  int64   `gorm:"default:0"`
@@ -50,7 +50,7 @@ type BannerScore struct {
 
 // SummaryBannersShows using for UCB1 summary show value.
 type SummaryBannersShows struct {
-	SlotID       uint
-	GroupID      uint
+	SlotID       uint64
+	GroupID      uint64
 	SummaryShows int64
 }

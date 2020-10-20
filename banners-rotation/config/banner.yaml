@@ -1,7 +1,7 @@
 ---
 logger:
   output:
-    - stdout
+    - stdout_file
   error:
     - stderr
   level: info

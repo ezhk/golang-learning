@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package server;
+option go_package = ".;server";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message SimpleResponse {
+  uint64 ID = 1;
+  string Name = 2;
+  google.protobuf.Timestamp CreatedAt = 3;
+  google.protobuf.Timestamp UpdatedAt = 4;
+}
+message MultipleSimpleResponse { repeated SimpleResponse Objects = 1; }
+
+message SimpleCreateRequest { string Name = 1; }
+message SimpleUpdateRequest {
+  uint64 ID = 1;
+  string Name = 2;
+}
+
+message SimpleDeleteRequest { uint64 ID = 1; }
+message SimpleDeleteResponse { uint64 ID = 1; }
+
+service Banner {
+  // Banner methods.
+  rpc CreateBanner(SimpleCreateRequest) returns(SimpleResponse) {
+    option(google.api.http) = {post : "/api/v1/banners" body : "*"};
+  }
+  rpc ReadBanners(google.protobuf.Empty) returns(MultipleSimpleResponse) {
+    option(google.api.http) = {get : "/api/v1/banners"};
+  }
+  rpc UpdateBanner(SimpleUpdateRequest) returns(SimpleResponse) {
+    option(google.api.http) = {put : "/api/v1/banners/{ID}" body : "*"};
+  }
+  rpc DeleteBanner(SimpleDeleteRequest) returns(SimpleDeleteResponse) {
+    option(google.api.http) = {delete : "/api/v1/banners/{ID}"};
+  }
+
+  // // Slots methods.
+  // rpc CreateSlot(SimpleCreateRequest) returns(SimpleResponse) {
+  //   option(google.api.http) = {post : "/api/v1/slots" body : "*"};
+  // }
+  // rpc ReadSlots(google.protobuf.Empty) returns(MultipleSimpleResponse) {
+  //   option(google.api.http) = {get : "/api/v1/slots"};
+  // }
+  // rpc UpdateSlot(SimpleUpdateRequest) returns(SimpleResponse) {
+  //   option(google.api.http) = {put : "/api/v1/slots/{ID}" body : "*"};
+  // }
+  // rpc DeleteSlot(SimpleDeleteRequest) returns(google.protobuf.Empty) {
+  //   option(google.api.http) = {delete : "/api/v1/slots/{ID}"};
+  // }
+
+  // // Group methods.
+  // rpc CreateGroup(SimpleCreateRequest) returns(SimpleResponse) {
+  //   option(google.api.http) = {post : "/api/v1/groups" body : "*"};
+  // }
+  // rpc ReadGroups(google.protobuf.Empty) returns(MultipleSimpleResponse) {
+  //   option(google.api.http) = {get : "/api/v1/groups"};
+  // }
+  // rpc UpdateGroup(SimpleUpdateRequest) returns(SimpleResponse) {
+  //   option(google.api.http) = {put : "/api/v1/groups/{ID}" body : "*"};
+  // }
+  // rpc DeleteGroup(SimpleDeleteRequest) returns(google.protobuf.Empty) {
+  //   option(google.api.http) = {delete : "/api/v1/groups/{ID}"};
+  // }
+}
