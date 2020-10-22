@@ -64,6 +64,29 @@
         ]
       }
     },
+    "/api/v1/banners/show": {
+      "get": {
+        "summary": "Banner events methods.",
+        "operationId": "Banner_BannerShow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serverPlacementResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Banner"
+        ]
+      }
+    },
     "/api/v1/banners/{ID}": {
       "delete": {
         "operationId": "Banner_DeleteBanner",
@@ -71,7 +94,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/serverSimpleDeleteResponse"
+              "$ref": "#/definitions/serverSimpleResponseID"
             }
           },
           "default": {
@@ -125,6 +148,37 @@
             "schema": {
               "$ref": "#/definitions/serverSimpleUpdateRequest"
             }
+          }
+        ],
+        "tags": [
+          "Banner"
+        ]
+      }
+    },
+    "/api/v1/banners/{ID}/click": {
+      "get": {
+        "operationId": "Banner_BannerClick",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serverSimpleResponseID"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
           }
         ],
         "tags": [
@@ -192,7 +246,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/serverSimpleDeleteResponse"
+              "$ref": "#/definitions/serverSimpleResponseID"
             }
           },
           "default": {
@@ -245,6 +299,127 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/serverSimpleUpdateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Banner"
+        ]
+      }
+    },
+    "/api/v1/placements": {
+      "get": {
+        "operationId": "Banner_ReadPlacements",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serverMultiplePlacementResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Banner"
+        ]
+      },
+      "post": {
+        "summary": "Placement methods.",
+        "operationId": "Banner_CreatePlacement",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serverPlacementResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serverPlacementCreateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Banner"
+        ]
+      }
+    },
+    "/api/v1/placements/{ID}": {
+      "delete": {
+        "operationId": "Banner_DeletePlacement",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serverSimpleResponseID"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "Banner"
+        ]
+      },
+      "put": {
+        "operationId": "Banner_UpdatePlacement",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serverPlacementResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serverPlacementUpdateRequest"
             }
           }
         ],
@@ -313,7 +488,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/serverSimpleDeleteResponse"
+              "$ref": "#/definitions/serverSimpleResponseID"
             }
           },
           "default": {
@@ -406,6 +581,17 @@
         }
       }
     },
+    "serverMultiplePlacementResponse": {
+      "type": "object",
+      "properties": {
+        "Objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/serverPlacementResponse"
+          }
+        }
+      }
+    },
     "serverMultipleSimpleResponse": {
       "type": "object",
       "properties": {
@@ -417,6 +603,83 @@
         }
       }
     },
+    "serverPlacementCreateRequest": {
+      "type": "object",
+      "properties": {
+        "BannerID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "SlotID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "GroupID": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "serverPlacementResponse": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Banner": {
+          "$ref": "#/definitions/serverSimpleResponse"
+        },
+        "Slot": {
+          "$ref": "#/definitions/serverSimpleResponse"
+        },
+        "Group": {
+          "$ref": "#/definitions/serverSimpleResponse"
+        },
+        "Shows": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Clicks": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Score": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "serverPlacementUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Banner": {
+          "$ref": "#/definitions/serverSimpleUpdateRequest"
+        },
+        "Slot": {
+          "$ref": "#/definitions/serverSimpleUpdateRequest"
+        },
+        "Group": {
+          "$ref": "#/definitions/serverSimpleUpdateRequest"
+        },
+        "Shows": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Clicks": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Score": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
     "serverSimpleCreateRequest": {
       "type": "object",
       "properties": {
@@ -425,15 +688,6 @@
         },
         "Description": {
           "type": "string"
-        }
-      }
-    },
-    "serverSimpleDeleteResponse": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string",
-          "format": "uint64"
         }
       }
     },
@@ -457,6 +711,15 @@
         "UpdatedAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "serverSimpleResponseID": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "uint64"
         }
       }
     },

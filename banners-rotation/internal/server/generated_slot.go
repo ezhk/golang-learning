@@ -60,10 +60,10 @@ func (s Server) UpdateSlot(ctx context.Context, r *SimpleUpdateRequest) (*Simple
 	return ConvertSlotToSimpleResponse(b), nil
 }
 
-func (s Server) DeleteSlot(ctx context.Context, r *SimpleDeleteRequest) (*SimpleDeleteResponse, error) {
+func (s Server) DeleteSlot(ctx context.Context, r *SimpleRequestID) (*SimpleResponseID, error) {
 	if err := s.storage.DeleteSlot(r.ID); err != nil {
 		return nil, err
 	}
 
-	return &SimpleDeleteResponse{ID: r.ID}, nil
+	return &SimpleResponseID{ID: r.ID}, nil
 }

@@ -1,6 +1,8 @@
 package storage
 
 import (
+	"fmt"
+
 	"github.com/ezhk/golang-learning/banners-rotation/internal/config"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 	"gorm.io/driver/postgres"
@@ -29,10 +31,18 @@ func NewStorage(cfg *config.Configuration) (*Storage, error) {
 	}
 
 	// Apply migration on create storage object.
-	err = db.AutoMigrate(&structs.Slot{}, &structs.Group{}, &structs.Banner{}, &structs.BannerScore{})
+	err = db.AutoMigrate(&structs.Slot{}, &structs.Group{}, &structs.Banner{}, &structs.BannerPlacement{})
 	if err != nil {
 		return nil, err
 	}
 
 	return &Storage{db: db}, nil
+}
+
+func FilterMap(tx *gorm.DB, filter structs.BannerFilter) error {
+	for k, v := range filter {
+		tx = tx.Where(fmt.Sprintf("%s = ?", k), v)
+	}
+
+	return nil
 }

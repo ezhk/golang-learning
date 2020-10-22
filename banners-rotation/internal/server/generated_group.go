@@ -60,10 +60,10 @@ func (s Server) UpdateGroup(ctx context.Context, r *SimpleUpdateRequest) (*Simpl
 	return ConvertGroupToSimpleResponse(b), nil
 }
 
-func (s Server) DeleteGroup(ctx context.Context, r *SimpleDeleteRequest) (*SimpleDeleteResponse, error) {
+func (s Server) DeleteGroup(ctx context.Context, r *SimpleRequestID) (*SimpleResponseID, error) {
 	if err := s.storage.DeleteGroup(r.ID); err != nil {
 		return nil, err
 	}
 
-	return &SimpleDeleteResponse{ID: r.ID}, nil
+	return &SimpleResponseID{ID: r.ID}, nil
 }

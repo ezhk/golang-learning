@@ -60,10 +60,10 @@ func (s Server) UpdateBanner(ctx context.Context, r *SimpleUpdateRequest) (*Simp
 	return ConvertBannerToSimpleResponse(b), nil
 }
 
-func (s Server) DeleteBanner(ctx context.Context, r *SimpleDeleteRequest) (*SimpleDeleteResponse, error) {
+func (s Server) DeleteBanner(ctx context.Context, r *SimpleRequestID) (*SimpleResponseID, error) {
 	if err := s.storage.DeleteBanner(r.ID); err != nil {
 		return nil, err
 	}
 
-	return &SimpleDeleteResponse{ID: r.ID}, nil
+	return &SimpleResponseID{ID: r.ID}, nil
 }

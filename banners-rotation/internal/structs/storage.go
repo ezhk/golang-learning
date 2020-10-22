@@ -31,7 +31,7 @@ type Banner struct {
 	Description string
 }
 
-type BannerScore struct {
+type BannerPlacement struct {
 	// gorm.Model
 	ID        uint64
 	CreatedAt time.Time
@@ -57,3 +57,6 @@ type SummaryBannersShows struct {
 	GroupID      uint64
 	SummaryShows int64
 }
+
+// Filter example: map[string]uint64{"banner_id": 0, "slot_id": 0, "group_id": 0}.
+type BannerFilter map[string]uint64

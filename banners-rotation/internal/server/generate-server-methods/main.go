@@ -77,12 +77,12 @@ func (s Server) Update{{.Name | Title}}(ctx context.Context, r *SimpleUpdateRequ
 	return Convert{{.Name | Title}}ToSimpleResponse(b), nil
 }
 
-func (s Server) Delete{{.Name | Title}}(ctx context.Context, r *SimpleDeleteRequest) (*SimpleDeleteResponse, error) {
+func (s Server) Delete{{.Name | Title}}(ctx context.Context, r *SimpleRequestID) (*SimpleResponseID, error) {
 	if err := s.storage.Delete{{.Name | Title}}(r.ID); err != nil {
 		return nil, err
 	}
 
-	return &SimpleDeleteResponse{ID: r.ID}, nil
+	return &SimpleResponseID{ID: r.ID}, nil
 }
 `
 
