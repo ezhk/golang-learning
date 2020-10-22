@@ -1,15 +1,5 @@
 ---
-logger:
-  output:
-    - stdout
-  error:
-    - stderr
-  level: info
-  encoding: json
 database:
   path: user=postgres password=postgres dbname=postgres sslmode=disable host=localhost port=5432
-server:
-  http: localhost:8080
-  grpc: localhost:9090
 queue:
   path: localhost:6379

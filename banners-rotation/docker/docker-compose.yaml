@@ -12,12 +12,10 @@ services:
       POSTGRES_PASSWORD: postgres
     container_name: postgres-golang-learning
 
-  rabbitmq-golang-learning:
-    image: rabbitmq:3-management
+  redis-golang-learning:
+    image: redis
     ports:
-      - "15672:15672"
-      - "5672:5672"
+      - "6379:6379"
     expose:
-      - 5672
-      - 15672
-    container_name: rabbitmq-golang-learning
+      - 6379
+    container_name: redis-golang-learning

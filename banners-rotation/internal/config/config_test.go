@@ -42,4 +42,9 @@ func TestConfig(t *testing.T) {
 		require.Equal(t, randomTestString, databasePath)
 		require.Equal(t, randomTestString, modifedEnvCfg.Database.Path)
 	})
+
+	t.Run("queue config", func(t *testing.T) {
+		cfg := NewConfig("testdata/config.yaml")
+		require.Equal(t, "localhost:6379", cfg.Queue.Path)
+	})
 }

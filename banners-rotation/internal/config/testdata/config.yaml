@@ -11,3 +11,5 @@ database:
 server:
   http: localhost:8080
   grpc: localhost:9090
+queue:
+  path: localhost:6379

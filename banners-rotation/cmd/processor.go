@@ -23,17 +23,17 @@ import (
 
 	"github.com/ezhk/golang-learning/banners-rotation/internal/logger"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/queue"
-	"github.com/ezhk/golang-learning/banners-rotation/internal/server"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/storage"
 	"github.com/spf13/cobra"
 )
 
 // serverCmd represents the server command.
-var serverCmd = &cobra.Command{
-	Use:   "server",
-	Short: "gRPC and HTTP server",
-	Long: `Server providers gRPC and REST operations
-under exist objects like a banners, slots and groups.`,
+var processorCmd = &cobra.Command{
+	Use:   "processor",
+	Short: "event messages receiver",
+	Long: `Server read events from redis and process them:
+* update placement shows/clicks;
+* calculate new score values.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Init logger.
 		zapLogger := logger.NewLogger(cfg)
@@ -51,35 +51,23 @@ under exist objects like a banners, slots and groups.`,
 			log.Fatal("cannot create queue connect: %w", err)
 		}
 
-		server := server.NewServer(cfg, zapLogger, storage, queue)
+		err = queue.RunConsumer(storage, zapLogger)
+		if err != nil {
+			log.Fatal("cannot run consumer: %w", err)
+		}
 
 		// Caught system signals.
 		s := make(chan os.Signal, 1)
 		signal.Notify(s, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
-		// Run gRPC server.
-		go func() {
-			err := server.Run()
-			if err != nil {
-				close(s)
-				log.Fatal(err)
-			}
-		}()
-
-		// Run REST API HTTP server.
-		go func() {
-			err := server.RunProxy()
-			if err != nil {
-				log.Fatal("cannot run REST API proxy: %w", err)
-				close(s)
-			}
-		}()
-
 		// Wait for interrupt signals.
 		<-s
+
+		// Wait for consumer.
+		<-queue.Conn.StopAllConsuming()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(serverCmd)
+	rootCmd.AddCommand(processorCmd)
 }

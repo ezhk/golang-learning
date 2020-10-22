@@ -7,6 +7,7 @@ import (
 
 	"github.com/ezhk/golang-learning/banners-rotation/internal/config"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/logger"
+	"github.com/ezhk/golang-learning/banners-rotation/internal/queue"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/storage"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
@@ -22,6 +23,7 @@ type Server struct {
 	config  *config.Configuration
 	logger  *logger.Logger
 	storage *storage.Storage
+	queue   *queue.Queue
 }
 
 // Generate gRPC gateway.
@@ -32,7 +34,7 @@ type Server struct {
 //go:generate go run ./generate-server-methods/... -object slot -file generated_slot.go
 //go:generate go run ./generate-server-methods/... -object group -file generated_group.go
 
-func NewServer(configPtr *config.Configuration, loggerPtr *logger.Logger, storagePtr *storage.Storage) *Server {
+func NewServer(configPtr *config.Configuration, loggerPtr *logger.Logger, storagePtr *storage.Storage, queuePrt *queue.Queue) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &Server{
@@ -42,6 +44,7 @@ func NewServer(configPtr *config.Configuration, loggerPtr *logger.Logger, storag
 		config:  configPtr,
 		logger:  loggerPtr,
 		storage: storagePtr,
+		queue:   queuePrt,
 	}
 }
 
