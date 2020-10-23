@@ -7,20 +7,6 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 )
 
-//   // Placement methods.
-//   rpc CreatePlacement(PlacementCreateRequest) returns(PlacementResponse) {
-//     option(google.api.http) = {post : "/api/v1/placements" body : "*"};
-//   }
-//   rpc ReadPlacements(google.protobuf.Empty) returns(MultiplePlacementResponse) {
-//     option(google.api.http) = {get : "/api/v1/placements"};
-//   }
-//   rpc UpdatePlacement(SimpleUpdateRequest) returns(PlacementResponse) {
-//     option(google.api.http) = {put : "/api/v1/placements/{ID}" body : "*"};
-//   }
-//   rpc DeletePlacement(SimpleRequestID) returns(SimpleResponseID) {
-//     option(google.api.http) = {delete : "/api/v1/placements/{ID}"};
-//   }
-
 func ConvertBannerPlacementToPlacementResponse(p structs.BannerPlacement) *PlacementResponse {
 	return &PlacementResponse{
 		ID:     p.ID,
@@ -33,15 +19,12 @@ func ConvertBannerPlacementToPlacementResponse(p structs.BannerPlacement) *Place
 	}
 }
 
-func ConvertBannerPlacementToPlacementUpdateResponse(p structs.BannerPlacement) *PlacementUpdateResponse {
-	return &PlacementUpdateResponse{
+func ConvertBannerPlacementToPlacementIDsResponse(p structs.BannerPlacement) *PlacementIDsResponse {
+	return &PlacementIDsResponse{
 		ID:       p.ID,
 		BannerID: p.BannerID,
 		SlotID:   p.SlotID,
 		GroupID:  p.GroupID,
-		Shows:    p.Shows,
-		Clicks:   p.Clicks,
-		Score:    p.Score,
 	}
 }
 
@@ -57,13 +40,13 @@ func ConvertPlacementUpdateRequestToBannerPlacement(r *PlacementUpdateRequest) s
 	}
 }
 
-func (s Server) CreatePlacement(ctx context.Context, r *PlacementCreateRequest) (*PlacementResponse, error) {
+func (s Server) CreatePlacement(ctx context.Context, r *PlacementCreateRequest) (*PlacementIDsResponse, error) {
 	placement, err := s.storage.CreateBannerPlacement(r.BannerID, r.SlotID, r.GroupID)
 	if err != nil {
 		return nil, err
 	}
 
-	return ConvertBannerPlacementToPlacementResponse(placement), nil
+	return ConvertBannerPlacementToPlacementIDsResponse(placement), nil
 }
 
 func (s Server) ReadPlacements(ctx context.Context, empty *empty.Empty) (*MultiplePlacementResponse, error) {
@@ -80,14 +63,14 @@ func (s Server) ReadPlacements(ctx context.Context, empty *empty.Empty) (*Multip
 	return &MultiplePlacementResponse{Objects: response}, nil
 }
 
-func (s Server) UpdatePlacement(ctx context.Context, r *PlacementUpdateRequest) (*PlacementUpdateResponse, error) {
+func (s Server) UpdatePlacement(ctx context.Context, r *PlacementUpdateRequest) (*PlacementIDsResponse, error) {
 	placement := ConvertPlacementUpdateRequestToBannerPlacement(r)
 	p, err := s.storage.UpdateBannerPlacement(placement)
 	if err != nil {
 		return nil, err
 	}
 
-	return ConvertBannerPlacementToPlacementUpdateResponse(p), nil
+	return ConvertBannerPlacementToPlacementIDsResponse(p), nil
 }
 
 func (s Server) DeletePlacement(ctx context.Context, r *SimpleRequestID) (*SimpleResponseID, error) {

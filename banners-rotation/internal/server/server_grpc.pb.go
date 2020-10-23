@@ -34,9 +34,9 @@ type BannerClient interface {
 	UpdateGroup(ctx context.Context, in *SimpleUpdateRequest, opts ...grpc.CallOption) (*SimpleResponse, error)
 	DeleteGroup(ctx context.Context, in *SimpleRequestID, opts ...grpc.CallOption) (*SimpleResponseID, error)
 	// Placement methods.
-	CreatePlacement(ctx context.Context, in *PlacementCreateRequest, opts ...grpc.CallOption) (*PlacementResponse, error)
+	CreatePlacement(ctx context.Context, in *PlacementCreateRequest, opts ...grpc.CallOption) (*PlacementIDsResponse, error)
 	ReadPlacements(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*MultiplePlacementResponse, error)
-	UpdatePlacement(ctx context.Context, in *PlacementUpdateRequest, opts ...grpc.CallOption) (*PlacementUpdateResponse, error)
+	UpdatePlacement(ctx context.Context, in *PlacementUpdateRequest, opts ...grpc.CallOption) (*PlacementIDsResponse, error)
 	DeletePlacement(ctx context.Context, in *SimpleRequestID, opts ...grpc.CallOption) (*SimpleResponseID, error)
 	// Banner events methods.
 	BannerShow(ctx context.Context, in *BannerShowRequest, opts ...grpc.CallOption) (*PlacementResponse, error)
@@ -160,8 +160,8 @@ func (c *bannerClient) DeleteGroup(ctx context.Context, in *SimpleRequestID, opt
 	return out, nil
 }
 
-func (c *bannerClient) CreatePlacement(ctx context.Context, in *PlacementCreateRequest, opts ...grpc.CallOption) (*PlacementResponse, error) {
-	out := new(PlacementResponse)
+func (c *bannerClient) CreatePlacement(ctx context.Context, in *PlacementCreateRequest, opts ...grpc.CallOption) (*PlacementIDsResponse, error) {
+	out := new(PlacementIDsResponse)
 	err := c.cc.Invoke(ctx, "/server.Banner/CreatePlacement", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -178,8 +178,8 @@ func (c *bannerClient) ReadPlacements(ctx context.Context, in *empty.Empty, opts
 	return out, nil
 }
 
-func (c *bannerClient) UpdatePlacement(ctx context.Context, in *PlacementUpdateRequest, opts ...grpc.CallOption) (*PlacementUpdateResponse, error) {
-	out := new(PlacementUpdateResponse)
+func (c *bannerClient) UpdatePlacement(ctx context.Context, in *PlacementUpdateRequest, opts ...grpc.CallOption) (*PlacementIDsResponse, error) {
+	out := new(PlacementIDsResponse)
 	err := c.cc.Invoke(ctx, "/server.Banner/UpdatePlacement", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -234,9 +234,9 @@ type BannerServer interface {
 	UpdateGroup(context.Context, *SimpleUpdateRequest) (*SimpleResponse, error)
 	DeleteGroup(context.Context, *SimpleRequestID) (*SimpleResponseID, error)
 	// Placement methods.
-	CreatePlacement(context.Context, *PlacementCreateRequest) (*PlacementResponse, error)
+	CreatePlacement(context.Context, *PlacementCreateRequest) (*PlacementIDsResponse, error)
 	ReadPlacements(context.Context, *empty.Empty) (*MultiplePlacementResponse, error)
-	UpdatePlacement(context.Context, *PlacementUpdateRequest) (*PlacementUpdateResponse, error)
+	UpdatePlacement(context.Context, *PlacementUpdateRequest) (*PlacementIDsResponse, error)
 	DeletePlacement(context.Context, *SimpleRequestID) (*SimpleResponseID, error)
 	// Banner events methods.
 	BannerShow(context.Context, *BannerShowRequest) (*PlacementResponse, error)
@@ -284,13 +284,13 @@ func (UnimplementedBannerServer) UpdateGroup(context.Context, *SimpleUpdateReque
 func (UnimplementedBannerServer) DeleteGroup(context.Context, *SimpleRequestID) (*SimpleResponseID, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteGroup not implemented")
 }
-func (UnimplementedBannerServer) CreatePlacement(context.Context, *PlacementCreateRequest) (*PlacementResponse, error) {
+func (UnimplementedBannerServer) CreatePlacement(context.Context, *PlacementCreateRequest) (*PlacementIDsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePlacement not implemented")
 }
 func (UnimplementedBannerServer) ReadPlacements(context.Context, *empty.Empty) (*MultiplePlacementResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadPlacements not implemented")
 }
-func (UnimplementedBannerServer) UpdatePlacement(context.Context, *PlacementUpdateRequest) (*PlacementUpdateResponse, error) {
+func (UnimplementedBannerServer) UpdatePlacement(context.Context, *PlacementUpdateRequest) (*PlacementIDsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePlacement not implemented")
 }
 func (UnimplementedBannerServer) DeletePlacement(context.Context, *SimpleRequestID) (*SimpleResponseID, error) {

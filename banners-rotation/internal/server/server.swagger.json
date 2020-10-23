@@ -352,7 +352,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/serverPlacementResponse"
+              "$ref": "#/definitions/serverPlacementIDsResponse"
             }
           },
           "default": {
@@ -413,7 +413,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/serverPlacementUpdateResponse"
+              "$ref": "#/definitions/serverPlacementIDsResponse"
             }
           },
           "default": {
@@ -637,6 +637,27 @@
         }
       }
     },
+    "serverPlacementIDsResponse": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "BannerID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "SlotID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "GroupID": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
     "serverPlacementResponse": {
       "type": "object",
       "properties": {
@@ -668,39 +689,6 @@
       }
     },
     "serverPlacementUpdateRequest": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "BannerID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "SlotID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "GroupID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "Shows": {
-          "type": "string",
-          "format": "int64"
-        },
-        "Clicks": {
-          "type": "string",
-          "format": "int64"
-        },
-        "Score": {
-          "type": "number",
-          "format": "double"
-        }
-      }
-    },
-    "serverPlacementUpdateResponse": {
       "type": "object",
       "properties": {
         "ID": {

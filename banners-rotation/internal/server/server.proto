@@ -44,14 +44,12 @@ message PlacementUpdateRequest {
   int64 Clicks = 6;
   double Score = 7;
 }
-message PlacementUpdateResponse {
+
+message PlacementIDsResponse {
   uint64 ID = 1;
   uint64 BannerID = 2;
   uint64 SlotID = 3;
   uint64 GroupID = 4;
-  int64 Shows = 5;
-  int64 Clicks = 6;
-  double Score = 7;
 }
 
 message PlacementResponse {
@@ -115,13 +113,13 @@ service Banner {
   }
 
   // Placement methods.
-  rpc CreatePlacement(PlacementCreateRequest) returns(PlacementResponse) {
+  rpc CreatePlacement(PlacementCreateRequest) returns(PlacementIDsResponse) {
     option(google.api.http) = {post : "/api/v1/placements" body : "*"};
   }
   rpc ReadPlacements(google.protobuf.Empty) returns(MultiplePlacementResponse) {
     option(google.api.http) = {get : "/api/v1/placements"};
   }
-  rpc UpdatePlacement(PlacementUpdateRequest) returns(PlacementUpdateResponse) {
+  rpc UpdatePlacement(PlacementUpdateRequest) returns(PlacementIDsResponse) {
     option(google.api.http) = {put : "/api/v1/placements/{ID}" body : "*"};
   }
   rpc DeletePlacement(SimpleRequestID) returns(SimpleResponseID) {
