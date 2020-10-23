@@ -1,3 +1,9 @@
+build: clean
+	go build -o build/banner .
+
+clean:
+	rm build/banner || true
+
 generate:
 	go generate ./...
 
@@ -14,3 +20,5 @@ lint:
 
 run:
 	go run . --config=config/banner.yaml $(filter-out $@,$(MAKECMDGOALS))
+
+.PHONY: build
