@@ -27,25 +27,14 @@ func (s *GroupTestSuite) SetupTest() {
 
 	// Define storage.
 	s.db = db
-
-	// Clean previous values.
-	s.TearDownTest()
-}
-
-func (s *GroupTestSuite) TearDownTest() {
-	// Clean exists groups.
-	groups, err := s.db.ReadGroups()
-	s.NoError(err)
-	for _, group := range groups {
-		err = s.db.DeleteGroup(group.ID)
-		s.NoError(err)
-	}
 }
 
 func (s *GroupTestSuite) TestGroupOperations() {
 	// Create new group.
 	group, err := s.db.CreateGroup("test group", "test description")
 	s.NoError(err)
+	defer s.db.DeleteGroup(group.ID)
+
 	s.Equal("test group", group.Name)
 
 	group.Name = "updated test group"
@@ -56,12 +45,18 @@ func (s *GroupTestSuite) TestGroupOperations() {
 	groups, err := s.db.ReadGroups()
 	s.NoError(err)
 	s.Greater(len(groups), 0)
-	s.Equal("updated test group", groups[0].Name)
+	for _, obj := range groups {
+		if obj.ID != group.ID {
+			continue
+		}
+
+		s.Equal("updated test group", obj.Name)
+	}
 
 	// Call "duplicate key value violates unique constraint".
 	_, err = s.db.CreateGroup("updated test group", "empty")
 	s.Error(err)
 
-	err = s.db.DeleteGroup(groups[0].ID)
+	err = s.db.DeleteGroup(group.ID)
 	s.NoError(err)
 }

@@ -36,10 +36,11 @@ type BannerClient interface {
 	// Placement methods.
 	CreatePlacement(ctx context.Context, in *PlacementCreateRequest, opts ...grpc.CallOption) (*PlacementResponse, error)
 	ReadPlacements(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*MultiplePlacementResponse, error)
-	UpdatePlacement(ctx context.Context, in *PlacementUpdateRequest, opts ...grpc.CallOption) (*PlacementResponse, error)
+	UpdatePlacement(ctx context.Context, in *PlacementUpdateRequest, opts ...grpc.CallOption) (*PlacementUpdateResponse, error)
 	DeletePlacement(ctx context.Context, in *SimpleRequestID, opts ...grpc.CallOption) (*SimpleResponseID, error)
 	// Banner events methods.
-	BannerShow(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PlacementResponse, error)
+	BannerShow(ctx context.Context, in *BannerShowRequest, opts ...grpc.CallOption) (*PlacementResponse, error)
+	// pid is PlacementID.
 	BannerClick(ctx context.Context, in *SimpleRequestID, opts ...grpc.CallOption) (*SimpleResponseID, error)
 }
 
@@ -177,8 +178,8 @@ func (c *bannerClient) ReadPlacements(ctx context.Context, in *empty.Empty, opts
 	return out, nil
 }
 
-func (c *bannerClient) UpdatePlacement(ctx context.Context, in *PlacementUpdateRequest, opts ...grpc.CallOption) (*PlacementResponse, error) {
-	out := new(PlacementResponse)
+func (c *bannerClient) UpdatePlacement(ctx context.Context, in *PlacementUpdateRequest, opts ...grpc.CallOption) (*PlacementUpdateResponse, error) {
+	out := new(PlacementUpdateResponse)
 	err := c.cc.Invoke(ctx, "/server.Banner/UpdatePlacement", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -195,7 +196,7 @@ func (c *bannerClient) DeletePlacement(ctx context.Context, in *SimpleRequestID,
 	return out, nil
 }
 
-func (c *bannerClient) BannerShow(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*PlacementResponse, error) {
+func (c *bannerClient) BannerShow(ctx context.Context, in *BannerShowRequest, opts ...grpc.CallOption) (*PlacementResponse, error) {
 	out := new(PlacementResponse)
 	err := c.cc.Invoke(ctx, "/server.Banner/BannerShow", in, out, opts...)
 	if err != nil {
@@ -235,10 +236,11 @@ type BannerServer interface {
 	// Placement methods.
 	CreatePlacement(context.Context, *PlacementCreateRequest) (*PlacementResponse, error)
 	ReadPlacements(context.Context, *empty.Empty) (*MultiplePlacementResponse, error)
-	UpdatePlacement(context.Context, *PlacementUpdateRequest) (*PlacementResponse, error)
+	UpdatePlacement(context.Context, *PlacementUpdateRequest) (*PlacementUpdateResponse, error)
 	DeletePlacement(context.Context, *SimpleRequestID) (*SimpleResponseID, error)
 	// Banner events methods.
-	BannerShow(context.Context, *empty.Empty) (*PlacementResponse, error)
+	BannerShow(context.Context, *BannerShowRequest) (*PlacementResponse, error)
+	// pid is PlacementID.
 	BannerClick(context.Context, *SimpleRequestID) (*SimpleResponseID, error)
 }
 
@@ -288,13 +290,13 @@ func (UnimplementedBannerServer) CreatePlacement(context.Context, *PlacementCrea
 func (UnimplementedBannerServer) ReadPlacements(context.Context, *empty.Empty) (*MultiplePlacementResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadPlacements not implemented")
 }
-func (UnimplementedBannerServer) UpdatePlacement(context.Context, *PlacementUpdateRequest) (*PlacementResponse, error) {
+func (UnimplementedBannerServer) UpdatePlacement(context.Context, *PlacementUpdateRequest) (*PlacementUpdateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePlacement not implemented")
 }
 func (UnimplementedBannerServer) DeletePlacement(context.Context, *SimpleRequestID) (*SimpleResponseID, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePlacement not implemented")
 }
-func (UnimplementedBannerServer) BannerShow(context.Context, *empty.Empty) (*PlacementResponse, error) {
+func (UnimplementedBannerServer) BannerShow(context.Context, *BannerShowRequest) (*PlacementResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BannerShow not implemented")
 }
 func (UnimplementedBannerServer) BannerClick(context.Context, *SimpleRequestID) (*SimpleResponseID, error) {
@@ -601,7 +603,7 @@ func _Banner_DeletePlacement_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _Banner_BannerShow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
+	in := new(BannerShowRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -613,7 +615,7 @@ func _Banner_BannerShow_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/server.Banner/BannerShow",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BannerServer).BannerShow(ctx, req.(*empty.Empty))
+		return srv.(BannerServer).BannerShow(ctx, req.(*BannerShowRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

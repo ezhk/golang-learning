@@ -37,9 +37,18 @@ message PlacementCreateRequest {
 
 message PlacementUpdateRequest {
   uint64 ID = 1;
-  SimpleUpdateRequest Banner = 2;
-  SimpleUpdateRequest Slot = 3;
-  SimpleUpdateRequest Group = 4;
+  uint64 BannerID = 2;
+  uint64 SlotID = 3;
+  uint64 GroupID = 4;
+  int64 Shows = 5;
+  int64 Clicks = 6;
+  double Score = 7;
+}
+message PlacementUpdateResponse {
+  uint64 ID = 1;
+  uint64 BannerID = 2;
+  uint64 SlotID = 3;
+  uint64 GroupID = 4;
   int64 Shows = 5;
   int64 Clicks = 6;
   double Score = 7;
@@ -56,6 +65,11 @@ message PlacementResponse {
 }
 
 message MultiplePlacementResponse { repeated PlacementResponse Objects = 1; }
+
+message BannerShowRequest {
+  uint64 SlotID = 1;
+  uint64 GroupID = 2;
+}
 
 service Banner {
   // Banner methods.
@@ -107,7 +121,7 @@ service Banner {
   rpc ReadPlacements(google.protobuf.Empty) returns(MultiplePlacementResponse) {
     option(google.api.http) = {get : "/api/v1/placements"};
   }
-  rpc UpdatePlacement(PlacementUpdateRequest) returns(PlacementResponse) {
+  rpc UpdatePlacement(PlacementUpdateRequest) returns(PlacementUpdateResponse) {
     option(google.api.http) = {put : "/api/v1/placements/{ID}" body : "*"};
   }
   rpc DeletePlacement(SimpleRequestID) returns(SimpleResponseID) {
@@ -115,10 +129,13 @@ service Banner {
   }
 
   // Banner events methods.
-  rpc BannerShow(google.protobuf.Empty) returns(PlacementResponse) {
-    option(google.api.http) = {get : "/api/v1/banners/show"};
+  rpc BannerShow(BannerShowRequest) returns(PlacementResponse) {
+    option(google.api.http) = {
+      get : "/api/v1/banners/sid/{SlotID}/gid/{GroupID}/show"
+    };
   }
+  // pid is PlacementID.
   rpc BannerClick(SimpleRequestID) returns(SimpleResponseID) {
-    option(google.api.http) = {get : "/api/v1/banners/{ID}/click"};
+    option(google.api.http) = {get : "/api/v1/banners/pid/{ID}/click"};
   }
 }

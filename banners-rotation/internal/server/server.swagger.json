@@ -64,7 +64,39 @@
         ]
       }
     },
-    "/api/v1/banners/show": {
+    "/api/v1/banners/pid/{ID}/click": {
+      "get": {
+        "summary": "pid is PlacementID.",
+        "operationId": "Banner_BannerClick",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serverSimpleResponseID"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "Banner"
+        ]
+      }
+    },
+    "/api/v1/banners/sid/{SlotID}/gid/{GroupID}/show": {
       "get": {
         "summary": "Banner events methods.",
         "operationId": "Banner_BannerShow",
@@ -82,6 +114,22 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "SlotID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "GroupID",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
         "tags": [
           "Banner"
         ]
@@ -148,37 +196,6 @@
             "schema": {
               "$ref": "#/definitions/serverSimpleUpdateRequest"
             }
-          }
-        ],
-        "tags": [
-          "Banner"
-        ]
-      }
-    },
-    "/api/v1/banners/{ID}/click": {
-      "get": {
-        "operationId": "Banner_BannerClick",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/serverSimpleResponseID"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "uint64"
           }
         ],
         "tags": [
@@ -396,7 +413,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/serverPlacementResponse"
+              "$ref": "#/definitions/serverPlacementUpdateResponse"
             }
           },
           "default": {
@@ -657,14 +674,50 @@
           "type": "string",
           "format": "uint64"
         },
-        "Banner": {
-          "$ref": "#/definitions/serverSimpleUpdateRequest"
+        "BannerID": {
+          "type": "string",
+          "format": "uint64"
         },
-        "Slot": {
-          "$ref": "#/definitions/serverSimpleUpdateRequest"
+        "SlotID": {
+          "type": "string",
+          "format": "uint64"
         },
-        "Group": {
-          "$ref": "#/definitions/serverSimpleUpdateRequest"
+        "GroupID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Shows": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Clicks": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Score": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "serverPlacementUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "BannerID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "SlotID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "GroupID": {
+          "type": "string",
+          "format": "uint64"
         },
         "Shows": {
           "type": "string",

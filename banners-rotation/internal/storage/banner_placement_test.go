@@ -69,11 +69,6 @@ func (bs *BannerPlacementTestSuite) SetupTest() {
 }
 
 func (bs *BannerPlacementTestSuite) TearDownTest() {
-	scores, _ := bs.db.ReadBannersPlacements(nil)
-	for _, score := range scores {
-		_ = bs.db.DeleteBannerPlacement(score.ID)
-	}
-
 	_ = bs.db.DeleteBanner(bs.firstBanner.ID)
 	_ = bs.db.DeleteBanner(bs.secondBanner.ID)
 	_ = bs.db.DeleteSlot(bs.firstSlot.ID)
@@ -85,13 +80,16 @@ func (bs *BannerPlacementTestSuite) TestBannerPlacementOperations() {
 	// Create new object.
 	bScore, err := bs.db.CreateBannerPlacement(bs.firstBanner.ID, bs.firstSlot.ID, bs.group.ID)
 	bs.NoError(err)
+	defer bs.db.DeleteBannerPlacement(bScore.ID)
+
 	bs.NotNil(bScore)
 	bs.Equal(bs.firstBanner.ID, bScore.BannerID)
 
 	// Read and check joined objects.
 	scores, err := bs.db.ReadBannersPlacements(nil)
 	bs.NoError(err)
-	bs.Equal(1, len(scores))
+	bs.Greater(len(scores), 0)
+
 	bs.Equal(bs.firstBanner.Name, scores[0].Banner.Name)
 	bs.Equal(bs.firstSlot.Name, scores[0].Slot.Name)
 	bs.Equal(bs.group.Name, scores[0].Group.Name)
@@ -106,23 +104,16 @@ func (bs *BannerPlacementTestSuite) TestBannerPlacementOperations() {
 	bScore, err = bs.db.UpdateBannerPlacement(*scores[0])
 	bs.NoError(err)
 	bs.Equal(bs.secondBanner.ID, bScore.BannerID)
-
-	// Delete operations.
-	scores, err = bs.db.ReadBannersPlacements(nil)
-	bs.NoError(err)
-	bs.Equal(1, len(scores))
-	for _, score := range scores {
-		err = bs.db.DeleteBannerPlacement(score.ID)
-		bs.NoError(err)
-	}
 }
 
 func (bs *BannerPlacementTestSuite) TestReadBannersShows() {
-	_, err := bs.db.CreateBannerPlacement(bs.firstBanner.ID, bs.firstSlot.ID, bs.group.ID)
+	firstPlacement, err := bs.db.CreateBannerPlacement(bs.firstBanner.ID, bs.firstSlot.ID, bs.group.ID)
 	bs.NoError(err)
+	defer bs.db.DeleteBannerPlacement(firstPlacement.ID)
 
-	_, err = bs.db.CreateBannerPlacement(bs.secondBanner.ID, bs.firstSlot.ID, bs.group.ID)
+	secondPlacement, err := bs.db.CreateBannerPlacement(bs.secondBanner.ID, bs.firstSlot.ID, bs.group.ID)
 	bs.NoError(err)
+	defer bs.db.DeleteBannerPlacement(secondPlacement.ID)
 
 	scores, err := bs.db.ReadBannersPlacements(nil)
 	bs.NoError(err)
@@ -161,27 +152,23 @@ func (bs *BannerPlacementTestSuite) TestReadBannersShows() {
 	bScores, err = bs.db.ReadBannersShows(structs.BannerFilter{"group_id": bs.group.ID + 1})
 	bs.NoError(err)
 	bs.Equal(0, len(bScores))
-
-	// Delete operations.
-	scores, err = bs.db.ReadBannersPlacements(nil)
-	bs.NoError(err)
-	for _, score := range scores {
-		err = bs.db.DeleteBannerPlacement(score.ID)
-		bs.NoError(err)
-	}
 }
 
 func (bs *BannerPlacementTestSuite) TestReadBannerWithHighestScore() {
 	// Create banner score and update value.
-	score, err := bs.db.CreateBannerPlacement(bs.firstBanner.ID, bs.firstSlot.ID, bs.group.ID)
+	firstScore, err := bs.db.CreateBannerPlacement(bs.firstBanner.ID, bs.firstSlot.ID, bs.group.ID)
 	bs.NoError(err)
-	score.Score = 97
-	_, err = bs.db.UpdateBannerPlacement(score)
+	defer bs.db.DeleteBannerPlacement(firstScore.ID)
+
+	firstScore.Score = 97
+	_, err = bs.db.UpdateBannerPlacement(firstScore)
 	bs.NoError(err)
 
 	// Create second banner with lowest score value.
-	score, err = bs.db.CreateBannerPlacement(bs.secondBanner.ID, bs.firstSlot.ID, bs.group.ID)
+	score, err := bs.db.CreateBannerPlacement(bs.secondBanner.ID, bs.firstSlot.ID, bs.group.ID)
 	bs.NoError(err)
+	defer bs.db.DeleteBannerPlacement(score.ID)
+
 	score.Score = 13
 	_, err = bs.db.UpdateBannerPlacement(score)
 	bs.NoError(err)
@@ -189,12 +176,4 @@ func (bs *BannerPlacementTestSuite) TestReadBannerWithHighestScore() {
 	banner, err := bs.db.ReadBannerHighestScore(nil)
 	bs.NoError(err)
 	bs.Equal(bs.firstBanner.ID, banner.BannerID)
-
-	// Delete operations.
-	scores, err := bs.db.ReadBannersPlacements(nil)
-	bs.NoError(err)
-	for _, score := range scores {
-		err = bs.db.DeleteBannerPlacement(score.ID)
-		bs.NoError(err)
-	}
 }

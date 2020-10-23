@@ -4,11 +4,13 @@ import (
 	"context"
 
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
-	"github.com/golang/protobuf/ptypes/empty"
 )
 
-func (s Server) BannerShow(ctx context.Context, empty *empty.Empty) (*PlacementResponse, error) {
-	bannerPlacement, err := s.storage.ReadBannerHighestScore(nil)
+func (s Server) BannerShow(ctx context.Context, r *BannerShowRequest) (*PlacementResponse, error) {
+	bannerPlacement, err := s.storage.ReadBannerHighestScore(structs.BannerFilter{
+		"slot_id":  r.SlotID,
+		"group_id": r.GroupID,
+	})
 	if err != nil {
 		return nil, err
 	}

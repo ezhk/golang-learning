@@ -1,0 +1,5 @@
+---
+database:
+  path: user=postgres password=postgres dbname=postgres sslmode=disable host=localhost port=5432
+queue:
+  path: localhost:6379

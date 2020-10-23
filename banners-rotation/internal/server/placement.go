@@ -33,15 +33,27 @@ func ConvertBannerPlacementToPlacementResponse(p structs.BannerPlacement) *Place
 	}
 }
 
+func ConvertBannerPlacementToPlacementUpdateResponse(p structs.BannerPlacement) *PlacementUpdateResponse {
+	return &PlacementUpdateResponse{
+		ID:       p.ID,
+		BannerID: p.BannerID,
+		SlotID:   p.SlotID,
+		GroupID:  p.GroupID,
+		Shows:    p.Shows,
+		Clicks:   p.Clicks,
+		Score:    p.Score,
+	}
+}
+
 func ConvertPlacementUpdateRequestToBannerPlacement(r *PlacementUpdateRequest) structs.BannerPlacement {
 	return structs.BannerPlacement{
-		ID:     r.ID,
-		Banner: ConvertSimpleUpdateRequestToBanner(r.Banner),
-		Slot:   ConvertSimpleUpdateRequestToSlot(r.Slot),
-		Group:  ConvertSimpleUpdateRequestToGroup(r.Group),
-		Shows:  r.Shows,
-		Clicks: r.Clicks,
-		Score:  r.Score,
+		ID:       r.ID,
+		BannerID: r.BannerID,
+		SlotID:   r.SlotID,
+		GroupID:  r.GroupID,
+		Shows:    r.Shows,
+		Clicks:   r.Clicks,
+		Score:    r.Score,
 	}
 }
 
@@ -68,14 +80,14 @@ func (s Server) ReadPlacements(ctx context.Context, empty *empty.Empty) (*Multip
 	return &MultiplePlacementResponse{Objects: response}, nil
 }
 
-func (s Server) UpdatePlacement(ctx context.Context, r *PlacementUpdateRequest) (*PlacementResponse, error) {
+func (s Server) UpdatePlacement(ctx context.Context, r *PlacementUpdateRequest) (*PlacementUpdateResponse, error) {
 	placement := ConvertPlacementUpdateRequestToBannerPlacement(r)
 	p, err := s.storage.UpdateBannerPlacement(placement)
 	if err != nil {
 		return nil, err
 	}
 
-	return ConvertBannerPlacementToPlacementResponse(p), nil
+	return ConvertBannerPlacementToPlacementUpdateResponse(p), nil
 }
 
 func (s Server) DeletePlacement(ctx context.Context, r *SimpleRequestID) (*SimpleResponseID, error) {

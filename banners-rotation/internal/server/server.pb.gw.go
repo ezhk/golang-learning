@@ -721,8 +721,35 @@ func local_request_Banner_DeletePlacement_0(ctx context.Context, marshaler runti
 }
 
 func request_Banner_BannerShow_0(ctx context.Context, marshaler runtime.Marshaler, client BannerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq empty.Empty
+	var protoReq BannerShowRequest
 	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["SlotID"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "SlotID")
+	}
+
+	protoReq.SlotID, err = runtime.Uint64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "SlotID", err)
+	}
+
+	val, ok = pathParams["GroupID"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "GroupID")
+	}
+
+	protoReq.GroupID, err = runtime.Uint64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "GroupID", err)
+	}
 
 	msg, err := client.BannerShow(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -730,8 +757,35 @@ func request_Banner_BannerShow_0(ctx context.Context, marshaler runtime.Marshale
 }
 
 func local_request_Banner_BannerShow_0(ctx context.Context, marshaler runtime.Marshaler, server BannerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq empty.Empty
+	var protoReq BannerShowRequest
 	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["SlotID"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "SlotID")
+	}
+
+	protoReq.SlotID, err = runtime.Uint64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "SlotID", err)
+	}
+
+	val, ok = pathParams["GroupID"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "GroupID")
+	}
+
+	protoReq.GroupID, err = runtime.Uint64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "GroupID", err)
+	}
 
 	msg, err := server.BannerShow(ctx, &protoReq)
 	return msg, metadata, err
@@ -1647,9 +1701,9 @@ var (
 
 	pattern_Banner_DeletePlacement_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "v1", "placements", "ID"}, ""))
 
-	pattern_Banner_BannerShow_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v1", "banners", "show"}, ""))
+	pattern_Banner_BannerShow_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6, 2, 7}, []string{"api", "v1", "banners", "sid", "SlotID", "gid", "GroupID", "show"}, ""))
 
-	pattern_Banner_BannerClick_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "banners", "ID", "click"}, ""))
+	pattern_Banner_BannerClick_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"api", "v1", "banners", "pid", "ID", "click"}, ""))
 )
 
 var (

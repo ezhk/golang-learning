@@ -27,25 +27,14 @@ func (s *SlotTestSuite) SetupTest() {
 
 	// Define storage.
 	s.db = db
-
-	// Clean previous values.
-	s.TearDownTest()
-}
-
-func (s *SlotTestSuite) TearDownTest() {
-	// Clean exists slots.
-	slots, err := s.db.ReadSlots()
-	s.NoError(err)
-	for _, slot := range slots {
-		err = s.db.DeleteSlot(slot.ID)
-		s.NoError(err)
-	}
 }
 
 func (s *SlotTestSuite) TestSlotOperations() {
 	// Create new slot.
 	slot, err := s.db.CreateSlot("test slot", "test description")
 	s.NoError(err)
+	defer s.db.DeleteSlot(slot.ID)
+
 	s.Equal("test slot", slot.Name)
 
 	slot.Name = "updated test slot"
@@ -56,12 +45,18 @@ func (s *SlotTestSuite) TestSlotOperations() {
 	slots, err := s.db.ReadSlots()
 	s.NoError(err)
 	s.Greater(len(slots), 0)
-	s.Equal("updated test slot", slots[0].Name)
+	for _, obj := range slots {
+		if obj.ID != slot.ID {
+			continue
+		}
+
+		s.Equal("updated test slot", obj.Name)
+	}
 
 	// Call "duplicate key value violates unique constraint".
 	_, err = s.db.CreateSlot("updated test slot", "empty")
 	s.Error(err)
 
-	err = s.db.DeleteSlot(slots[0].ID)
+	err = s.db.DeleteSlot(slot.ID)
 	s.NoError(err)
 }

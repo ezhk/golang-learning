@@ -27,25 +27,14 @@ func (s *BannerTestSuite) SetupTest() {
 
 	// Define storage.
 	s.db = db
-
-	// Clean previous values.
-	s.TearDownTest()
-}
-
-func (s *BannerTestSuite) TearDownTest() {
-	// Clean exists banners.
-	banners, err := s.db.ReadBanners()
-	s.NoError(err)
-	for _, banner := range banners {
-		err = s.db.DeleteBanner(banner.ID)
-		s.NoError(err)
-	}
 }
 
 func (s *BannerTestSuite) TestBannerOperations() {
 	// Create new banner.
 	banner, err := s.db.CreateBanner("test banner", "test description")
 	s.NoError(err)
+	defer s.db.DeleteBanner(banner.ID)
+
 	s.Equal("test banner", banner.Name)
 
 	banner.Name = "updated test banner"
@@ -56,12 +45,18 @@ func (s *BannerTestSuite) TestBannerOperations() {
 	banners, err := s.db.ReadBanners()
 	s.NoError(err)
 	s.Greater(len(banners), 0)
-	s.Equal("updated test banner", banners[0].Name)
+	for _, obj := range banners {
+		if obj.ID != banner.ID {
+			continue
+		}
+
+		s.Equal("updated test banner", obj.Name)
+	}
 
 	// Call "duplicate key value violates unique constraint".
 	_, err = s.db.CreateBanner("updated test banner", "empty")
 	s.Error(err)
 
-	err = s.db.DeleteBanner(banners[0].ID)
+	err = s.db.DeleteBanner(banner.ID)
 	s.NoError(err)
 }

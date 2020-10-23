@@ -44,25 +44,14 @@ func (s *{{.Name | Title}}TestSuite) SetupTest() {
 
 	// Define storage.
 	s.db = db
-
-	// Clean previous values.
-	s.TearDownTest()
-}
-
-func (s *{{.Name | Title}}TestSuite) TearDownTest() {
-	// Clean exists {{.Name | ToLower}}s.
-	{{.Name | ToLower}}s, err := s.db.Read{{.Name | Title}}s()
-	s.NoError(err)
-	for _, {{.Name | ToLower}} := range {{.Name | ToLower}}s {
-		err = s.db.Delete{{.Name | Title}}({{.Name | ToLower}}.ID)
-		s.NoError(err)
-	}
 }
 
 func (s *{{.Name | Title}}TestSuite) Test{{.Name | Title}}Operations() {
 	// Create new {{.Name | ToLower}}.
 	{{.Name | ToLower}}, err := s.db.Create{{.Name | Title}}("test {{.Name | ToLower}}", "test description")
 	s.NoError(err)
+	defer s.db.Delete{{.Name | Title}}({{.Name | ToLower}}.ID)
+
 	s.Equal("test {{.Name | ToLower}}", {{.Name | ToLower}}.Name)
 
 	{{.Name | ToLower}}.Name = "updated test {{.Name | ToLower}}"
@@ -73,13 +62,19 @@ func (s *{{.Name | Title}}TestSuite) Test{{.Name | Title}}Operations() {
 	{{.Name | ToLower}}s, err := s.db.Read{{.Name | Title}}s()
 	s.NoError(err)
 	s.Greater(len({{.Name | ToLower}}s), 0)
-	s.Equal("updated test {{.Name | ToLower}}", {{.Name | ToLower}}s[0].Name)
+	for _, obj := range {{.Name | ToLower}}s {
+		if obj.ID != {{.Name | ToLower}}.ID {
+			continue
+		}
+
+		s.Equal("updated test {{.Name | ToLower}}", obj.Name)
+	}
 
 	// Call "duplicate key value violates unique constraint".
 	_, err = s.db.Create{{.Name | Title}}("updated test {{.Name | ToLower}}", "empty")
 	s.Error(err)
 
-	err = s.db.Delete{{.Name | Title}}({{.Name | ToLower}}s[0].ID)
+	err = s.db.Delete{{.Name | Title}}({{.Name | ToLower}}.ID)
 	s.NoError(err)
 }
 `
