@@ -9,7 +9,7 @@ test:
 
 lint:
 	go get github.com/golangci/golangci-lint/cmd/golangci-lint
-	golangci-lint run --build-tags server,sender,scheduler ./...
+	golangci-lint run --build-tags server,sender,scheduler --disable exhaustivestruct ./...
 
 run:
 	go run -tags=server,sender,scheduler . --config=configs/calendar.yaml $(filter-out $@,$(MAKECMDGOALS))

@@ -28,7 +28,7 @@ type Consumer struct {
 func (b *Broker) Connect() error {
 	connection, err := amqp.Dial(b.Cfg.Broker.AMQP)
 	if err != nil {
-		return err
+		return fmt.Errorf("AMQP dial error: %w", err)
 	}
 	b.Conn = connection
 
@@ -42,7 +42,7 @@ func (b *Broker) Close() error {
 func (b *Broker) ChannelDeclare() error {
 	channel, err := b.Conn.Channel()
 	if err != nil {
-		return err
+		return fmt.Errorf("channel declare error: %w", err)
 	}
 	b.Channel = channel
 
@@ -83,7 +83,7 @@ func (p *Producer) Init() error {
 func (p *Producer) Publish(e structs.Event) error {
 	payload, err := json.Marshal(e)
 	if err != nil {
-		return err
+		return fmt.Errorf("marshall event error: %w", err)
 	}
 
 	return p.Channel.Publish(
@@ -141,7 +141,7 @@ func (c *Consumer) QueueDeclare() error {
 		nil,       // arguments
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("queue declare error: %w", err)
 	}
 	c.Queue = &queue
 
@@ -168,6 +168,9 @@ func (c *Consumer) Consume() (<-chan amqp.Delivery, error) {
 		false,        // noWait
 		nil,          // arguments
 	)
+	if err != nil {
+		return msgCh, fmt.Errorf("consume error: %w", err)
+	}
 
-	return msgCh, err
+	return msgCh, nil
 }

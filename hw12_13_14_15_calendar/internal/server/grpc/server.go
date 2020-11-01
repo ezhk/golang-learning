@@ -54,11 +54,17 @@ func NewServer(cfg *config.Configuration, log *logger.Logger, db storage.ClientI
 }
 
 func (s *Server) RunProxy() error {
-	mux := runtime.NewServeMux()
+	// Enable omitted fields to output.
+	mux := runtime.NewServeMux(runtime.WithMarshalerOption(
+		runtime.MIMEWildcard,
+		&runtime.JSONPb{
+			OrigName:     true,
+			EmitDefaults: true,
+		}))
 
 	err := RegisterCalendarHandlerServer(s.ctx, mux, s)
 	if err != nil {
-		return err
+		return fmt.Errorf("register handler error: %w", err)
 	}
 	address := fmt.Sprintf("%s:%d", s.cfg.Server.Host, s.cfg.Server.HTTPPort)
 
@@ -70,7 +76,7 @@ func (s *Server) RunServer() error {
 	address := fmt.Sprintf("%s:%d", s.cfg.Server.Host, s.cfg.Server.GRPCPort)
 	l, err := net.Listen("tcp", address)
 	if err != nil {
-		return nil
+		return fmt.Errorf("listen error: %w", err)
 	}
 
 	s.listener = l
@@ -98,7 +104,7 @@ func (s *Server) Close() error {
 func (s *Server) GetUser(ctx context.Context, req *RequestByUserEmail) (*User, error) {
 	user, err := s.db.GetUserByEmail(req.Email)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get user error: %w", err)
 	}
 
 	return ConvertUserToInternalUser(user), nil
@@ -107,7 +113,7 @@ func (s *Server) GetUser(ctx context.Context, req *RequestByUserEmail) (*User, e
 func (s *Server) CreateUser(ctx context.Context, u *User) (*User, error) {
 	user, err := s.db.CreateUser(u.Email, u.FirstName, u.LastName)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("create user error: %w", err)
 	}
 
 	return ConvertUserToInternalUser(user), nil
@@ -118,7 +124,7 @@ func (s *Server) UpdateUser(ctx context.Context, u *User) (*User, error) {
 
 	err := s.db.UpdateUser(user)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("update user error: %w", err)
 	}
 
 	return u, nil
@@ -127,7 +133,7 @@ func (s *Server) UpdateUser(ctx context.Context, u *User) (*User, error) {
 func (s *Server) DeleteUser(ctx context.Context, req *RequestByUserID) (*User, error) {
 	err := s.db.DeleteUser(structs.User{ID: req.ID})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("delete user error: %w", err)
 	}
 
 	return &User{ID: req.ID}, nil
@@ -136,7 +142,7 @@ func (s *Server) DeleteUser(ctx context.Context, req *RequestByUserID) (*User, e
 func (s *Server) GetEvents(ctx context.Context, req *RequestByUserID) (*Events, error) {
 	events, err := s.db.GetEventsByUserID(req.ID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get events error: %w", err)
 	}
 
 	resultEvents := make([]*Event, 0)
@@ -150,7 +156,7 @@ func (s *Server) GetEvents(ctx context.Context, req *RequestByUserID) (*Events, 
 func (s *Server) CreateEvent(ctx context.Context, e *Event) (*Event, error) {
 	event, err := s.db.CreateEvent(e.UserID, e.Title, e.Content, e.DateFrom.AsTime(), e.DateTo.AsTime())
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("create event error: %w", err)
 	}
 
 	return ConvertEventToInternalEvent(event), nil
@@ -159,7 +165,7 @@ func (s *Server) CreateEvent(ctx context.Context, e *Event) (*Event, error) {
 func (s *Server) UpdateEvent(ctx context.Context, e *Event) (*Event, error) {
 	err := s.db.UpdateEvent(CovertInternalEventToEvent(e))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("update event error: %w", err)
 	}
 
 	return e, nil
@@ -169,7 +175,7 @@ func (s *Server) DeleteEvent(ctx context.Context, eventID *EventID) (*Event, err
 	event := structs.Event{ID: eventID.ID}
 	err := s.db.DeleteEvent(event)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("delete event error: %w", err)
 	}
 
 	return ConvertEventToInternalEvent(event), nil
@@ -181,7 +187,7 @@ func (s *Server) PeriodEvents(ctx context.Context, d *DateEvent) (*Events, error
 
 	dateTime, err := time.Parse(time.RFC3339, d.Date)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parse time error: %w", err)
 	}
 
 	switch d.Period {
@@ -196,7 +202,7 @@ func (s *Server) PeriodEvents(ctx context.Context, d *DateEvent) (*Events, error
 	}
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("select period events error: %w", err)
 	}
 
 	resultEvents := make([]*Event, 0)
@@ -210,7 +216,7 @@ func (s *Server) PeriodEvents(ctx context.Context, d *DateEvent) (*Events, error
 func (s *Server) GetNotifyReadyEvents(ctx context.Context, empty *emptypb.Empty) (*Events, error) {
 	events, err := s.db.GetNotifyReadyEvents()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get notify ready events error: %w", err)
 	}
 
 	resultEvents := make([]*Event, 0)
@@ -220,13 +226,3 @@ func (s *Server) GetNotifyReadyEvents(ctx context.Context, empty *emptypb.Empty)
 
 	return &Events{Events: resultEvents}, nil
 }
-
-// func (s *Server) MarkEventAsNotified(ctx context.Context, e *Event) (*emptypb.Empty, error) {
-// 	event := CovertInternalEventToEvent(e)
-// 	err := s.db.MarkEventAsNotified(&event)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return nil, nil
-// }

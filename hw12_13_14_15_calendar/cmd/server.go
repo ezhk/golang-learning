@@ -40,44 +40,22 @@ under the hood, that processing request as SQL commands.`,
 
 		// Run server.
 		server := internalgrpc.NewServer(cfg, zapLogger, database)
-		// grpcServer := internalgrpc.NewServer(cfg, srv.GetLogger(), srv.GetDatabase())
 		go func() {
 			err := server.RunServer()
 			if err != nil {
+				zapLogger.Sugar().Errorf("cannot run gRPC server: %s", err)
+				// Close program with closed channel.
 				close(s)
-				log.Fatal(err)
 			}
 		}()
 		go func() {
 			err := server.RunProxy()
 			if err != nil {
+				zapLogger.Sugar().Errorf("cannot run REST API proxy: %s", err)
 				close(s)
-				log.Fatal("cannot run REST API proxy: %w", err)
 			}
 		}()
 		defer server.Close()
-
-		/*
-			// Defined server and waiting for shutdown.
-			HTTPServer := internalhttp.NewHTTPServer(cfg, zapLogger, database)
-			defer func() {
-				if err := HTTPServer.Shutdown(context.Background()); err != nil {
-					zapLogger.Error(err.Error())
-				}
-				zapLogger.Info("HTTP server shutdowned")
-			}()
-
-			// Main server goroutine.
-			go func() {
-				err := HTTPServer.Run()
-				if err != nil {
-					zapLogger.Error(err.Error())
-
-					// Don't wait for signal on server error.
-					close(s)
-				}
-			}()
-		*/
 
 		// Wait for interrupt signals.
 		<-s

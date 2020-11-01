@@ -9,6 +9,7 @@ package sqlstorage
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
@@ -40,7 +41,7 @@ func NewDatatabase() storage.ClientInterface {
 func (d *SQLDatabase) Connect(dsn string) error {
 	db, err := sqlx.Open("pgx", dsn)
 	if err != nil {
-		return fmt.Errorf("failed to load driver: %q", err)
+		return fmt.Errorf("failed to load driver: %w", err)
 	}
 	d.database = db
 
@@ -62,10 +63,10 @@ func (d *SQLDatabase) GetUserByEmail(email string) (storage.User, error) {
 	err := d.database.QueryRowxContext(d.ctx, query, email).StructScan(&user)
 
 	switch {
-	case err == sql.ErrNoRows:
+	case errors.Is(err, sql.ErrNoRows):
 		return storage.User{}, storage.ErrUserDoesNotExist
 	case err != nil:
-		return storage.User{}, fmt.Errorf("query error: %q", err)
+		return storage.User{}, fmt.Errorf("get user by email error: %w", err)
 	}
 
 	return user, nil
@@ -146,7 +147,7 @@ func (d *SQLDatabase) GetEventsByUserID(userID int64) ([]storage.Event, error) {
 	var events []storage.Event
 	err := d.database.SelectContext(d.ctx, &events, query, userID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("select events by user ID error: %w", err)
 	}
 
 	return events, nil
@@ -164,7 +165,7 @@ func (d *SQLDatabase) getEventsByDateRange(userID int64, fromDate, toDate time.T
 	var events []storage.Event
 	err := d.database.SelectContext(d.ctx, &events, query, userID, fromDate, toDate)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("select events by date range error: %w", err)
 	}
 
 	return events, nil
@@ -223,7 +224,7 @@ func (d *SQLDatabase) UpdateEvent(event storage.Event) error {
 
 	_, err := d.database.NamedExecContext(d.ctx, query, &event)
 	if err != nil {
-		return fmt.Errorf("update event error: %q", err)
+		return fmt.Errorf("update event error: %w", err)
 	}
 
 	return nil
@@ -236,7 +237,7 @@ func (d *SQLDatabase) DeleteEvent(event storage.Event) error {
 
 	_, err := d.database.ExecContext(d.ctx, query, event.ID)
 	if err != nil {
-		return fmt.Errorf("delete event error: %q", err)
+		return fmt.Errorf("delete event error: %w", err)
 	}
 
 	return nil
@@ -274,7 +275,7 @@ func (d *SQLDatabase) GetNotifyReadyEvents() ([]storage.Event, error) {
 	var events []storage.Event
 	err := d.database.SelectContext(d.ctx, &events, query, twoWeekLeft)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get notify ready events error: %w", err)
 	}
 
 	return events, nil
@@ -287,7 +288,7 @@ func (d *SQLDatabase) MarkEventAsNotified(event *storage.Event) error {
 
 	_, err := d.database.ExecContext(d.ctx, query, event.ID)
 	if err != nil {
-		return fmt.Errorf("update event as notified error: %q", err)
+		return fmt.Errorf("update events error: %w", err)
 	}
 	event.Notified = true
 

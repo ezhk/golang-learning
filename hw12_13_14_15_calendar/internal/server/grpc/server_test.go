@@ -97,7 +97,7 @@ func (s *UserTestSuite) TestCreateUser() {
 	var errMsg ErrorMessage
 	err = json.NewDecoder(w.Body).Decode(&errMsg)
 	s.NoError(err)
-	s.Equal("user already exists", errMsg.Message)
+	s.Equal("create user error: user already exists", errMsg.Message)
 	s.Equal(2, errMsg.Code)
 }
 
@@ -173,7 +173,7 @@ func (s *UserTestSuite) TestDeleteUser() {
 	s.NoError(err)
 
 	s.Equal(http.StatusInternalServerError, w.Result().StatusCode)
-	s.Equal("user doesn't not exist", errMsg.Message)
+	s.Equal("get user error: user doesn't not exist", errMsg.Message)
 }
 
 type EventTestSuite struct {
