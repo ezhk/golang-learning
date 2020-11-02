@@ -40,7 +40,7 @@ jobs:
       install: go install github.com/golangci/golangci-lint/cmd/golangci-lint
       script: golangci-lint run ./...
       if: |
-        (type = push AND branch NOT IN (hw12_13_14_15_calendar, banners-rotation) OR \
+        (type = push AND branch NOT IN (hw12_13_14_15_calendar, banners-rotation)) OR \
         (type = pull_request AND head_branch NOT IN (hw12_13_14_15_calendar, banners-rotation))
 
     - stage: "Tests"
@@ -48,7 +48,7 @@ jobs:
       install: go mod download
       script: go test -v -count=1 -race -gcflags=-l -timeout=30s ./...
       if: |
-        (type = push AND branch NOT IN (hw12_13_14_15_calendar, banners-rotation) OR \
+        (type = push AND branch NOT IN (hw12_13_14_15_calendar, banners-rotation)) OR \
         (type = pull_request AND head_branch NOT IN (hw12_13_14_15_calendar, banners-rotation))
 
     - stage: "Tests"
@@ -75,5 +75,5 @@ jobs:
         - make test
         - make build
       if: |
-        (type = push AND branch IN (hw12_13_14_15_calendar, banners-rotation) OR \
+        (type = push AND branch IN (hw12_13_14_15_calendar, banners-rotation)) OR \
         (type = pull_request AND head_branch IN (hw12_13_14_15_calendar, banners-rotation))
