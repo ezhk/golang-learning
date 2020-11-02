@@ -75,5 +75,5 @@ jobs:
         - make test
         - make build
       if: |
-        (type = push AND branch NOT IN (hw12_13_14_15_calendar, banners-rotation) OR \
-        (type = pull_request AND head_branch NOT IN (hw12_13_14_15_calendar, banners-rotation))
+        (type = push AND branch IN (hw12_13_14_15_calendar, banners-rotation) OR \
+        (type = pull_request AND head_branch IN (hw12_13_14_15_calendar, banners-rotation))
