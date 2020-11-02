@@ -1,3 +1,5 @@
+// +build server
+
 package cmd
 
 import (
@@ -11,11 +13,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// calendarCmd represents the calendar command.
-var calendarCmd = &cobra.Command{
-	Use:   "calendar",
-	Short: "Calendar gRPC API",
-	Long: `Calendar provides methods and abstraction calls
+// serverCmd represents the calendar command.
+var serverCmd = &cobra.Command{
+	Use:   "server",
+	Short: "Calendar gRPC and REST API",
+	Long: `Calendar server provides methods and abstraction calls
 under the hood, that processing request as SQL commands.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Init logger.
@@ -41,38 +43,19 @@ under the hood, that processing request as SQL commands.`,
 		go func() {
 			err := server.RunServer()
 			if err != nil {
-				log.Fatal(err)
+				zapLogger.Sugar().Errorf("cannot run gRPC server: %s", err)
+				// Close program with closed channel.
 				close(s)
 			}
 		}()
 		go func() {
 			err := server.RunProxy()
 			if err != nil {
-				log.Fatal("cannot run REST API proxy: %w", err)
+				zapLogger.Sugar().Errorf("cannot run REST API proxy: %s", err)
 				close(s)
 			}
 		}()
 		defer server.Close()
-
-		// // Defined server and waiting for shutdown.
-		// HTTPServer := internalhttp.NewHTTPServer(cfg, zapLogger, database)
-		// defer func() {
-		// 	if err := HTTPServer.Shutdown(context.Background()); err != nil {
-		// 		zapLogger.Error(err.Error())
-		// 	}
-		// 	zapLogger.Info("HTTP server shutdowned")
-		// }()
-
-		// // Main server goroutine.
-		// go func() {
-		// 	err := HTTPServer.Run()
-		// 	if err != nil {
-		// 		zapLogger.Error(err.Error())
-
-		// 		// Don't wait for signal on server error.
-		// 		close(s)
-		// 	}
-		// }()
 
 		// Wait for interrupt signals.
 		<-s
@@ -80,5 +63,5 @@ under the hood, that processing request as SQL commands.`,
 }
 
 func init() {
-	rootCmd.AddCommand(calendarCmd)
+	rootCmd.AddCommand(serverCmd)
 }

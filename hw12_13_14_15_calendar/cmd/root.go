@@ -16,12 +16,13 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "main",
+	Use:   "calendar",
 	Short: "Calendar management tools",
-	Long: `Calednar tools that allows different actions:
-- calendar: server-side app, that provide gPRC API;
+	Long: `Calendar tools provide different actions:
+- server: server-side app, that provide gPRC and REST API;
 - scheduler: read event from database and notify about upcoming events;
-- sender: process notifications and send messages to users.`,
+- sender: process notifications and send messages to users.
+Tools list depends on build tags.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

@@ -1,0 +1,20 @@
+version: "3.4"
+services:
+  postgres-golang-learning:
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  rabbitmq-golang-learning:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    expose:
+      - 5672
+      - 15672

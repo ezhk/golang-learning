@@ -1,15 +1,18 @@
-build:
-	go build -o ./build ./...
+build: clean test
+	go build -o ./build/calendar -tags=server,sender,scheduler .
+
+clean:
+	find build -not -name "README.md" -delete || true
 
 test:
 	go test -race ./...
 
 lint:
 	go get github.com/golangci/golangci-lint/cmd/golangci-lint
-	golangci-lint run ./...
+	golangci-lint run --build-tags server,sender,scheduler --disable exhaustivestruct ./...
 
 run:
-	go run . --config=configs/calendar.yaml $(filter-out $@,$(MAKECMDGOALS))
+	go run -tags=server,sender,scheduler . --config=configs/calendar.yaml $(filter-out $@,$(MAKECMDGOALS))
 
 # brew tap ktr0731/evans && brew install evans
 grpc-client:

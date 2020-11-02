@@ -1,6 +1,7 @@
 package structs
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -9,7 +10,7 @@ import (
 func ConvertUserMessageToUser(u UserMessage) (User, error) {
 	ID, err := strconv.Atoi(u.ID)
 	if err != nil {
-		return User{}, err
+		return User{}, fmt.Errorf("convert string to int error: %w", err)
 	}
 
 	user := User{
@@ -26,22 +27,22 @@ func ConvertUserMessageToUser(u UserMessage) (User, error) {
 func ConvertEventMessageToEvent(e EventMessage) (Event, error) {
 	ID, err := strconv.Atoi(e.ID)
 	if err != nil {
-		return Event{}, err
+		return Event{}, fmt.Errorf("convert ID error: %w", err)
 	}
 
 	userID, err := strconv.Atoi(e.ID)
 	if err != nil {
-		return Event{}, err
+		return Event{}, fmt.Errorf("convert UserID error: %w", err)
 	}
 
 	dateFrom, err := time.Parse(time.RFC3339, e.DateFrom)
 	if err != nil {
-		return Event{}, err
+		return Event{}, fmt.Errorf("parse DateFrom error: %w", err)
 	}
 
 	dateTo, err := time.Parse(time.RFC3339, e.DateTo)
 	if err != nil {
-		return Event{}, err
+		return Event{}, fmt.Errorf("parse DateTo error: %w", err)
 	}
 
 	event := Event{
