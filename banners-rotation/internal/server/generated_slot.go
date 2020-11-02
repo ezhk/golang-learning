@@ -4,13 +4,14 @@ package server
 import (
 	"context"
 
+	"github.com/ezhk/golang-learning/banners-rotation/internal/api"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func ConvertSlotToSimpleResponse(b structs.Slot) *SimpleResponse {
-	return &SimpleResponse{
+func ConvertSlotToSimpleResponse(b structs.Slot) *api.SimpleResponse {
+	return &api.SimpleResponse{
 		ID:          b.ID,
 		Name:        b.Name,
 		Description: b.Description,
@@ -19,7 +20,7 @@ func ConvertSlotToSimpleResponse(b structs.Slot) *SimpleResponse {
 	}
 }
 
-func ConvertSimpleUpdateRequestToSlot(r *SimpleUpdateRequest) structs.Slot {
+func ConvertSimpleUpdateRequestToSlot(r *api.SimpleUpdateRequest) structs.Slot {
 	return structs.Slot{
 		ID:          r.ID,
 		Name:        r.Name,
@@ -27,7 +28,7 @@ func ConvertSimpleUpdateRequestToSlot(r *SimpleUpdateRequest) structs.Slot {
 	}
 }
 
-func (s Server) CreateSlot(ctx context.Context, r *SimpleCreateRequest) (*SimpleResponse, error) {
+func (s Server) CreateSlot(ctx context.Context, r *api.SimpleCreateRequest) (*api.SimpleResponse, error) {
 	slot, err := s.storage.CreateSlot(r.Name, r.Description)
 	if err != nil {
 		return nil, err
@@ -36,21 +37,21 @@ func (s Server) CreateSlot(ctx context.Context, r *SimpleCreateRequest) (*Simple
 	return ConvertSlotToSimpleResponse(slot), nil
 }
 
-func (s Server) ReadSlots(ctx context.Context, empty *empty.Empty) (*MultipleSimpleResponse, error) {
+func (s Server) ReadSlots(ctx context.Context, empty *empty.Empty) (*api.MultipleSimpleResponse, error) {
 	slots, err := s.storage.ReadSlots()
 	if err != nil {
 		return nil, err
 	}
 
-	simpleResponses := make([]*SimpleResponse, 0)
+	simpleResponses := make([]*api.SimpleResponse, 0)
 	for _, slot := range slots {
 		simpleResponses = append(simpleResponses, ConvertSlotToSimpleResponse(*slot))
 	}
 
-	return &MultipleSimpleResponse{Objects: simpleResponses}, nil
+	return &api.MultipleSimpleResponse{Objects: simpleResponses}, nil
 }
 
-func (s Server) UpdateSlot(ctx context.Context, r *SimpleUpdateRequest) (*SimpleResponse, error) {
+func (s Server) UpdateSlot(ctx context.Context, r *api.SimpleUpdateRequest) (*api.SimpleResponse, error) {
 	slot := ConvertSimpleUpdateRequestToSlot(r)
 	b, err := s.storage.UpdateSlot(slot)
 	if err != nil {
@@ -60,10 +61,10 @@ func (s Server) UpdateSlot(ctx context.Context, r *SimpleUpdateRequest) (*Simple
 	return ConvertSlotToSimpleResponse(b), nil
 }
 
-func (s Server) DeleteSlot(ctx context.Context, r *SimpleRequestID) (*SimpleResponseID, error) {
+func (s Server) DeleteSlot(ctx context.Context, r *api.SimpleRequestID) (*api.SimpleResponseID, error) {
 	if err := s.storage.DeleteSlot(r.ID); err != nil {
 		return nil, err
 	}
 
-	return &SimpleResponseID{ID: r.ID}, nil
+	return &api.SimpleResponseID{ID: r.ID}, nil
 }

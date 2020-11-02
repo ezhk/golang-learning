@@ -7,6 +7,7 @@ import (
 	"net"
 	"testing"
 
+	"github.com/ezhk/golang-learning/banners-rotation/internal/api"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/config"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/queue"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/storage"
@@ -24,7 +25,7 @@ func MakeDialer() func(context.Context, string) (net.Conn, error) {
 	listener := bufconn.Listen(8192)
 	server := grpc.NewServer()
 
-	RegisterBannerServer(server, &Server{storage: storage, queue: queue})
+	api.RegisterBannerServer(server, &Server{storage: storage, queue: queue})
 	go server.Serve(listener)
 
 	return func(context.Context, string) (net.Conn, error) {
@@ -35,7 +36,7 @@ func MakeDialer() func(context.Context, string) (net.Conn, error) {
 type ServerTestSuite struct {
 	suite.Suite
 	conn   *grpc.ClientConn
-	client BannerClient
+	client api.BannerClient
 	ctx    context.Context
 }
 
@@ -49,7 +50,7 @@ func (s *ServerTestSuite) SetupTest() {
 	s.NoError(err)
 	s.conn = conn
 
-	client := NewBannerClient(conn)
+	client := api.NewBannerClient(conn)
 	s.client = client
 
 	s.ctx = context.Background()
@@ -64,9 +65,9 @@ func (s *ServerTestSuite) TestBanners() {
 	s.NoError(err)
 	initBannersLen := len(banners.Objects)
 
-	res, err := s.client.CreateBanner(s.ctx, &SimpleCreateRequest{Name: "test grpc banner"})
+	res, err := s.client.CreateBanner(s.ctx, &api.SimpleCreateRequest{Name: "test grpc banner"})
 	s.NoError(err)
-	defer s.client.DeleteBanner(s.ctx, &SimpleRequestID{ID: res.ID})
+	defer s.client.DeleteBanner(s.ctx, &api.SimpleRequestID{ID: res.ID})
 
 	s.Equal("test grpc banner", res.Name)
 
@@ -74,12 +75,12 @@ func (s *ServerTestSuite) TestBanners() {
 	s.NoError(err)
 	s.Equal(initBannersLen+1, len(banners.Objects))
 
-	resUpdated, err := s.client.UpdateBanner(s.ctx, &SimpleUpdateRequest{ID: res.ID, Name: "updated test grpc banner"})
+	resUpdated, err := s.client.UpdateBanner(s.ctx, &api.SimpleUpdateRequest{ID: res.ID, Name: "updated test grpc banner"})
 	s.NoError(err)
 	s.Equal(res.ID, resUpdated.ID)
 	s.Equal("updated test grpc banner", resUpdated.Name)
 
-	_, err = s.client.DeleteBanner(s.ctx, &SimpleRequestID{ID: res.ID})
+	_, err = s.client.DeleteBanner(s.ctx, &api.SimpleRequestID{ID: res.ID})
 	s.NoError(err)
 
 	banners, err = s.client.ReadBanners(s.ctx, &emptypb.Empty{})
@@ -92,9 +93,9 @@ func (s *ServerTestSuite) TestSlots() {
 	s.NoError(err)
 	initSlotsLen := len(slots.Objects)
 
-	res, err := s.client.CreateSlot(s.ctx, &SimpleCreateRequest{Name: "test grpc slot"})
+	res, err := s.client.CreateSlot(s.ctx, &api.SimpleCreateRequest{Name: "test grpc slot"})
 	s.NoError(err)
-	defer s.client.DeleteSlot(s.ctx, &SimpleRequestID{ID: res.ID})
+	defer s.client.DeleteSlot(s.ctx, &api.SimpleRequestID{ID: res.ID})
 
 	s.Equal("test grpc slot", res.Name)
 
@@ -102,7 +103,7 @@ func (s *ServerTestSuite) TestSlots() {
 	s.NoError(err)
 	s.Equal(initSlotsLen+1, len(slots.Objects))
 
-	resUpdated, err := s.client.UpdateSlot(s.ctx, &SimpleUpdateRequest{
+	resUpdated, err := s.client.UpdateSlot(s.ctx, &api.SimpleUpdateRequest{
 		ID:   res.ID,
 		Name: "updated test grpc slot",
 	})
@@ -110,7 +111,7 @@ func (s *ServerTestSuite) TestSlots() {
 	s.Equal(res.ID, resUpdated.ID)
 	s.Equal("updated test grpc slot", resUpdated.Name)
 
-	_, err = s.client.DeleteSlot(s.ctx, &SimpleRequestID{ID: res.ID})
+	_, err = s.client.DeleteSlot(s.ctx, &api.SimpleRequestID{ID: res.ID})
 	s.NoError(err)
 
 	slots, err = s.client.ReadSlots(s.ctx, &emptypb.Empty{})
@@ -123,9 +124,9 @@ func (s *ServerTestSuite) TestGroups() {
 	s.NoError(err)
 	initGroupsLen := len(groups.Objects)
 
-	res, err := s.client.CreateGroup(s.ctx, &SimpleCreateRequest{Name: "test grpc group"})
+	res, err := s.client.CreateGroup(s.ctx, &api.SimpleCreateRequest{Name: "test grpc group"})
 	s.NoError(err)
-	defer s.client.DeleteGroup(s.ctx, &SimpleRequestID{ID: res.ID})
+	defer s.client.DeleteGroup(s.ctx, &api.SimpleRequestID{ID: res.ID})
 
 	s.Equal("test grpc group", res.Name)
 
@@ -133,7 +134,7 @@ func (s *ServerTestSuite) TestGroups() {
 	s.NoError(err)
 	s.Equal(initGroupsLen+1, len(groups.Objects))
 
-	resUpdated, err := s.client.UpdateGroup(s.ctx, &SimpleUpdateRequest{
+	resUpdated, err := s.client.UpdateGroup(s.ctx, &api.SimpleUpdateRequest{
 		ID:   res.ID,
 		Name: "updated test grpc group",
 	})
@@ -141,7 +142,7 @@ func (s *ServerTestSuite) TestGroups() {
 	s.Equal(res.ID, resUpdated.ID)
 	s.Equal("updated test grpc group", resUpdated.Name)
 
-	_, err = s.client.DeleteGroup(s.ctx, &SimpleRequestID{ID: res.ID})
+	_, err = s.client.DeleteGroup(s.ctx, &api.SimpleRequestID{ID: res.ID})
 	s.NoError(err)
 
 	groups, err = s.client.ReadGroups(s.ctx, &emptypb.Empty{})
@@ -150,39 +151,39 @@ func (s *ServerTestSuite) TestGroups() {
 }
 
 func (s *ServerTestSuite) TestPlacements() {
-	banner, err := s.client.CreateBanner(s.ctx, &SimpleCreateRequest{Name: "test placements banner"})
+	banner, err := s.client.CreateBanner(s.ctx, &api.SimpleCreateRequest{Name: "test placements banner"})
 	s.NoError(err)
-	defer s.client.DeleteBanner(s.ctx, &SimpleRequestID{ID: banner.ID})
+	defer s.client.DeleteBanner(s.ctx, &api.SimpleRequestID{ID: banner.ID})
 
-	slot, err := s.client.CreateSlot(s.ctx, &SimpleCreateRequest{Name: "test placements slot"})
+	slot, err := s.client.CreateSlot(s.ctx, &api.SimpleCreateRequest{Name: "test placements slot"})
 	s.NoError(err)
-	defer s.client.DeleteSlot(s.ctx, &SimpleRequestID{ID: slot.ID})
+	defer s.client.DeleteSlot(s.ctx, &api.SimpleRequestID{ID: slot.ID})
 
-	group, err := s.client.CreateGroup(s.ctx, &SimpleCreateRequest{Name: "test placements group"})
+	group, err := s.client.CreateGroup(s.ctx, &api.SimpleCreateRequest{Name: "test placements group"})
 	s.NoError(err)
-	defer s.client.DeleteGroup(s.ctx, &SimpleRequestID{ID: group.ID})
+	defer s.client.DeleteGroup(s.ctx, &api.SimpleRequestID{ID: group.ID})
 
 	placements, err := s.client.ReadPlacements(s.ctx, &emptypb.Empty{})
 	s.NoError(err)
 	initPlacementsLen := len(placements.Objects)
 
-	placement, err := s.client.CreatePlacement(s.ctx, &PlacementCreateRequest{
+	placement, err := s.client.CreatePlacement(s.ctx, &api.PlacementCreateRequest{
 		BannerID: banner.ID,
 		SlotID:   slot.ID,
 		GroupID:  group.ID,
 	})
 	s.NoError(err)
-	defer s.client.DeletePlacement(s.ctx, &SimpleRequestID{ID: placement.ID})
+	defer s.client.DeletePlacement(s.ctx, &api.SimpleRequestID{ID: placement.ID})
 
 	placements, err = s.client.ReadPlacements(s.ctx, &emptypb.Empty{})
 	s.NoError(err)
 	s.Equal(initPlacementsLen+1, len(placements.Objects))
 
-	secondBanner, err := s.client.CreateBanner(s.ctx, &SimpleCreateRequest{Name: "second test placements banner"})
+	secondBanner, err := s.client.CreateBanner(s.ctx, &api.SimpleCreateRequest{Name: "second test placements banner"})
 	s.NoError(err)
-	defer s.client.DeleteBanner(s.ctx, &SimpleRequestID{ID: secondBanner.ID})
+	defer s.client.DeleteBanner(s.ctx, &api.SimpleRequestID{ID: secondBanner.ID})
 
-	resUpdated, err := s.client.UpdatePlacement(s.ctx, &PlacementUpdateRequest{
+	resUpdated, err := s.client.UpdatePlacement(s.ctx, &api.PlacementUpdateRequest{
 		ID:       placement.ID,
 		BannerID: secondBanner.ID,
 		SlotID:   slot.ID,
@@ -192,7 +193,7 @@ func (s *ServerTestSuite) TestPlacements() {
 
 	s.Equal(resUpdated.BannerID, secondBanner.ID)
 
-	_, err = s.client.DeletePlacement(s.ctx, &SimpleRequestID{ID: placement.ID})
+	_, err = s.client.DeletePlacement(s.ctx, &api.SimpleRequestID{ID: placement.ID})
 	s.NoError(err)
 
 	placements, err = s.client.ReadPlacements(s.ctx, &emptypb.Empty{})
@@ -201,34 +202,34 @@ func (s *ServerTestSuite) TestPlacements() {
 }
 
 func (s *ServerTestSuite) TestEvents() {
-	banner, err := s.client.CreateBanner(s.ctx, &SimpleCreateRequest{Name: "test placements banner"})
+	banner, err := s.client.CreateBanner(s.ctx, &api.SimpleCreateRequest{Name: "test placements banner"})
 	s.NoError(err)
-	defer s.client.DeleteBanner(s.ctx, &SimpleRequestID{ID: banner.ID})
+	defer s.client.DeleteBanner(s.ctx, &api.SimpleRequestID{ID: banner.ID})
 
-	slot, err := s.client.CreateSlot(s.ctx, &SimpleCreateRequest{Name: "test placements slot"})
+	slot, err := s.client.CreateSlot(s.ctx, &api.SimpleCreateRequest{Name: "test placements slot"})
 	s.NoError(err)
-	defer s.client.DeleteSlot(s.ctx, &SimpleRequestID{ID: slot.ID})
+	defer s.client.DeleteSlot(s.ctx, &api.SimpleRequestID{ID: slot.ID})
 
-	group, err := s.client.CreateGroup(s.ctx, &SimpleCreateRequest{Name: "test placements group"})
+	group, err := s.client.CreateGroup(s.ctx, &api.SimpleCreateRequest{Name: "test placements group"})
 	s.NoError(err)
-	defer s.client.DeleteGroup(s.ctx, &SimpleRequestID{ID: group.ID})
+	defer s.client.DeleteGroup(s.ctx, &api.SimpleRequestID{ID: group.ID})
 
-	placement, err := s.client.CreatePlacement(s.ctx, &PlacementCreateRequest{
+	placement, err := s.client.CreatePlacement(s.ctx, &api.PlacementCreateRequest{
 		BannerID: banner.ID,
 		SlotID:   slot.ID,
 		GroupID:  group.ID,
 	})
 	s.NoError(err)
-	defer s.client.DeletePlacement(s.ctx, &SimpleRequestID{ID: placement.ID})
+	defer s.client.DeletePlacement(s.ctx, &api.SimpleRequestID{ID: placement.ID})
 
-	showedBanner, err := s.client.BannerShow(s.ctx, &BannerShowRequest{
+	showedBanner, err := s.client.BannerShow(s.ctx, &api.BannerShowRequest{
 		SlotID:  slot.ID,
 		GroupID: group.ID,
 	})
 	s.NoError(err)
 	s.Equal(banner.ID, showedBanner.Banner.ID)
 
-	res, err := s.client.BannerClick(s.ctx, &SimpleRequestID{ID: placement.ID})
+	res, err := s.client.BannerClick(s.ctx, &api.SimpleRequestID{ID: placement.ID})
 	s.NoError(err)
 	s.Equal(placement.ID, res.ID)
 }

@@ -29,7 +29,7 @@ import (
 
 type {{.Name | Title}}TestSuite struct {
 	suite.Suite
-	db *Storage
+	db DatabaseInterface
 }
 
 func Test{{.Name | Title}}Suite(t *testing.T) {

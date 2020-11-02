@@ -13,7 +13,11 @@ import (
 
 func TestGenerate(t *testing.T) {
 	t.Run("generate event", func(t *testing.T) {
-		cfg := config.NewConfig("testdata/config.yaml")
+		cfg := &config.Configuration{
+			Queue:    config.QueueParams{Path: "localhost:6379"},
+			Database: config.DatabaseParams{Path: "user=postgres password=postgres dbname=postgres sslmode=disable host=localhost port=5432"},
+		}
+
 		q, err := NewQueue(cfg)
 		require.NoError(t, err)
 

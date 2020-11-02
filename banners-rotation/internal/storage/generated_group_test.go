@@ -12,7 +12,7 @@ import (
 
 type GroupTestSuite struct {
 	suite.Suite
-	db *Storage
+	db DatabaseInterface
 }
 
 func TestGroupSuite(t *testing.T) {

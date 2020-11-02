@@ -8,6 +8,8 @@ import (
 	"github.com/ezhk/golang-learning/banners-rotation/internal/config"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 	"github.com/stretchr/testify/require"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func TestDatabase(t *testing.T) {
@@ -23,10 +25,10 @@ func TestDatabase(t *testing.T) {
 func TestFilter(t *testing.T) {
 	t.Run("filter test", func(t *testing.T) {
 		cfg := config.NewConfig("testdata/config.yaml")
-		s, err := NewStorage(cfg)
+		db, err := gorm.Open(postgres.Open(cfg.GetDatabasePath()), &gorm.Config{})
 		require.NoError(t, err)
 
-		err = FilterMap(s.db, structs.BannerFilter{"group_id": 123})
+		err = FilterMap(db, structs.BannerFilter{"group_id": 123})
 		require.NoError(t, err)
 	})
 }

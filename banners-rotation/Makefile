@@ -16,7 +16,7 @@ test:
 
 lint:
 	go get github.com/golangci/golangci-lint/cmd/golangci-lint
-	golangci-lint run ./...
+	golangci-lint run --disable exhaustivestruct --disable wrapcheck ./...
 
 run:
 	go run . --config=config/banner.yaml $(filter-out $@,$(MAKECMDGOALS))

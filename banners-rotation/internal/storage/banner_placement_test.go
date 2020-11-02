@@ -12,7 +12,7 @@ import (
 
 type BannerPlacementTestSuite struct {
 	suite.Suite
-	db *Storage
+	db DatabaseInterface
 
 	firstBanner  *structs.Banner
 	secondBanner *structs.Banner

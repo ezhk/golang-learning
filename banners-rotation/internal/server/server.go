@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 
+	"github.com/ezhk/golang-learning/banners-rotation/internal/api"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/config"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/logger"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/queue"
@@ -22,19 +23,11 @@ type Server struct {
 
 	config  *config.Configuration
 	logger  *logger.Logger
-	storage *storage.Storage
+	storage storage.DatabaseInterface
 	queue   *queue.Queue
 }
 
-// Generate gRPC gateway.
-//go:generate protoc -I . -I ${GOPATH}/src -I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --go-grpc_out . --go-grpc_opt require_unimplemented_servers=false --go_out . --go_opt paths=source_relative --openapiv2_out . --openapiv2_opt logtostderr=true --grpc-gateway_out . --grpc-gateway_opt logtostderr=true --grpc-gateway_opt paths=source_relative --grpc-gateway_opt generate_unbound_methods=true server.proto
-
-// Generate object methods.
-//go:generate go run ./generate-server-methods/... -object banner -file generated_banner.go
-//go:generate go run ./generate-server-methods/... -object slot -file generated_slot.go
-//go:generate go run ./generate-server-methods/... -object group -file generated_group.go
-
-func NewServer(configPtr *config.Configuration, loggerPtr *logger.Logger, storagePtr *storage.Storage, queuePrt *queue.Queue) *Server {
+func NewServer(configPtr *config.Configuration, loggerPtr *logger.Logger, databaseI storage.DatabaseInterface, queuePrt *queue.Queue) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &Server{
@@ -43,7 +36,7 @@ func NewServer(configPtr *config.Configuration, loggerPtr *logger.Logger, storag
 
 		config:  configPtr,
 		logger:  loggerPtr,
-		storage: storagePtr,
+		storage: databaseI,
 		queue:   queuePrt,
 	}
 }
@@ -64,7 +57,7 @@ func (s Server) Run() error {
 			grpc_zap.UnaryServerInterceptor(&s.logger.Logger),
 		)),
 	)
-	RegisterBannerServer(grpcServer, s)
+	api.RegisterBannerServer(grpcServer, s)
 
 	return grpcServer.Serve(s.listener)
 }
@@ -72,7 +65,7 @@ func (s Server) Run() error {
 func (s Server) RunProxy() error {
 	mux := runtime.NewServeMux()
 
-	err := RegisterBannerHandlerServer(s.ctx, mux, s)
+	err := api.RegisterBannerHandlerServer(s.ctx, mux, s)
 	if err != nil {
 		return err
 	}

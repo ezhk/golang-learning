@@ -14,7 +14,7 @@ import (
 type Queue struct {
 	Conn    rmq.Connection
 	Events  rmq.Queue
-	Storage *storage.Storage
+	Storage storage.DatabaseInterface
 	Logger  *logger.Logger
 }
 
@@ -49,8 +49,8 @@ func (q *Queue) ProduceEvent(e structs.QueueEvent) error {
 	return nil
 }
 
-func (q *Queue) RunConsumer(storage *storage.Storage, logger *logger.Logger) error {
-	q.Storage = storage
+func (q *Queue) RunConsumer(databaseI storage.DatabaseInterface, logger *logger.Logger) error {
+	q.Storage = databaseI
 	q.Logger = logger
 
 	if err := q.Events.StartConsuming(10, 100*time.Millisecond); err != nil {

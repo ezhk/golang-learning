@@ -9,21 +9,38 @@ import (
 	"gorm.io/gorm"
 )
 
+type DatabaseInterface interface {
+	CreateBanner(string, string) (structs.Banner, error)
+	ReadBanners() ([]*structs.Banner, error)
+	UpdateBanner(structs.Banner) (structs.Banner, error)
+	DeleteBanner(uint64) error
+
+	CreateSlot(string, string) (structs.Slot, error)
+	ReadSlots() ([]*structs.Slot, error)
+	UpdateSlot(structs.Slot) (structs.Slot, error)
+	DeleteSlot(uint64) error
+
+	CreateGroup(string, string) (structs.Group, error)
+	ReadGroups() ([]*structs.Group, error)
+	UpdateGroup(structs.Group) (structs.Group, error)
+	DeleteGroup(uint64) error
+
+	CreateBannerPlacement(uint64, uint64, uint64) (structs.BannerPlacement, error)
+	ReadBannerHighestScore(structs.BannerFilter) (structs.BannerPlacement, error)
+	ReadBannersPlacements(structs.BannerFilter) ([]*structs.BannerPlacement, error)
+	ReadBannersShows(structs.BannerFilter) ([]*structs.SummaryBannersShows, error)
+	UpdateBannerPlacement(structs.BannerPlacement) (structs.BannerPlacement, error)
+	DeleteBannerPlacement(uint64) error
+
+	ProcessBannerEvent(uint64, string) error
+	RecalculateBannersScore(structs.BannerFilter) error
+}
+
 type Storage struct {
 	db *gorm.DB
 }
 
-// Generate base methods for tables.
-//go:generate go run ./generate-table-methods/... -table banner -file generated_banner.go
-//go:generate go run ./generate-table-methods/... -table slot -file generated_slot.go
-//go:generate go run ./generate-table-methods/... -table group -file generated_group.go
-
-// Generate base tests for table methods.
-//go:generate go run ./generate-table-tests/... -table banner -file generated_banner_test.go
-//go:generate go run ./generate-table-tests/... -table slot -file generated_slot_test.go
-//go:generate go run ./generate-table-tests/... -table group -file generated_group_test.go
-
-func NewStorage(cfg *config.Configuration) (*Storage, error) {
+func NewStorage(cfg *config.Configuration) (DatabaseInterface, error) {
 	// Create psql connection.
 	db, err := gorm.Open(postgres.Open(cfg.GetDatabasePath()), &gorm.Config{})
 	if err != nil {

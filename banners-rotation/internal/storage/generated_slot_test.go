@@ -12,7 +12,7 @@ import (
 
 type SlotTestSuite struct {
 	suite.Suite
-	db *Storage
+	db DatabaseInterface
 }
 
 func TestSlotSuite(t *testing.T) {

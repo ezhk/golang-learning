@@ -4,13 +4,14 @@ package server
 import (
 	"context"
 
+	"github.com/ezhk/golang-learning/banners-rotation/internal/api"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func ConvertGroupToSimpleResponse(b structs.Group) *SimpleResponse {
-	return &SimpleResponse{
+func ConvertGroupToSimpleResponse(b structs.Group) *api.SimpleResponse {
+	return &api.SimpleResponse{
 		ID:          b.ID,
 		Name:        b.Name,
 		Description: b.Description,
@@ -19,7 +20,7 @@ func ConvertGroupToSimpleResponse(b structs.Group) *SimpleResponse {
 	}
 }
 
-func ConvertSimpleUpdateRequestToGroup(r *SimpleUpdateRequest) structs.Group {
+func ConvertSimpleUpdateRequestToGroup(r *api.SimpleUpdateRequest) structs.Group {
 	return structs.Group{
 		ID:          r.ID,
 		Name:        r.Name,
@@ -27,7 +28,7 @@ func ConvertSimpleUpdateRequestToGroup(r *SimpleUpdateRequest) structs.Group {
 	}
 }
 
-func (s Server) CreateGroup(ctx context.Context, r *SimpleCreateRequest) (*SimpleResponse, error) {
+func (s Server) CreateGroup(ctx context.Context, r *api.SimpleCreateRequest) (*api.SimpleResponse, error) {
 	group, err := s.storage.CreateGroup(r.Name, r.Description)
 	if err != nil {
 		return nil, err
@@ -36,21 +37,21 @@ func (s Server) CreateGroup(ctx context.Context, r *SimpleCreateRequest) (*Simpl
 	return ConvertGroupToSimpleResponse(group), nil
 }
 
-func (s Server) ReadGroups(ctx context.Context, empty *empty.Empty) (*MultipleSimpleResponse, error) {
+func (s Server) ReadGroups(ctx context.Context, empty *empty.Empty) (*api.MultipleSimpleResponse, error) {
 	groups, err := s.storage.ReadGroups()
 	if err != nil {
 		return nil, err
 	}
 
-	simpleResponses := make([]*SimpleResponse, 0)
+	simpleResponses := make([]*api.SimpleResponse, 0)
 	for _, group := range groups {
 		simpleResponses = append(simpleResponses, ConvertGroupToSimpleResponse(*group))
 	}
 
-	return &MultipleSimpleResponse{Objects: simpleResponses}, nil
+	return &api.MultipleSimpleResponse{Objects: simpleResponses}, nil
 }
 
-func (s Server) UpdateGroup(ctx context.Context, r *SimpleUpdateRequest) (*SimpleResponse, error) {
+func (s Server) UpdateGroup(ctx context.Context, r *api.SimpleUpdateRequest) (*api.SimpleResponse, error) {
 	group := ConvertSimpleUpdateRequestToGroup(r)
 	b, err := s.storage.UpdateGroup(group)
 	if err != nil {
@@ -60,10 +61,10 @@ func (s Server) UpdateGroup(ctx context.Context, r *SimpleUpdateRequest) (*Simpl
 	return ConvertGroupToSimpleResponse(b), nil
 }
 
-func (s Server) DeleteGroup(ctx context.Context, r *SimpleRequestID) (*SimpleResponseID, error) {
+func (s Server) DeleteGroup(ctx context.Context, r *api.SimpleRequestID) (*api.SimpleResponseID, error) {
 	if err := s.storage.DeleteGroup(r.ID); err != nil {
 		return nil, err
 	}
 
-	return &SimpleResponseID{ID: r.ID}, nil
+	return &api.SimpleResponseID{ID: r.ID}, nil
 }

@@ -12,7 +12,7 @@ import (
 
 type BannerTestSuite struct {
 	suite.Suite
-	db *Storage
+	db DatabaseInterface
 }
 
 func TestBannerSuite(t *testing.T) {

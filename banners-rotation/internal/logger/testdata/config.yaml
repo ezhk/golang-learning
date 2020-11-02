@@ -1,8 +1,0 @@
----
-logger:
-  output:
-    - stdout_file
-  error:
-    - stderr
-  level: info
-  encoding: json

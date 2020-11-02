@@ -22,8 +22,12 @@ func TestLogger(t *testing.T) {
 		defer os.Remove("stdout_file")
 		_ = os.Remove("stdout_file")
 
-		cfg := config.NewConfig("testdata/config.yaml")
-		log := NewLogger(cfg)
+		log := NewLogger(&config.Configuration{
+			Logger: config.LoggerParams{
+				Output: []string{"stdout_file"},
+				Level:  "info",
+			},
+		})
 		require.NotEmpty(t, log)
 
 		// Write data to logfile.
