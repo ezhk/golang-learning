@@ -7,6 +7,9 @@ clean:
 test:
 	go test -race ./...
 
+integration-test:
+	go test -tags integration ./...
+
 lint:
 	go get github.com/golangci/golangci-lint/cmd/golangci-lint
 	golangci-lint run --build-tags server,sender,scheduler --disable exhaustivestruct ./...
@@ -24,5 +27,14 @@ migrate:
 
 generate:
 	go generate ./...
+
+up:
+	docker-compose -f docker/docker-compose.yaml up --scale bdd-tests=0
+
+down:
+	docker-compose -f docker/docker-compose.yaml down
+
+bdd:
+	docker-compose -f docker/docker-compose.yaml run --rm bdd-tests
 
 .PHONY: build

@@ -1,0 +1,10 @@
+FROM golang:latest
+
+COPY . /app/
+WORKDIR /app
+
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+
+VOLUME /app/godogs
+RUN go get -u github.com/cucumber/godog/cmd/godog
