@@ -40,20 +40,16 @@ jobs:
       install: go install github.com/golangci/golangci-lint/cmd/golangci-lint
       script: golangci-lint run ./...
       if: |
-        (type = push AND branch != hw12_13_14_15_calendar) OR \
-        (type = pull_request AND head_branch != hw12_13_14_15_calendar) OR \
-        (type = push AND branch != hw12_13_14_15_calendar) OR \
-        (type = pull_request AND head_branch != hw12_13_14_15_calendar)
+        (type = push AND branch NOT IN (hw12_13_14_15_calendar, banners-rotation) OR \
+        (type = pull_request AND head_branch NOT IN (hw12_13_14_15_calendar, banners-rotation))
 
     - stage: "Tests"
       name: "Unit tests"
       install: go mod download
       script: go test -v -count=1 -race -gcflags=-l -timeout=30s ./...
       if: |
-        (type = push AND branch != hw12_13_14_15_calendar) OR \
-        (type = pull_request AND head_branch != hw12_13_14_15_calendar) OR \
-        (type = push AND branch != hw12_13_14_15_calendar) OR \
-        (type = pull_request AND head_branch != hw12_13_14_15_calendar)
+        (type = push AND branch NOT IN (hw12_13_14_15_calendar, banners-rotation) OR \
+        (type = pull_request AND head_branch NOT IN (hw12_13_14_15_calendar, banners-rotation))
 
     - stage: "Tests"
       name: "Optimization tests"
@@ -61,8 +57,6 @@ jobs:
       script: go test -v -count=1 -timeout=30s -tags bench ./...
       if: |
         (type = push AND branch == hw10_program_optimization) OR \
-        (type = pull_request AND head_branch != hw12_13_14_15_calendar) OR \
-        (type = push AND branch != hw12_13_14_15_calendar) OR \
         (type = pull_request AND head_branch == hw10_program_optimization)
 
     - stage: "Tests"
@@ -81,7 +75,5 @@ jobs:
         - make test
         - make build
       if: |
-        (type = push AND branch == hw12_13_14_15_calendar) OR \
-        (type = pull_request AND head_branch == hw12_13_14_15_calendar) OR \
-        (type = push AND branch == banners-rotation) OR \
-        (type = pull_request AND head_branch == banners-rotation)
+        (type = push AND branch NOT IN (hw12_13_14_15_calendar, banners-rotation) OR \
+        (type = pull_request AND head_branch NOT IN (hw12_13_14_15_calendar, banners-rotation))
