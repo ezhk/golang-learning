@@ -24,12 +24,13 @@ import (
 	"testing"
 
 	"github.com/ezhk/golang-learning/banners-rotation/internal/config"
+	"github.com/ezhk/golang-learning/banners-rotation/internal/interfaces"
 	"github.com/stretchr/testify/suite"
 )
 
 type {{.Name | Title}}TestSuite struct {
 	suite.Suite
-	db DatabaseInterface
+	db interfaces.Storage
 }
 
 func Test{{.Name | Title}}Suite(t *testing.T) {

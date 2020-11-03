@@ -30,6 +30,7 @@ func TestGenerate(t *testing.T) {
 		err = q.RunConsumer(storage, nil)
 		require.NoError(t, err)
 
-		<-q.Conn.StopAllConsuming()
+		err = q.StopConsumer()
+		require.NoError(t, err)
 	})
 }

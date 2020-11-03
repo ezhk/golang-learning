@@ -20,12 +20,13 @@ import (
 	"testing"
 
 	"github.com/ezhk/golang-learning/banners-rotation/internal/config"
+	"github.com/ezhk/golang-learning/banners-rotation/internal/interfaces"
 	"github.com/stretchr/testify/suite"
 )
 
 type SlotTestSuite struct {
 	suite.Suite
-	db DatabaseInterface
+	db interfaces.Storage
 }
 
 func TestSlotSuite(t *testing.T) {

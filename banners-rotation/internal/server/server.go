@@ -6,9 +6,8 @@ import (
 	"net/http"
 
 	"github.com/ezhk/golang-learning/banners-rotation/internal/config"
+	"github.com/ezhk/golang-learning/banners-rotation/internal/interfaces"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/logger"
-	"github.com/ezhk/golang-learning/banners-rotation/internal/queue"
-	"github.com/ezhk/golang-learning/banners-rotation/internal/storage"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -22,11 +21,11 @@ type Server struct {
 
 	config  *config.Configuration
 	logger  *logger.Logger
-	storage storage.DatabaseInterface
-	queue   *queue.Queue
+	storage interfaces.Storage
+	queue   interfaces.Queue
 }
 
-func NewServer(configPtr *config.Configuration, loggerPtr *logger.Logger, databaseI storage.DatabaseInterface, queuePrt *queue.Queue) *Server {
+func NewServer(configPtr *config.Configuration, loggerPtr *logger.Logger, storageI interfaces.Storage, queueI interfaces.Queue) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &Server{
@@ -35,8 +34,8 @@ func NewServer(configPtr *config.Configuration, loggerPtr *logger.Logger, databa
 
 		config:  configPtr,
 		logger:  loggerPtr,
-		storage: databaseI,
-		queue:   queuePrt,
+		storage: storageI,
+		queue:   queueI,
 	}
 }
 

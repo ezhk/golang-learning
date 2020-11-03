@@ -7,13 +7,14 @@ import (
 
 	"github.com/ezhk/golang-learning/banners-rotation/internal/config"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/exceptions"
+	"github.com/ezhk/golang-learning/banners-rotation/internal/interfaces"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 	"github.com/stretchr/testify/suite"
 )
 
 type BannerEventTestSuite struct {
 	suite.Suite
-	db DatabaseInterface
+	db interfaces.Storage
 
 	firstBanner  *structs.Banner
 	secondBanner *structs.Banner
