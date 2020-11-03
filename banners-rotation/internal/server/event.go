@@ -3,11 +3,10 @@ package server
 import (
 	"context"
 
-	"github.com/ezhk/golang-learning/banners-rotation/internal/api"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 )
 
-func (s Server) BannerShow(ctx context.Context, r *api.BannerShowRequest) (*api.PlacementResponse, error) {
+func (s Server) BannerShow(ctx context.Context, r *BannerShowRequest) (*PlacementResponse, error) {
 	bannerPlacement, err := s.storage.ReadBannerHighestScore(structs.BannerFilter{
 		"slot_id":  r.SlotID,
 		"group_id": r.GroupID,
@@ -27,7 +26,7 @@ func (s Server) BannerShow(ctx context.Context, r *api.BannerShowRequest) (*api.
 	return ConvertBannerPlacementToPlacementResponse(bannerPlacement), nil
 }
 
-func (s Server) BannerClick(ctx context.Context, r *api.SimpleRequestID) (*api.SimpleResponseID, error) {
+func (s Server) BannerClick(ctx context.Context, r *SimpleRequestID) (*SimpleResponseID, error) {
 	err := s.queue.ProduceEvent(structs.QueueEvent{
 		PlacementID: r.ID,
 		EventType:   "click",
@@ -36,5 +35,5 @@ func (s Server) BannerClick(ctx context.Context, r *api.SimpleRequestID) (*api.S
 		return nil, err
 	}
 
-	return &api.SimpleResponseID{ID: r.ID}, nil
+	return &SimpleResponseID{ID: r.ID}, nil
 }

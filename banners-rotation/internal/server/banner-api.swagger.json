@@ -18,7 +18,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiMultipleSimpleResponse"
+              "$ref": "#/definitions/serverMultipleSimpleResponse"
             }
           },
           "default": {
@@ -39,7 +39,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSimpleResponse"
+              "$ref": "#/definitions/serverSimpleResponse"
             }
           },
           "default": {
@@ -55,7 +55,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiSimpleCreateRequest"
+              "$ref": "#/definitions/serverSimpleCreateRequest"
             }
           }
         ],
@@ -72,7 +72,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSimpleResponseID"
+              "$ref": "#/definitions/serverSimpleResponseID"
             }
           },
           "default": {
@@ -104,7 +104,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiPlacementResponse"
+              "$ref": "#/definitions/serverPlacementResponse"
             }
           },
           "default": {
@@ -142,7 +142,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSimpleResponseID"
+              "$ref": "#/definitions/serverSimpleResponseID"
             }
           },
           "default": {
@@ -171,7 +171,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSimpleResponse"
+              "$ref": "#/definitions/serverSimpleResponse"
             }
           },
           "default": {
@@ -194,7 +194,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiSimpleUpdateRequest"
+              "$ref": "#/definitions/serverSimpleUpdateRequest"
             }
           }
         ],
@@ -210,7 +210,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiMultipleSimpleResponse"
+              "$ref": "#/definitions/serverMultipleSimpleResponse"
             }
           },
           "default": {
@@ -231,7 +231,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSimpleResponse"
+              "$ref": "#/definitions/serverSimpleResponse"
             }
           },
           "default": {
@@ -247,7 +247,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiSimpleCreateRequest"
+              "$ref": "#/definitions/serverSimpleCreateRequest"
             }
           }
         ],
@@ -263,7 +263,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSimpleResponseID"
+              "$ref": "#/definitions/serverSimpleResponseID"
             }
           },
           "default": {
@@ -292,7 +292,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSimpleResponse"
+              "$ref": "#/definitions/serverSimpleResponse"
             }
           },
           "default": {
@@ -315,7 +315,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiSimpleUpdateRequest"
+              "$ref": "#/definitions/serverSimpleUpdateRequest"
             }
           }
         ],
@@ -331,7 +331,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiMultiplePlacementResponse"
+              "$ref": "#/definitions/serverMultiplePlacementResponse"
             }
           },
           "default": {
@@ -352,7 +352,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiPlacementIDsResponse"
+              "$ref": "#/definitions/serverPlacementIDsResponse"
             }
           },
           "default": {
@@ -368,7 +368,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiPlacementCreateRequest"
+              "$ref": "#/definitions/serverPlacementCreateRequest"
             }
           }
         ],
@@ -384,7 +384,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSimpleResponseID"
+              "$ref": "#/definitions/serverSimpleResponseID"
             }
           },
           "default": {
@@ -413,7 +413,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiPlacementIDsResponse"
+              "$ref": "#/definitions/serverPlacementIDsResponse"
             }
           },
           "default": {
@@ -436,7 +436,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiPlacementUpdateRequest"
+              "$ref": "#/definitions/serverPlacementUpdateRequest"
             }
           }
         ],
@@ -452,7 +452,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiMultipleSimpleResponse"
+              "$ref": "#/definitions/serverMultipleSimpleResponse"
             }
           },
           "default": {
@@ -473,7 +473,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSimpleResponse"
+              "$ref": "#/definitions/serverSimpleResponse"
             }
           },
           "default": {
@@ -489,7 +489,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiSimpleCreateRequest"
+              "$ref": "#/definitions/serverSimpleCreateRequest"
             }
           }
         ],
@@ -505,7 +505,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSimpleResponseID"
+              "$ref": "#/definitions/serverSimpleResponseID"
             }
           },
           "default": {
@@ -534,7 +534,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSimpleResponse"
+              "$ref": "#/definitions/serverSimpleResponse"
             }
           },
           "default": {
@@ -557,7 +557,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiSimpleUpdateRequest"
+              "$ref": "#/definitions/serverSimpleUpdateRequest"
             }
           }
         ],
@@ -568,187 +568,6 @@
     }
   },
   "definitions": {
-    "apiMultiplePlacementResponse": {
-      "type": "object",
-      "properties": {
-        "Objects": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/apiPlacementResponse"
-          }
-        }
-      }
-    },
-    "apiMultipleSimpleResponse": {
-      "type": "object",
-      "properties": {
-        "Objects": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/apiSimpleResponse"
-          }
-        }
-      }
-    },
-    "apiPlacementCreateRequest": {
-      "type": "object",
-      "properties": {
-        "BannerID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "SlotID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "GroupID": {
-          "type": "string",
-          "format": "uint64"
-        }
-      }
-    },
-    "apiPlacementIDsResponse": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "BannerID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "SlotID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "GroupID": {
-          "type": "string",
-          "format": "uint64"
-        }
-      }
-    },
-    "apiPlacementResponse": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "Banner": {
-          "$ref": "#/definitions/apiSimpleResponse"
-        },
-        "Slot": {
-          "$ref": "#/definitions/apiSimpleResponse"
-        },
-        "Group": {
-          "$ref": "#/definitions/apiSimpleResponse"
-        },
-        "Shows": {
-          "type": "string",
-          "format": "int64"
-        },
-        "Clicks": {
-          "type": "string",
-          "format": "int64"
-        },
-        "Score": {
-          "type": "number",
-          "format": "double"
-        }
-      }
-    },
-    "apiPlacementUpdateRequest": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "BannerID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "SlotID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "GroupID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "Shows": {
-          "type": "string",
-          "format": "int64"
-        },
-        "Clicks": {
-          "type": "string",
-          "format": "int64"
-        },
-        "Score": {
-          "type": "number",
-          "format": "double"
-        }
-      }
-    },
-    "apiSimpleCreateRequest": {
-      "type": "object",
-      "properties": {
-        "Name": {
-          "type": "string"
-        },
-        "Description": {
-          "type": "string"
-        }
-      }
-    },
-    "apiSimpleResponse": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "Name": {
-          "type": "string"
-        },
-        "Description": {
-          "type": "string"
-        },
-        "CreatedAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "UpdatedAt": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "apiSimpleResponseID": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string",
-          "format": "uint64"
-        }
-      }
-    },
-    "apiSimpleUpdateRequest": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "Name": {
-          "type": "string"
-        },
-        "Description": {
-          "type": "string"
-        }
-      }
-    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -776,6 +595,187 @@
           "items": {
             "$ref": "#/definitions/protobufAny"
           }
+        }
+      }
+    },
+    "serverMultiplePlacementResponse": {
+      "type": "object",
+      "properties": {
+        "Objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/serverPlacementResponse"
+          }
+        }
+      }
+    },
+    "serverMultipleSimpleResponse": {
+      "type": "object",
+      "properties": {
+        "Objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/serverSimpleResponse"
+          }
+        }
+      }
+    },
+    "serverPlacementCreateRequest": {
+      "type": "object",
+      "properties": {
+        "BannerID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "SlotID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "GroupID": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "serverPlacementIDsResponse": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "BannerID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "SlotID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "GroupID": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "serverPlacementResponse": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Banner": {
+          "$ref": "#/definitions/serverSimpleResponse"
+        },
+        "Slot": {
+          "$ref": "#/definitions/serverSimpleResponse"
+        },
+        "Group": {
+          "$ref": "#/definitions/serverSimpleResponse"
+        },
+        "Shows": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Clicks": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Score": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "serverPlacementUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "BannerID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "SlotID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "GroupID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Shows": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Clicks": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Score": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "serverSimpleCreateRequest": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      }
+    },
+    "serverSimpleResponse": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "CreatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "UpdatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "serverSimpleResponseID": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "serverSimpleUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
         }
       }
     }

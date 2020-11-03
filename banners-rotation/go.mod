@@ -7,10 +7,11 @@ require (
 	github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6 // indirect
 	github.com/daixiang0/gci v0.2.4
 	github.com/golang/protobuf v1.4.3
-	github.com/golangci/golangci-lint v1.32.1
+	github.com/golangci/golangci-lint v1.32.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.0.1
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/sclevine/agouti v3.0.0+incompatible // indirect
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1

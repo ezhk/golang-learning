@@ -4,14 +4,13 @@ package server
 import (
 	"context"
 
-	"github.com/ezhk/golang-learning/banners-rotation/internal/api"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func ConvertBannerToSimpleResponse(b structs.Banner) *api.SimpleResponse {
-	return &api.SimpleResponse{
+func ConvertBannerToSimpleResponse(b structs.Banner) *SimpleResponse {
+	return &SimpleResponse{
 		ID:          b.ID,
 		Name:        b.Name,
 		Description: b.Description,
@@ -20,7 +19,7 @@ func ConvertBannerToSimpleResponse(b structs.Banner) *api.SimpleResponse {
 	}
 }
 
-func ConvertSimpleUpdateRequestToBanner(r *api.SimpleUpdateRequest) structs.Banner {
+func ConvertSimpleUpdateRequestToBanner(r *SimpleUpdateRequest) structs.Banner {
 	return structs.Banner{
 		ID:          r.ID,
 		Name:        r.Name,
@@ -28,7 +27,7 @@ func ConvertSimpleUpdateRequestToBanner(r *api.SimpleUpdateRequest) structs.Bann
 	}
 }
 
-func (s Server) CreateBanner(ctx context.Context, r *api.SimpleCreateRequest) (*api.SimpleResponse, error) {
+func (s Server) CreateBanner(ctx context.Context, r *SimpleCreateRequest) (*SimpleResponse, error) {
 	banner, err := s.storage.CreateBanner(r.Name, r.Description)
 	if err != nil {
 		return nil, err
@@ -37,21 +36,21 @@ func (s Server) CreateBanner(ctx context.Context, r *api.SimpleCreateRequest) (*
 	return ConvertBannerToSimpleResponse(banner), nil
 }
 
-func (s Server) ReadBanners(ctx context.Context, empty *empty.Empty) (*api.MultipleSimpleResponse, error) {
+func (s Server) ReadBanners(ctx context.Context, empty *empty.Empty) (*MultipleSimpleResponse, error) {
 	banners, err := s.storage.ReadBanners()
 	if err != nil {
 		return nil, err
 	}
 
-	simpleResponses := make([]*api.SimpleResponse, 0)
+	simpleResponses := make([]*SimpleResponse, 0)
 	for _, banner := range banners {
 		simpleResponses = append(simpleResponses, ConvertBannerToSimpleResponse(*banner))
 	}
 
-	return &api.MultipleSimpleResponse{Objects: simpleResponses}, nil
+	return &MultipleSimpleResponse{Objects: simpleResponses}, nil
 }
 
-func (s Server) UpdateBanner(ctx context.Context, r *api.SimpleUpdateRequest) (*api.SimpleResponse, error) {
+func (s Server) UpdateBanner(ctx context.Context, r *SimpleUpdateRequest) (*SimpleResponse, error) {
 	banner := ConvertSimpleUpdateRequestToBanner(r)
 	b, err := s.storage.UpdateBanner(banner)
 	if err != nil {
@@ -61,10 +60,10 @@ func (s Server) UpdateBanner(ctx context.Context, r *api.SimpleUpdateRequest) (*
 	return ConvertBannerToSimpleResponse(b), nil
 }
 
-func (s Server) DeleteBanner(ctx context.Context, r *api.SimpleRequestID) (*api.SimpleResponseID, error) {
+func (s Server) DeleteBanner(ctx context.Context, r *SimpleRequestID) (*SimpleResponseID, error) {
 	if err := s.storage.DeleteBanner(r.ID); err != nil {
 		return nil, err
 	}
 
-	return &api.SimpleResponseID{ID: r.ID}, nil
+	return &SimpleResponseID{ID: r.ID}, nil
 }

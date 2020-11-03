@@ -21,14 +21,13 @@ package server
 import (
 	"context"
 
-	"github.com/ezhk/golang-learning/banners-rotation/internal/api"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/structs"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func Convert{{.Name | Title}}ToSimpleResponse(b structs.{{.Name | Title}}) *api.SimpleResponse {
-	return &api.SimpleResponse{
+func Convert{{.Name | Title}}ToSimpleResponse(b structs.{{.Name | Title}}) *SimpleResponse {
+	return &SimpleResponse{
 		ID:          b.ID,
 		Name:        b.Name,
 		Description: b.Description,
@@ -37,7 +36,7 @@ func Convert{{.Name | Title}}ToSimpleResponse(b structs.{{.Name | Title}}) *api.
 	}
 }
 
-func ConvertSimpleUpdateRequestTo{{.Name | Title}}(r *api.SimpleUpdateRequest) structs.{{.Name | Title}} {
+func ConvertSimpleUpdateRequestTo{{.Name | Title}}(r *SimpleUpdateRequest) structs.{{.Name | Title}} {
 	return structs.{{.Name | Title}}{
 		ID:          r.ID,
 		Name:        r.Name,
@@ -45,7 +44,7 @@ func ConvertSimpleUpdateRequestTo{{.Name | Title}}(r *api.SimpleUpdateRequest) s
 	}
 }
 
-func (s Server) Create{{.Name | Title}}(ctx context.Context, r *api.SimpleCreateRequest) (*api.SimpleResponse, error) {
+func (s Server) Create{{.Name | Title}}(ctx context.Context, r *SimpleCreateRequest) (*SimpleResponse, error) {
 	{{.Name | ToLower}}, err := s.storage.Create{{.Name | Title}}(r.Name, r.Description)
 	if err != nil {
 		return nil, err
@@ -54,21 +53,21 @@ func (s Server) Create{{.Name | Title}}(ctx context.Context, r *api.SimpleCreate
 	return Convert{{.Name | Title}}ToSimpleResponse({{.Name | ToLower}}), nil
 }
 
-func (s Server) Read{{.Name | Title}}s(ctx context.Context, empty *empty.Empty) (*api.MultipleSimpleResponse, error) {
+func (s Server) Read{{.Name | Title}}s(ctx context.Context, empty *empty.Empty) (*MultipleSimpleResponse, error) {
 	{{.Name | ToLower}}s, err := s.storage.Read{{.Name | Title}}s()
 	if err != nil {
 		return nil, err
 	}
 
-	simpleResponses := make([]*api.SimpleResponse, 0)
+	simpleResponses := make([]*SimpleResponse, 0)
 	for _, {{.Name | ToLower}} := range {{.Name | ToLower}}s {
 		simpleResponses = append(simpleResponses, Convert{{.Name | Title}}ToSimpleResponse(*{{.Name | ToLower}}))
 	}
 
-	return &api.MultipleSimpleResponse{Objects: simpleResponses}, nil
+	return &MultipleSimpleResponse{Objects: simpleResponses}, nil
 }
 
-func (s Server) Update{{.Name | Title}}(ctx context.Context, r *api.SimpleUpdateRequest) (*api.SimpleResponse, error) {
+func (s Server) Update{{.Name | Title}}(ctx context.Context, r *SimpleUpdateRequest) (*SimpleResponse, error) {
 	{{.Name | ToLower}} := ConvertSimpleUpdateRequestTo{{.Name | Title}}(r)
 	b, err := s.storage.Update{{.Name | Title}}({{.Name | ToLower}})
 	if err != nil {
@@ -78,12 +77,12 @@ func (s Server) Update{{.Name | Title}}(ctx context.Context, r *api.SimpleUpdate
 	return Convert{{.Name | Title}}ToSimpleResponse(b), nil
 }
 
-func (s Server) Delete{{.Name | Title}}(ctx context.Context, r *api.SimpleRequestID) (*api.SimpleResponseID, error) {
+func (s Server) Delete{{.Name | Title}}(ctx context.Context, r *SimpleRequestID) (*SimpleResponseID, error) {
 	if err := s.storage.Delete{{.Name | Title}}(r.ID); err != nil {
 		return nil, err
 	}
 
-	return &api.SimpleResponseID{ID: r.ID}, nil
+	return &SimpleResponseID{ID: r.ID}, nil
 }
 `
 

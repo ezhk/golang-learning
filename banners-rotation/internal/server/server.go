@@ -5,7 +5,6 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/ezhk/golang-learning/banners-rotation/internal/api"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/config"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/logger"
 	"github.com/ezhk/golang-learning/banners-rotation/internal/queue"
@@ -57,7 +56,7 @@ func (s Server) Run() error {
 			grpc_zap.UnaryServerInterceptor(&s.logger.Logger),
 		)),
 	)
-	api.RegisterBannerServer(grpcServer, s)
+	RegisterBannerServer(grpcServer, s)
 
 	return grpcServer.Serve(s.listener)
 }
@@ -65,7 +64,7 @@ func (s Server) Run() error {
 func (s Server) RunProxy() error {
 	mux := runtime.NewServeMux()
 
-	err := api.RegisterBannerHandlerServer(s.ctx, mux, s)
+	err := RegisterBannerHandlerServer(s.ctx, mux, s)
 	if err != nil {
 		return err
 	}
