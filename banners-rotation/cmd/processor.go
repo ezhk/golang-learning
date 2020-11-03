@@ -55,7 +55,6 @@ var processorCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal("cannot run consumer: %w", err)
 		}
-		defer queue.StopConsumer()
 
 		// Caught system signals.
 		s := make(chan os.Signal, 1)
@@ -63,6 +62,12 @@ var processorCmd = &cobra.Command{
 
 		// Wait for interrupt signals.
 		<-s
+
+		// Wait for consumer.
+		err = queue.StopConsumer()
+		if err != nil {
+			log.Fatal("cannot stop consumer: %w", err)
+		}
 	},
 }
 
