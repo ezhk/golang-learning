@@ -135,7 +135,7 @@ func (bs *BannerPlacementTestSuite) TestReadBannersShows() {
 	bScores, err = bs.db.ReadBannersShows(nil)
 	bs.NoError(err)
 	bs.Equal(2, len(bScores))
-	bs.Equal(int64(64*2), bScores[0].SummaryShows+bScores[1].SummaryShows)
+	bs.Equal(int64(64*2), bScores[0].SummaryShows+bScores[1].SummaryShows-1) // default shows value is 1
 
 	// Test filter operations: don't forget about "GROUP BY"
 	bScores, err = bs.db.ReadBannersShows(structs.BannerFilter{"banner_id": bs.firstBanner.ID})

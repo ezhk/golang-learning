@@ -127,8 +127,8 @@ func (bs *BannerEventTestSuite) TestBannerEvents() {
 	topBanner, err := bs.db.ReadBannerHighestScore(nil)
 	bs.NoError(err)
 	bs.Equal(thirdScore.ID, topBanner.ID)
-	bs.Equal(1.8325546111576978, topBanner.Score)
-	bs.Equal(int64(2), topBanner.Shows)
+	bs.Equal(1.5224751688711062, topBanner.Score)
+	bs.Equal(int64(2), topBanner.Shows-1) // starts from 1
 	bs.Equal(int64(2), topBanner.Clicks)
 
 	// Synthetic change leaders.
@@ -140,7 +140,7 @@ func (bs *BannerEventTestSuite) TestBannerEvents() {
 	topBanner, err = bs.db.ReadBannerHighestScore(nil)
 	bs.NoError(err)
 	bs.Equal(firstScore.ID, topBanner.ID)
-	bs.Equal(2.0929347248663586, topBanner.Score)
-	bs.Equal(int64(3), topBanner.Shows)
+	bs.Equal(1.769666990168809, topBanner.Score)
+	bs.Equal(int64(3), topBanner.Shows-1) // starts from 1
 	bs.Equal(int64(3), topBanner.Clicks)
 }
