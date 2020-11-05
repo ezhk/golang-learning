@@ -1,0 +1,139 @@
+syntax = "proto3";
+
+package server;
+option go_package = ".;server";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message SimpleResponse {
+  uint64 ID = 1;
+  string Name = 2;
+  string Description = 3;
+  google.protobuf.Timestamp CreatedAt = 4;
+  google.protobuf.Timestamp UpdatedAt = 5;
+}
+message MultipleSimpleResponse { repeated SimpleResponse Objects = 1; }
+
+message SimpleCreateRequest {
+  string Name = 1;
+  string Description = 2;
+}
+message SimpleUpdateRequest {
+  uint64 ID = 1;
+  string Name = 2;
+  string Description = 3;
+}
+
+message SimpleRequestID { uint64 ID = 1; }
+message SimpleResponseID { uint64 ID = 1; }
+
+message PlacementCreateRequest {
+  uint64 BannerID = 1;
+  uint64 SlotID = 2;
+  uint64 GroupID = 3;
+}
+
+message PlacementUpdateRequest {
+  uint64 ID = 1;
+  uint64 BannerID = 2;
+  uint64 SlotID = 3;
+  uint64 GroupID = 4;
+  int64 Shows = 5;
+  int64 Clicks = 6;
+  double Score = 7;
+}
+
+message PlacementIDsResponse {
+  uint64 ID = 1;
+  uint64 BannerID = 2;
+  uint64 SlotID = 3;
+  uint64 GroupID = 4;
+}
+
+message PlacementResponse {
+  uint64 ID = 1;
+  SimpleResponse Banner = 2;
+  SimpleResponse Slot = 3;
+  SimpleResponse Group = 4;
+  int64 Shows = 5;
+  int64 Clicks = 6;
+  double Score = 7;
+}
+
+message MultiplePlacementResponse { repeated PlacementResponse Objects = 1; }
+
+message BannerShowRequest {
+  uint64 SlotID = 1;
+  uint64 GroupID = 2;
+}
+
+service Banner {
+  // Banner methods.
+  rpc CreateBanner(SimpleCreateRequest) returns(SimpleResponse) {
+    option(google.api.http) = {post : "/api/v1/banners" body : "*"};
+  }
+  rpc ReadBanners(google.protobuf.Empty) returns(MultipleSimpleResponse) {
+    option(google.api.http) = {get : "/api/v1/banners"};
+  }
+  rpc UpdateBanner(SimpleUpdateRequest) returns(SimpleResponse) {
+    option(google.api.http) = {put : "/api/v1/banners/{ID}" body : "*"};
+  }
+  rpc DeleteBanner(SimpleRequestID) returns(SimpleResponseID) {
+    option(google.api.http) = {delete : "/api/v1/banners/{ID}"};
+  }
+
+  // Slots methods.
+  rpc CreateSlot(SimpleCreateRequest) returns(SimpleResponse) {
+    option(google.api.http) = {post : "/api/v1/slots" body : "*"};
+  }
+  rpc ReadSlots(google.protobuf.Empty) returns(MultipleSimpleResponse) {
+    option(google.api.http) = {get : "/api/v1/slots"};
+  }
+  rpc UpdateSlot(SimpleUpdateRequest) returns(SimpleResponse) {
+    option(google.api.http) = {put : "/api/v1/slots/{ID}" body : "*"};
+  }
+  rpc DeleteSlot(SimpleRequestID) returns(SimpleResponseID) {
+    option(google.api.http) = {delete : "/api/v1/slots/{ID}"};
+  }
+
+  // Group methods.
+  rpc CreateGroup(SimpleCreateRequest) returns(SimpleResponse) {
+    option(google.api.http) = {post : "/api/v1/groups" body : "*"};
+  }
+  rpc ReadGroups(google.protobuf.Empty) returns(MultipleSimpleResponse) {
+    option(google.api.http) = {get : "/api/v1/groups"};
+  }
+  rpc UpdateGroup(SimpleUpdateRequest) returns(SimpleResponse) {
+    option(google.api.http) = {put : "/api/v1/groups/{ID}" body : "*"};
+  }
+  rpc DeleteGroup(SimpleRequestID) returns(SimpleResponseID) {
+    option(google.api.http) = {delete : "/api/v1/groups/{ID}"};
+  }
+
+  // Placement methods.
+  rpc CreatePlacement(PlacementCreateRequest) returns(PlacementIDsResponse) {
+    option(google.api.http) = {post : "/api/v1/placements" body : "*"};
+  }
+  rpc ReadPlacements(google.protobuf.Empty) returns(MultiplePlacementResponse) {
+    option(google.api.http) = {get : "/api/v1/placements"};
+  }
+  rpc UpdatePlacement(PlacementUpdateRequest) returns(PlacementIDsResponse) {
+    option(google.api.http) = {put : "/api/v1/placements/{ID}" body : "*"};
+  }
+  rpc DeletePlacement(SimpleRequestID) returns(SimpleResponseID) {
+    option(google.api.http) = {delete : "/api/v1/placements/{ID}"};
+  }
+
+  // Banner events methods.
+  rpc BannerShow(BannerShowRequest) returns(PlacementResponse) {
+    option(google.api.http) = {
+      get : "/api/v1/banners/sid/{SlotID}/gid/{GroupID}/show"
+    };
+  }
+  // pid is PlacementID.
+  rpc BannerClick(SimpleRequestID) returns(SimpleResponseID) {
+    option(google.api.http) = {get : "/api/v1/banners/pid/{ID}/click"};
+  }
+}
