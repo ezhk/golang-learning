@@ -46,7 +46,7 @@ type BannerPlacement struct {
 	GroupID uint64
 	Group   Group `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
-	Shows  int64   `gorm:"default:0"`
+	Shows  int64   `gorm:"default:1"` // UCB1 required minimum 1 show as initial value
 	Clicks int64   `gorm:"default:0"`
 	Score  float64 `gorm:"default:0"` // will be computed in background task
 }

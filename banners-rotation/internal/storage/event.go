@@ -67,7 +67,8 @@ func (s *Storage) RecalculateBannersScore(filter structs.BannerFilter) error {
 
 		val, err := core.Score(bannerPlacement.Clicks, bannerPlacement.Shows, sum)
 		if err != nil {
-			return err
+			// Skip current store value, but process another banners.
+			continue
 		}
 
 		bannerPlacement.Score = val

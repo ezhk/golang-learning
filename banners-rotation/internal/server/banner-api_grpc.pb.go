@@ -716,5 +716,5 @@ var _Banner_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "banner-api.proto",
+	Metadata: "api/banner-api.proto",
 }
