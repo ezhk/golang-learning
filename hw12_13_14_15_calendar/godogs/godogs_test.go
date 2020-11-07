@@ -442,31 +442,3 @@ func FeatureContext(s *godog.Suite) {
 	s.Step(`^save event ID as global ID$`, saveEventIDAsGlobalID)
 	s.Step(`^update event with global ID and title "([^"]*)"$`, updateEventWithGlobalIDAndTitle)
 }
-
-// var opts = godog.Options{
-// 	Output: colors.Colored(os.Stdout),
-// 	Format: "progress",
-// }
-
-// func init() {
-// 	Server = os.Getenv("REST_SERVER")
-
-// 	if len(Server) < 1 {
-// 		Server = "http://localhost:8080"
-// 	}
-// }
-
-// func TestMain(m *testing.M) {
-// 	// flag.Parse()
-// 	// opts.Paths = flag.Args()
-
-// 	status := godog.TestSuite{
-// 		Name: "godogs",
-// 		// TestSuiteInitializer: InitializeTestSuite,
-// 		ScenarioInitializer: InitializeScenario,
-// 		Options:             &opts,
-// 	}.Run()
-
-// 	fmt.Println(status)
-// 	os.Exit(status)
-// }

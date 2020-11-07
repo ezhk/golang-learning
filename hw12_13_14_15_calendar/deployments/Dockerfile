@@ -20,4 +20,4 @@ COPY --from=builder /app/calendar .
 COPY --from=builder /go/bin/goose .
 
 COPY migrations /app/migrations/
-COPY docker/configs /app/configs/
+COPY deployments/configs /app/configs/

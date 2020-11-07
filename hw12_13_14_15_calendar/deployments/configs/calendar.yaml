@@ -19,4 +19,4 @@ broker:
   exchangeType: direct
   routingKey: notifications
 scheduler:
-  checkInterval: 3
+  checkInterval: 1
