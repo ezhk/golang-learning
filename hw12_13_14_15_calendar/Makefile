@@ -1,3 +1,5 @@
+DOCKER_COMPOSE = deployments/docker-compose.yaml
+
 build: clean test
 	go build -o ./build/calendar -tags=server,sender,scheduler .
 
@@ -6,6 +8,9 @@ clean:
 
 test:
 	go test -race ./...
+
+integration-test:
+	go test -tags integration ./...
 
 lint:
 	go get github.com/golangci/golangci-lint/cmd/golangci-lint
@@ -24,5 +29,21 @@ migrate:
 
 generate:
 	go generate ./...
+
+up:
+	docker-compose -f ${DOCKER_COMPOSE} up --scale bdd-tests=0
+
+down:
+	docker-compose -f ${DOCKER_COMPOSE} down
+
+restart: down up
+
+bdd:
+	docker-compose -f ${DOCKER_COMPOSE} up --build -d;		\
+	test_status_code=0;										\
+	docker-compose -f ${DOCKER_COMPOSE} run --rm bdd-tests	\
+		|| test_status_code=$$? ;							\
+	docker-compose -f ${DOCKER_COMPOSE} down;				\
+	exit $$test_status_code
 
 .PHONY: build

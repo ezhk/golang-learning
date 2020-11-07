@@ -1,0 +1,122 @@
+version: "3.5"
+
+networks:
+  server:
+    driver: bridge
+  rabbit:
+    driver: bridge
+  postgres:
+    driver: bridge
+
+services:
+  postgres-golang-learning:
+    image: postgres:alpine
+    ports:
+      - "127.0.0.1:5432:5432"
+    expose:
+      - 5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "postgres-golang-learning", "-p", "5432"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    networks:
+      - postgres
+
+  rabbitmq-golang-learning:
+    image: rabbitmq:3-management
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    ports:
+      - "127.0.0.1:15672:15672"
+      - "127.0.0.1:5672:5672"
+    expose:
+      - 5672
+      - 15672
+    networks:
+      - rabbit
+
+  calendar-base-image:
+    image: calendar-base-image
+    build:
+      context: ..
+      dockerfile: deployments/Dockerfile
+    command: "true"
+
+  server:
+    image: calendar-base-image
+    container_name: calendar-server
+    ports:
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:9090:9090"
+    expose:
+      - 8080
+      - 9090
+    depends_on:
+      postgres-golang-learning:
+        condition: service_healthy
+      calendar-base-image:
+        condition: service_started
+    networks:
+      - server
+      - postgres
+    command: >
+      /bin/sh -c '
+        /app/goose -dir migrations postgres "user=postgres password=postgres dbname=postgres host=postgres-golang-learning port=5432 sslmode=disable" up;
+        /app/calendar server;
+      '
+
+  sender:
+    image: calendar-base-image
+    container_name: calendar-sender
+    depends_on:
+      rabbitmq-golang-learning:
+        condition: service_healthy
+      calendar-base-image:
+        condition: service_started
+    networks:
+      - rabbit
+    command: /app/calendar sender
+
+  scheduler:
+    image: calendar-base-image
+    container_name: calendar-scheduler
+    depends_on:
+      postgres-golang-learning:
+        condition: service_healthy
+      rabbitmq-golang-learning:
+        condition: service_healthy
+      sender:
+        condition: service_started
+    networks:
+      - postgres
+      - rabbit
+    command: >
+      /bin/sh -c '
+        /app/goose -dir migrations postgres "user=postgres password=postgres dbname=postgres host=postgres-golang-learning port=5432 sslmode=disable" up;
+        /app/calendar scheduler;
+      '
+
+  bdd-tests:
+    build:
+      context: ..
+      dockerfile: deployments/Dockerfile-bdd-tests
+    image: calendar-bdd-tests
+    environment:
+      - REST_SERVER=http://server:8080
+    volumes:
+      - ../godogs:/app/godogs
+    working_dir: /app/godogs
+    depends_on:
+      - server
+      - scheduler
+      - sender
+    networks:
+      - server
+    command: godog -f progress

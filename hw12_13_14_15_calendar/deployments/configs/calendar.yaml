@@ -1,0 +1,22 @@
+---
+logger:
+  output:
+    - stdout
+  error:
+    - stderr
+  level: info
+  encoding: json
+db:
+  path: user=postgres password=postgres dbname=postgres host=postgres-golang-learning port=5432 sslmode=disable
+  type: sql
+server:
+  host: 0.0.0.0
+  httpPort: 8080
+  grpcPort: 9090
+broker:
+  amqp: amqp://guest:guest@rabbitmq-golang-learning:5672/
+  exchange: events
+  exchangeType: direct
+  routingKey: notifications
+scheduler:
+  checkInterval: 1
