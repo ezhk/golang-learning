@@ -1,12 +1,13 @@
 package hw10_program_optimization //nolint:golint,stylecheck
 
 import (
-	"encoding/json"
+	"bufio"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"regexp"
 	"strings"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 type User struct {
@@ -22,46 +23,50 @@ type User struct {
 type DomainStat map[string]int
 
 func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
-	u, err := getUsers(r)
+	u, err := getUsersEmails(r)
 	if err != nil {
 		return nil, fmt.Errorf("get users error: %s", err)
 	}
+
 	return countDomains(u, domain)
 }
 
-type users [100_000]User
+func getUsersEmails(r io.Reader) (result []string, funcErr error) {
+	var user User
+	json := jsoniter.ConfigCompatibleWithStandardLibrary
 
-func getUsers(r io.Reader) (result users, err error) {
-	content, err := ioutil.ReadAll(r)
-	if err != nil {
-		return
-	}
-
-	lines := strings.Split(string(content), "\n")
-	for i, line := range lines {
-		var user User
-		if err = json.Unmarshal([]byte(line), &user); err != nil {
-			return
+	bufReader := bufio.NewReader(r)
+	for {
+		line, _, err := bufReader.ReadLine()
+		if err == io.EOF {
+			break
 		}
-		result[i] = user
+
+		if err = json.Unmarshal(line, &user); err != nil {
+			funcErr = err
+
+			break
+		}
+
+		result = append(result, user.Email)
 	}
+
 	return
 }
 
-func countDomains(u users, domain string) (DomainStat, error) {
+func countDomains(emails []string, domain string) (DomainStat, error) {
+	re := regexp.MustCompile("\\." + domain)
 	result := make(DomainStat)
 
-	for _, user := range u {
-		matched, err := regexp.Match("\\."+domain, []byte(user.Email))
-		if err != nil {
-			return nil, err
+	for _, email := range emails {
+		matched := re.MatchString(email)
+		if !matched {
+			continue
 		}
 
-		if matched {
-			num := result[strings.ToLower(strings.SplitN(user.Email, "@", 2)[1])]
-			num++
-			result[strings.ToLower(strings.SplitN(user.Email, "@", 2)[1])] = num
-		}
+		domain := strings.Split(email, "@")[1]
+		result[strings.ToLower(domain)]++
 	}
+
 	return result, nil
 }

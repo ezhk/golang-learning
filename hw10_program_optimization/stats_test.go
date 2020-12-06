@@ -3,6 +3,7 @@
 package hw10_program_optimization //nolint:golint,stylecheck
 
 import (
+	"archive/zip"
 	"bytes"
 	"testing"
 
@@ -36,4 +37,24 @@ func TestGetDomainStat(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, DomainStat{}, result)
 	})
+}
+
+//go:generate go test -bench=^Benchmark  -cpuprofile=cpu-profile.out -memprofile=mem-profile.out .
+// for showing profiles using: go tool pprof -http=":8090" <PROFILE PATH>
+
+func BenchmarkGetDomainStat(b *testing.B) {
+	r, err := zip.OpenReader("testdata/users.dat.zip")
+	if err != nil {
+		return
+	}
+	defer r.Close()
+
+	data, err := r.File[0].Open()
+	if err != nil {
+		return
+	}
+
+	for i := 0; i < b.N; i++ {
+		GetDomainStat(data, "biz")
+	}
 }
