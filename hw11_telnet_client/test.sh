@@ -17,7 +17,7 @@ kill ${NC_PID} 2>/dev/null || true
 function fileEquals() {
   local fileData
   fileData=$(cat "$1")
-  [ "${fileData}" = "${2}" ] || (echo -e "unexpected output, $1:\n${fileData}" && exit 1)
+  [ "${fileData}" == "${2}" ] || (echo -e "unexpected output, $1:\n${fileData}" && exit 1)
 }
 
 expected_nc_out='I
