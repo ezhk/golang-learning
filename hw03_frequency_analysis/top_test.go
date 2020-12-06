@@ -7,7 +7,7 @@ import (
 )
 
 // Change to true if needed
-var taskWithAsteriskIsCompleted = false
+var taskWithAsteriskIsCompleted = true
 
 var text = `Как видите, он  спускается  по  лестнице  вслед  за  своим
 	другом   Кристофером   Робином,   головой   вниз,  пересчитывая
@@ -57,4 +57,27 @@ func TestTop10(t *testing.T) {
 			assert.ElementsMatch(t, expected, Top10(text))
 		}
 	})
+}
+
+func TestExtendedTop10(t *testing.T) {
+	type test struct {
+		text     string
+		expected []string
+	}
+	for _, testCase := range []test{
+		{"какой-то", []string{"какойто"}},
+		{"кот,собака собака", []string{"собака", "кот"}},
+		// check ingoring "-" in next test
+		{"12 1-2 5", []string{"12", "5"}},
+		{"1\n, ;1 -1 \t2,2 3.", []string{"1", "2", "3"}},
+	} {
+		result := Top10(testCase.text)
+		assert.Equal(t, result, testCase.expected)
+	}
+}
+
+func BenchmarkTop(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Top10(text)
+	}
 }
