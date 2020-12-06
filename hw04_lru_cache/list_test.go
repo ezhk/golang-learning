@@ -15,6 +15,45 @@ func TestList(t *testing.T) {
 		require.Nil(t, l.Back())
 	})
 
+	t.Run("zero or one element", func(t *testing.T) {
+		l := NewList()
+
+		l.PushFront(10)
+		require.Equal(t, l.Len(), 1)
+		// validate internal struct: when last and first are equals
+		require.Equal(t, l.Front(), l.Back())
+
+		elems := make([]int, 0, l.Len())
+		for i := l.Front(); i != nil; i = i.Next {
+			elems = append(elems, i.Value.(int))
+		}
+		require.Equal(t, elems, []int{10})
+
+		l.Remove(l.Front())
+		require.Equal(t, l.Len(), 0)
+		require.Equal(t, l.Front(), (*listItem)(nil))
+		require.Equal(t, l.Back(), (*listItem)(nil))
+	})
+
+	t.Run("two elements", func(t *testing.T) {
+		l := NewList()
+		l.PushFront("begin")
+		l.PushBack("end")
+		require.Equal(t, l.Len(), 2)
+
+		elems := make([]string, 0, l.Len())
+		for i := l.Front(); i != nil; i = i.Next {
+			elems = append(elems, i.Value.(string))
+		}
+		require.Equal(t, elems, []string{"begin", "end"})
+
+		l.Remove(l.Front())
+		require.Equal(t, l.Len(), 1)
+
+		// validate last value
+		require.Equal(t, l.Back().Value.(string), "end")
+	})
+
 	t.Run("complex", func(t *testing.T) {
 		l := NewList()
 
